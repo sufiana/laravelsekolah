@@ -1,0 +1,1816 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Mirrored from cube-30.aircode.sk/ui-sliders.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 06 Aug 2021 13:00:02 GMT -->
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<title>UI Sliders | Cube - Bootstrap Admin Template</title>
+
+<link rel="stylesheet" type="text/css" href="components/bootstrap/dist/css/bootstrap.min.css" />
+
+<script src="js/demo-rtl.js"></script>
+
+
+<link rel="stylesheet" type="text/css" href="components/font-awesome/css/font-awesome.css" />
+<link rel="stylesheet" type="text/css" href="css/libs/nanoscroller.css" />
+
+<link rel="stylesheet" type="text/css" href="css/compiled/theme_styles.css" />
+
+<link rel="stylesheet" type="text/css" href="components/nouislider/distribute/nouislider.min.css" />
+<style type="text/css">
+		#red, #green, #blue {
+			margin: 10px;
+			display: inline-block;
+			height: 200px;
+		}
+
+		#colorpicker {
+			height: 240px;
+			width: 310px;
+			margin: 0 auto;
+			padding: 10px;
+			border: 1px solid #BFBFBF;
+		}
+
+		#result {
+			margin: 60px 26px;
+			height: 100px;
+			width: 100px;
+			display: inline-block;
+			vertical-align: top;
+			color: rgb(127, 127, 127);
+			background: rgb(127, 127, 127);
+			border: 1px solid #fff;
+			box-shadow: 0 0 10px;
+		}
+
+		#red .noUi-connect {
+			background: #e84e40;
+		}
+
+		#green .noUi-connect {
+			background: #8bc34a;
+		}
+
+		#blue .noUi-connect {
+			background: #03a9f4;
+		}
+
+		#input-select,
+		#input-number {
+			padding: 7px;
+			margin: 15px 5px 5px;
+			width: 70px;
+		}
+
+		.example {
+			position: relative;
+			padding: 10px 60px 10px 30px;
+			margin: 20px 0;
+			max-width: 600px;
+		}
+		.example.overflow {
+			overflow: visible;
+		}
+		.example-val {
+			font: 400 12px Arial;
+			color: #888;
+			display: block;
+			margin: 15px 0;
+		}
+		.example-val:before {
+			content: "Value: ";
+			font: 700 12px Arial;
+		}
+		.example.vertical {
+			width: 120px;
+		}
+		.example.vertical .noUi-target {
+			height: 150px;
+		}
+
+		.before-example ~ .example {
+			margin-top: 0;
+		}
+		.before-example ~ .example.vertical .noUi-target {
+			height: 220px;
+		}
+		.c-1-color { background: red !important);; }
+		.c-2-color { background: yellow !important; }
+		.c-3-color { background: green !important; }
+		.c-4-color { background: blue !important; }
+		.c-5-color { background: purple !important; }
+	</style>
+
+<link type="image/x-icon" href="favicon.png" rel="shortcut icon" />
+
+<link href='../fonts.googleapis.com/cssaaf0.css?family=Open+Sans:400,600,700,300' rel='stylesheet' type='text/css'>
+<!--[if lt IE 9]>
+		<script src="js/html5shiv.js"></script>
+		<script src="js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+<div id="theme-wrapper">
+<header class="navbar navbar-expand-lg navbar-light container d-block d-lg-flex" id="header-navbar">
+<a class="navbar-brand float-left float-lg-none" href="index.html" id="logo">
+<img alt="" class="normal-logo logo-white" src="img/logo.png" />
+<img alt="" class="normal-logo logo-black" src="img/logo-black.png" />
+</a>
+<button aria-controls="navbar-ex1-collapse" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler float-right float-lg-none" data-target=".navbar-ex1-collapse" data-toggle="collapse" type="button">
+<span class="fa fa-bars"></span>
+</button>
+<ul class="nav navbar-nav mr-auto d-none d-lg-block mrg-l-none">
+<li>
+<a class="btn" id="make-small-nav">
+<i class="fa fa-bars">
+</i>
+</a>
+</li>
+<li class="dropdown d-none d-md-block">
+<a class="btn dropdown-toggle dropdown-nocaret" data-toggle="dropdown">
+ <i class="fa fa-bell">
+</i>
+<span class="count">
+8
+</span>
+</a>
+<ul class="dropdown-menu notifications-list">
+<li class="pointer">
+<div class="pointer-inner">
+<div class="arrow">
+</div>
+</div>
+</li>
+<li class="item-header">
+You have 6 new notifications
+</li>
+<li class="item">
+<a href="#">
+<i class="fa fa-comment">
+</i>
+<span class="content">
+New comment on ‘Awesome P...
+</span>
+<span class="time">
+<i class="fa fa-clock-o">
+</i>
+13 min.
+</span>
+</a>
+</li>
+<li class="item">
+<a href="#">
+<i class="fa fa-plus">
+</i>
+<span class="content">
+New user registration
+</span>
+<span class="time">
+<i class="fa fa-clock-o">
+</i>
+13 min.
+</span>
+</a>
+</li>
+<li class="item">
+<a href="#">
+<i class="fa fa-envelope">
+</i>
+<span class="content">
+New Message from George
+</span>
+<span class="time">
+<i class="fa fa-clock-o">
+</i>
+13 min.
+</span>
+</a>
+</li>
+<li class="item">
+<a href="#">
+<i class="fa fa-shopping-cart">
+</i>
+<span class="content">
+New purchase
+</span>
+<span class="time">
+<i class="fa fa-clock-o">
+</i>
+13 min.
+</span>
+</a>
+</li>
+<li class="item">
+<a href="#">
+<i class="fa fa-eye">
+</i>
+<span class="content">
+New order
+</span>
+<span class="time">
+<i class="fa fa-clock-o">
+</i>
+13 min.
+</span>
+</a>
+</li>
+<li class="item-footer">
+<a href="#">
+View all notifications
+</a>
+</li>
+</ul>
+</li>
+<li class="dropdown d-none d-md-block">
+<a class="btn dropdown-toggle dropdown-nocaret" data-toggle="dropdown">
+<i class="fa fa-envelope-o">
+</i>
+<span class="count">
+16
+</span>
+</a>
+<ul class="dropdown-menu notifications-list messages-list">
+<li class="pointer">
+<div class="pointer-inner">
+<div class="arrow">
+</div>
+</div>
+ </li>
+<li class="item first-item">
+<a href="#">
+<img alt="" src="img/samples/messages-photo-1.png" />
+<span class="content">
+<span class="content-headline">
+George Clooney
+</span>
+<span class="content-text">
+Look, just because I don't be givin' no man a foot massage don't make it
+right for Marsellus to throw...
+</span>
+</span>
+<span class="time">
+<i class="fa fa-clock-o">
+</i>
+13 min.
+</span>
+</a>
+</li>
+<li class="item">
+<a href="#">
+<img alt="" src="img/samples/messages-photo-2.png" />
+<span class="content">
+<span class="content-headline">
+Emma Watson
+</span>
+<span class="content-text">
+Look, just because I don't be givin' no man a foot massage don't make it
+right for Marsellus to throw...
+</span>
+</span>
+<span class="time">
+<i class="fa fa-clock-o">
+</i>
+13 min.
+</span>
+</a>
+</li>
+<li class="item">
+<a href="#">
+<img alt="" src="img/samples/messages-photo-3.png" />
+<span class="content">
+<span class="content-headline">
+Robert Downey Jr.
+</span>
+<span class="content-text">
+Look, just because I don't be givin' no man a foot massage don't make it
+right for Marsellus to throw...
+</span>
+</span>
+<span class="time">
+<i class="fa fa-clock-o">
+</i>
+13 min.
+</span>
+</a>
+</li>
+<li class="item-footer">
+<a href="#">
+View all messages
+</a>
+</li>
+</ul>
+</li>
+<li class="dropdown d-none d-md-block">
+<a class="btn dropdown-toggle" data-toggle="dropdown">
+New Item
+</a>
+<ul class="dropdown-menu">
+<li class="item">
+<a href="#">
+<i class="fa fa-archive">
+</i>
+New Product
+</a>
+</li>
+<li class="item">
+<a href="#">
+<i class="fa fa-shopping-cart">
+</i>
+New Order
+</a>
+</li>
+<li class="item">
+<a href="#">
+<i class="fa fa-sitemap">
+</i>
+New Category
+</a>
+</li>
+<li class="item">
+<a href="#">
+<i class="fa fa-file-text">
+</i>
+ New Page
+</a>
+</li>
+</ul>
+</li>
+<li class="nav-item dropdown d-none d-md-block">
+<a aria-expanded="false" aria-haspopup="true" class="btn dropdown-toggle" data-toggle="dropdown" id="" role="button">
+English
+</a>
+<ul class="dropdown-menu">
+<li class="dropdown-item">
+<a href="#">
+Spanish
+</a>
+</li>
+<li class="dropdown-item">
+<a href="#">
+German
+</a>
+</li>
+<li class="dropdown-item">
+<a href="#">
+Italian
+</a>
+</li>
+</ul>
+</li>
+</ul>
+<ul class="nav navbar-nav ml-auto float-right float-lg-none" id="header-nav">
+<li class="mobile-search">
+<a class="btn">
+<i class="fa fa-search">
+</i>
+</a>
+<div class="drowdown-search">
+<form role="search">
+<div class="form-group">
+<input class="form-control" placeholder="Search..." type="text">
+<i class="fa fa-search nav-search-icon">
+</i>
+</input>
+</div>
+</form>
+</div>
+</li>
+<li class="dropdown profile-dropdown">
+<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+<img alt="" src="img/samples/scarlet-159.png" />
+<span class="d-none d-md-block">
+Scarlett Johansson
+</span>
+<b class="caret">
+</b>
+</a>
+<ul class="dropdown-menu dropdown-menu-right">
+<li>
+<a href="user-profile.html">
+<i class="fa fa-user">
+</i>
+Profile
+</a>
+</li>
+<li>
+<a href="#">
+<i class="fa fa-cog">
+</i>
+Settings
+</a>
+</li>
+<li>
+<a href="#">
+<i class="fa fa-envelope-o">
+</i>
+Messages
+</a>
+</li>
+<li>
+<a href="#">
+<i class="fa fa-power-off">
+</i>
+Logout
+</a>
+</li>
+</ul>
+</li>
+<li class="d-none d-sm-block">
+<a class="btn">
+<i class="fa fa-power-off">
+</i>
+</a>
+</li>
+</ul>
+</header>
+<div id="page-wrapper" class="container">
+<div class="row">
+<div id="nav-col">
+<section id="col-left" class="col-left-nano">
+<div id="col-left-inner" class="col-left-nano-content">
+<div id="user-left-box" class="clearfix d-none d-lg-block profile2-dropdown">
+<img alt="" src="img/samples/scarlet-159.png" />
+<div class="user-box">
+<span class="dropdown name">
+<a href="#" class="dropdown-nocaret dropdown-toggle" data-toggle="dropdown">
+Scarlett J.
+<i class="fa fa-angle-down"></i>
+</a>
+<ul class="dropdown-menu dropdown-menu-right">
+<li class="item"><a href="user-profile.html"><i class="fa fa-user"></i>Profile</a></li>
+<li class="item"><a href="#"><i class="fa fa-cog"></i>Settings</a></li>
+<li class="item"><a href="#"><i class="fa fa-envelope-o"></i>Messages</a></li>
+<li class="item"><a href="#"><i class="fa fa-power-off"></i>Logout</a></li>
+</ul>
+</span>
+<span class="status">
+<i class="fa fa-circle"></i> Online
+</span>
+</div>
+</div>
+<div class="navbar navbar-expand-lg navbar-light">
+<div class="collapse navbar-collapse navbar-ex1-collapse" id="sidebar-nav">
+<ul class="nav navbar-nav nav-pills nav-stacked">
+<li class="nav-header nav-header-first d-none d-lg-block">
+Navigation
+</li>
+<li>
+<a href="index.html">
+<i class="fa fa-dashboard"></i>
+<span>Dashboard</span>
+<span class="badge badge-primary badge-circle float-right">28</span>
+</a>
+</li>
+<li>
+<a href="#" class="dropdown-toggle dropdown-nocaret">
+<i class="fa fa-table"></i>
+<span>Tables</span>
+<i class="fa fa-angle-right drop-icon"></i>
+</a>
+<ul class="submenu">
+<li>
+<a href="tables.html">
+Simple
+</a>
+</li>
+<li>
+<a href="tables-advanced.html">
+Advanced
+</a>
+</li>
+<li>
+<a href="users.html">
+Users
+</a>
+</li>
+<li>
+<a href="tables-footables.html">
+FooTables
+<span class="badge badge-success float-right">New</span>
+</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#" class="dropdown-toggle dropdown-nocaret">
+<i class="fa fa-envelope"></i>
+<span>Email</span>
+<i class="fa fa-angle-right drop-icon"></i>
+</a>
+<ul class="submenu">
+<li>
+<a href="email-inbox.html">
+Inbox
+</a>
+</li>
+<li>
+<a href="email-detail.html">
+Detail
+</a>
+</li>
+<li>
+<a href="email-compose.html">
+Compose
+</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#" class="dropdown-toggle dropdown-nocaret">
+<i class="fa fa-bar-chart-o"></i>
+<span>Graphs</span>
+<i class="fa fa-angle-right drop-icon"></i>
+</a>
+<ul class="submenu">
+<li>
+<a href="graphs-morris.html">
+Morris &amp; Mixed
+</a>
+</li>
+<li>
+<a href="graphs-flot.html">
+Flot
+</a>
+</li>
+<li>
+<a href="graphs-dygraphs.html">
+Dygraphs
+</a>
+</li>
+<li>
+<a href="graphs-xcharts.html">
+xCharts
+</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="widgets.html">
+ <i class="fa fa-th-large"></i>
+<span>Widgets</span>
+<span class="badge badge-success float-right">New</span>
+</a>
+</li>
+<li>
+<a href="#" class="dropdown-toggle dropdown-nocaret">
+<i class="fa fa-copy"></i>
+<span>Pages</span>
+<i class="fa fa-angle-right drop-icon"></i>
+</a>
+<ul class="submenu">
+<li>
+<a href="calendar.html">
+Calendar
+</a>
+</li>
+<li>
+<a href="gallery.html">
+Gallery
+</a>
+</li>
+<li>
+<a href="gallery-v2.html">
+Gallery v2
+</a>
+</li>
+<li>
+<a href="pricing.html">
+Pricing
+</a>
+</li>
+<li>
+<a href="projects.html">
+Projects
+</a>
+</li>
+<li>
+<a href="team-members.html">
+Team Members
+</a>
+</li>
+<li>
+<a href="timeline.html">
+Timeline
+</a>
+</li>
+<li>
+<a href="timeline-grid.html">
+Timeline Grid
+</a>
+</li>
+<li>
+<a href="user-profile.html">
+User Profile
+</a>
+</li>
+<li>
+<a href="search.html">
+Search Results
+</a>
+</li>
+<li>
+<a href="invoice.html">
+Invoice
+</a>
+</li>
+<li>
+<a href="intro.html">
+Tour Layout
+</a>
+</li>
+</ul>
+</li>
+<li class="nav-header d-none d-lg-block">
+Components
+</li>
+<li>
+<a href="#" class="dropdown-toggle dropdown-nocaret">
+<i class="fa fa-edit"></i>
+<span>Forms</span>
+<i class="fa fa-angle-right drop-icon"></i>
+</a>
+<ul class="submenu">
+<li>
+<a href="form-elements.html">
+Elements
+</a>
+</li>
+<li>
+<a href="x-editable.html">
+X-Editable
+</a>
+</li>
+<li>
+<a href="form-wizard.html">
+Wizard
+</a>
+</li>
+<li>
+<a href="form-wysiwyg.html">
+WYSIWYG
+</a>
+</li>
+<li>
+<a href="form-summernote.html">
+WYSIWYG Summernote
+</a>
+</li>
+<li>
+<a href="form-ckeditor.html">
+WYSIWYG CKEditor
+</a>
+</li>
+<li>
+<a href="form-dropzone.html">
+Multiple File Upload
+</a>
+</li>
+</ul>
+</li>
+<li class="active">
+<a href="#" class="dropdown-toggle dropdown-nocaret">
+<i class="fa fa-desktop"></i>
+<span>UI Kit</span>
+<i class="fa fa-angle-right drop-icon"></i>
+</a>
+<ul class="submenu">
+<li>
+<a href="ui-elements.html">
+Elements
+</a>
+</li>
+<li>
+<a href="ui-sliders.html" class="active">
+Sliders
+</a>
+</li>
+<li>
+<a href="notifications.html">
+Notifications &amp; Alerts
+</a>
+</li>
+<li>
+<a href="modals.html">
+Modals
+</a>
+</li>
+<li>
+<a href="video.html">
+Video
+</a>
+</li>
+<li>
+<a href="#" class="dropdown-toggle dropdown-nocaret">
+Icons
+<i class="fa fa-angle-right drop-icon"></i>
+</a>
+<ul class="submenu">
+<li>
+<a href="icons-awesome.html">
+Awesome Icons
+</a>
+</li>
+<li>
+<a href="icons-halflings.html">
+Halflings Icons
+</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="ui-nestable.html">
+Nestable List
+</a>
+</li>
+<li>
+<a href="typography.html">
+Typography
+</a>
+</li>
+<li>
+<a href="#" class="dropdown-toggle dropdown-nocaret">
+3 Level Menu
+<i class="fa fa-angle-right drop-icon"></i>
+</a>
+<ul class="submenu">
+<li>
+<a href="#">
+3rd Level
+</a>
+</li>
+<li>
+<a href="#">
+3rd Level
+</a>
+</li>
+<li>
+<a href="#">
+3rd Level
+</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<a href="maps.html">
+<i class="fa fa-map-marker"></i>
+<span>Google Maps</span>
+<span class="badge badge-danger float-right">Updated</span>
+</a>
+</li>
+<li>
+<a href="#" class="dropdown-toggle dropdown-nocaret">
+<i class="fa fa-file-text-o"></i>
+<span>Extra pages</span>
+<i class="fa fa-angle-right drop-icon"></i>
+</a>
+<ul class="submenu">
+<li>
+<a href="faq.html">
+FAQ
+</a>
+</li>
+<li>
+<a href="emails.html">
+Email Templates
+</a>
+</li>
+<li>
+<a href="login.html">
+Login
+</a>
+</li>
+<li>
+<a href="login-full.html">
+Login Full
+</a>
+</li>
+<li>
+<a href="registration.html">
+Registration
+</a>
+</li>
+<li>
+<a href="registration-full.html">
+Registration Full
+</a>
+</li>
+<li>
+<a href="forgot-password.html">
+Forgot Password
+</a>
+</li>
+<li>
+<a href="forgot-password-full.html">
+Forgot Password Full
+</a>
+</li>
+<li>
+<a href="lock-screen.html">
+Lock Screen
+</a>
+</li>
+<li>
+<a href="lock-screen-full.html">
+Lock Screen Full
+</a>
+</li>
+<li>
+<a href="error-404.html">
+Error 404
+</a>
+</li>
+<li>
+<a href="error-404-v2.html">
+Error 404 Nested
+</a>
+</li>
+<li>
+<a href="error-500.html">
+Error 500
+</a>
+</li>
+<li>
+<a href="extra-grid.html">
+Grid
+</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<div id="nav-col-submenu"></div>
+</div>
+<div id="content-wrapper">
+<div class="row">
+<div class="col-lg-12">
+<div class="row">
+<div class="col-lg-12">
+<ol class="breadcrumb">
+<li><a href="#">Home</a></li>
+<li class="active"><span>UI Sliders</span></li>
+</ol>
+<h1>UI Sliders</h1>
+</div>
+</div>
+<div class="row">
+<div class="col-lg-12">
+<div class="main-box clearfix">
+<div class="row">
+<div class="col-lg-6 col-md-7">
+<header class="main-box-header clearfix">
+<h2>Complex range example</h2>
+<div class="pagecallout pagecallout-info">
+<h4>Notes</h4>
+<p>noUiSlider is a range slider <strong>without bloat</strong>. It offers a ton off <strong>features</strong>, and it is as small, <strong>lightweight</strong> and minimal as possible, which is great for mobile use on the many supported <strong>devices</strong>, including iPhone, iPad, Android devices &amp; Windows (Phone) 8 desktops, tablets and all-in-ones. It works on desktops too, of course!</p>
+<ul class="pro-list">
+<li>Responsive design friendly</li>
+<li>Touch support for iOS, Android &amp; Windows (phone)</li>
+<li>Draggable range</li>
+<li><strong>No jQuery, jQueryUI or other dependencies</strong></li>
+<li>Tested in IE9 - IE11, Edge, Chrome, Opera, Firefox &amp; Safari</li>
+</ul>
+<p>noUiSlider works with pretty much any device, mouse, touchscreen or both, and it'll work beautifully in <strong>responsive designs</strong>. Have you tried this documentation on your phone?</p>
+</div>
+</header>
+</div>
+<div class="col-lg-6 col-md-5">
+<div class="main-box-body clearfix">
+<div class="example" id="showcase" style="margin: 30px 20px 0;">
+<div id="range"></div>
+<div style="text-align: center; font-size: 12px;">
+<span id="range-value-4"></span> -
+<span id="range-diff-3" style="color: blue"></span> -
+<span id="range-value-3"></span> -
+<span id="range-diff-2" style="color: blue"></span> -
+<span id="range-value-2"></span> -
+<span id="range-diff-1" style="color: blue"></span> -
+<span id="range-value-1"></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row d-none d-sm-block">
+<div class="col-lg-12">
+<div class="main-box clearfix">
+<header class="main-box-header clearfix">
+<h2>Steps</h2>
+<div class="pagecallout pagecallout-info">
+<h4>Notes</h4>
+<p>Like <code>range</code>, the <code>steps</code> mode uses the slider range. In <code>steps</code> mode, a pip is generated for every step. The <code>filter</code> option can be used to filter the generated pips.</p>
+<p>The <code>filter</code> function must return <code>0</code> (no value), <code>1</code> (large value) or <code>2</code> (small value).</p>
+<p>Here, we'll use large values for every step matching a thousand (<code>1000</code>, <code>2000</code>, <code>3000</code>), and small values for every step matching 500 (<code>2500</code>, <code>3500</code>, <code>4500</code>).</p>
+<p>The Pips add-on supports <code>format</code> in the same way the slider itself does.</p>
+</div>
+</header>
+<div class="main-box-body clearfix">
+<div class="example" style="max-width: 100%; padding-bottom: 40px;">
+<div id="pips-steps"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-lg-12">
+<div class="main-box clearfix">
+<div class="row">
+<div class="col-lg-6 col-md-7">
+<header class="main-box-header clearfix">
+<h2>Colorpicker</h2>
+<div class="pagecallout pagecallout-info">
+<h4>Notes</h4>
+<p>
+We'll initialize all sliders with the same options, and use the slide callback to keep to color in sync with the slider values. This callback fires when the slider is moved by sliding, or when it is clicked or tapped.
+</p>
+</div>
+</header>
+</div>
+<div class="col-lg-6 col-md-5">
+<div class="main-box-body clearfix">
+<div id="colorpicker" style="margin-top: 30px;">
+<div class="sliders" id="red"></div>
+<div class="sliders" id="green"></div>
+<div class="sliders" id="blue"></div>
+<div id="result"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-lg-12">
+<div class="main-box clearfix">
+<header class="main-box-header clearfix">
+<h2>Using HTML5 input elements</h2>
+<div class="pagecallout pagecallout-info">
+<h4>Notes</h4>
+<p>noUiSlider is perfectly fine serializing values to any element with a <code class=" language-javascript"><span class="token punctuation">.</span><span class="token function">val</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code> method, so lets try using <code class=" language-javascript">type<span class="token operator">=</span><span class="token string">"number"</span></code> and <code class=" language-javascript"><span class="token operator">&lt;</span>select<span class="token operator">&gt;</span></code>.</p>
+<p>Note that if your browser doesn't support an input type, it will just assume <code class=" language-javascript"><span class="token string">"text"</span></code>. If you'd like to know more, consider reading <a href="http://html5doctor.com/html5-forms-input-types/" target="_blank">this article</a>.</p>
+<p>We'll append <code class=" language-javascript"><span class="token operator">&lt;</span>option<span class="token operator">&gt;</span></code> elements to the <code class=" language-javascript"><span class="token operator">&lt;</span>select<span class="token operator">&gt;</span></code> dynamically.</p>
+</div>
+</header>
+<div class="main-box-body clearfix">
+<div class="example">
+<div id="html5"></div>
+<select id="input-select" class="form-control float-left"></select>
+<input type="number" min="-20" max="40" step="1" id="input-number" class="form-control float-left" style="width: 40%; margin-right: 4%;">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-lg-12">
+<div class="main-box clearfix">
+<header class="main-box-header clearfix">
+<h2>Non linear slider</h2>
+<div class="pagecallout pagecallout-info">
+ <h4>Notes</h4>
+<p>One of noUiSlider's core features is the ability to divide the range in a non-linear fashion. Stepping can be applied, too! The example on the right shows where the handles are on the slider range in values and percentages.</p>
+</div>
+</header>
+<div class="main-box-body clearfix">
+<div class="example">
+<div id="nonlinear"></div>
+<span class="example-val" id="lower-value"></span>
+<span class="example-val" id="upper-value"></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-lg-12">
+<div class="main-box clearfix">
+<header class="main-box-header clearfix">
+<h2>Locking sliders together</h2>
+<div class="pagecallout pagecallout-info">
+<h4>Notes</h4>
+<p>Two cross-updating sliders can be created using a combination of the <code>change</code> and <code>slide</code> events.</p>
+</div>
+</header>
+<div class="main-box-body clearfix">
+<div class="example">
+<div class="slider" id="slider1"></div>
+<span class="example-val" id="slider1-span"></span>
+<div class="slider" id="slider2"></div>
+<span class="example-val" id="slider2-span"></span>
+<button id="lockbutton" style="float: right; margin: 20px 0 0;" class="btn btn-primary">Lock</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-lg-12">
+<div class="main-box clearfix">
+<header class="main-box-header clearfix">
+<h2>Colored Connect Elements</h2>
+<div class="pagecallout pagecallout-info">
+<h4>Notes</h4>
+<p>noUiSlider's connect elements can be individually colored or otherwise styled.</p>
+</div>
+</header>
+<div class="main-box-body clearfix">
+<div class="example">
+<div class="slider" id="slider-color"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-lg-12">
+<div class="main-box clearfix">
+<header class="main-box-header clearfix">
+<h2>Changing the slider by keypress</h2>
+<div class="pagecallout pagecallout-info">
+<h4>Notes</h4>
+<p>To keep the library small, features like keyboard interaction haven't been included. However, adding features to input fields linked to a slider is easy. noUiSlider provides API's to help you. In this example, pressing the keyboard arrow keys will increase/decrease the slider by one step.</p>
+<p>This example uses the <code>'step'</code> API to determine by how much the slider should be changed. You don't need this function if your slider is linear. In that case, increase/decrease the value with the ammount of your <code>step</code>.</p>
+<p>We'll listen to keydown on the <code>'#input-with-keypress'</code> element, and pass the event to a function so we can read the code that identifies the key.</p>
+<p>Note that the slider value will be a <code>string</code>, so we'll need to parse it to an integer.</p>
+</div>
+</header>
+<div class="main-box-body clearfix">
+<div class="example">
+<div id="keypress" style="margin-bottom: 20px;"></div>
+<div class="row">
+<div class="col-6">
+<input type="text" class="form-control float-left" id="input-with-keypress-1">
+</div>
+<div class="col-6">
+<input type="text" class="form-control float-left" id="input-with-keypress-0">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-lg-12">
+<div class="main-box clearfix">
+ <header class="main-box-header clearfix">
+<h2>Skipping steps</h2>
+<div class="pagecallout pagecallout-info">
+<h4>Notes</h4>
+<p>When using a stepped slider, your configuration may require that certain steps aren't available. Using the <code>snap</code> feature, this effect can be created.</p>
+<p>Notice how <code>40</code> and <code>80</code> can't be selected on the slider.</p>
+</div>
+</header>
+<div class="main-box-body clearfix">
+<div class="example">
+<div id="skipstep"></div>
+<span class="example-val" id="skip-value-lower"></span>
+<span class="example-val" id="skip-value-upper"></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-lg-12">
+<div class="main-box clearfix">
+<header class="main-box-header clearfix">
+<h2>Using the slider with huge numbers</h2>
+<div class="pagecallout pagecallout-info">
+<h4>Notes</h4>
+<p>If you are working with arbitrarily large numbers, you should <strong>not use these directly in noUiSlider</strong>, as you'll run into some JavaScript limitations. Instead, you should <strong>map</strong> your values to an <code>array</code>.</p>
+<p>Numbers is JavaScript are Double Precision Floats, which can store numbers up to 2^53 <em>(9007199254740992)</em> precisely. For reference, see <a href="https://stackoverflow.com/questions/15529337/prevent-javascript-number-function-from-rounding-big-numbers" target="_blank">this StackOverflow question</a>, or <a href="https://github.com/leongersen/noUiSlider/issues/427" target="_blank">issue #427 filed on GitHub</a>.</p>
+<p>As an example, see the <code>'range'</code> option for a RAM selector offering 14 steps from 512MB to 8GB. The <code>'step'</code> are ommited for clarity. The values are provided as bytes. A better solution would be to abstract the byte values away from the slider, looking up the byte values in an array. This keeps the slider configuration simple and prevents issues with floating point precision.</p>
+<p><em>(These values fit within the limit just fine, but demonstrate the point really well!)</em></p>
+</div>
+</header>
+<div class="main-box-body clearfix">
+<div class="example">
+<div id="slider-huge"></div>
+<span class="example-val" id="huge-value"></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-lg-12">
+<div class="main-box clearfix">
+<header class="main-box-header clearfix">
+<h2>Working with dates</h2>
+<div class="pagecallout pagecallout-info">
+<h4>Notes</h4>
+<p>As all dates in JavaScript can be represented as time, noUiSlider can handle them, too. This example will show you how to convert dates to numerical ranges, and then use the <code>update</code> event to display them in a pretty format.</p>
+<p>We'll be creating timestamps from strings. In order to do this easily, we'll define a new helper function. This function accepts a string, creates a <code>new Date</code> and then returns it as a timestamp.</p>
+<p>In in overview below you'll find the code used to run this example. For readability, all <strong>helper</strong> functions have been moved into their own tab.</p>
+</div>
+</header>
+<div class="main-box-body clearfix">
+<div class="example">
+<div id="slider-date"></div>
+<span class="example-val" id="event-start"></span>
+<span class="example-val" id="event-end"></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-lg-12">
+<div class="main-box clearfix">
+<header class="main-box-header clearfix">
+ <h2>Soft limits</h2>
+<div class="pagecallout pagecallout-info">
+<h4>Notes</h4>
+<p>If you want to disable the edges of a slider, the set event can be used to reset the value if a limit is passed. Note how the handle 'bounces back' when it is released below <code>20</code> or above <code>80</code>. noUiSlider also supports disabling edges altogether, which can be done using the <a href="nouislider/slider-options/index.html#section-padding" target="_blank">padding option</a>.</p>
+</div>
+</header>
+<div class="main-box-body clearfix">
+<div class="example" style="padding-bottom: 40px;">
+<div id="soft"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer id="footer-bar" class="row">
+<div class="container">
+<p id="footer-copyright" class="col-12">
+Powered by Cube Theme.
+</p>
+</div>
+</footer>
+</div>
+</div>
+</div>
+</div>
+<div id="config-tool" class="closed">
+<a id="config-tool-cog">
+<i class="fa fa-cog"></i>
+</a>
+<div id="config-tool-options">
+<h4>Layout Options</h4>
+<ul>
+<li>
+<div class="checkbox-nice">
+<input type="checkbox" id="config-fixed-header" />
+<label for="config-fixed-header">
+Fixed Header
+</label>
+</div>
+</li>
+<li>
+<div class="checkbox-nice">
+<input type="checkbox" id="config-fixed-sidebar" />
+<label for="config-fixed-sidebar">
+Fixed Left Menu
+</label>
+</div>
+</li>
+<li>
+<div class="checkbox-nice">
+<input type="checkbox" id="config-fixed-footer" />
+<label for="config-fixed-footer">
+Fixed Footer
+</label>
+</div>
+</li>
+<li>
+<div class="checkbox-nice">
+<input type="checkbox" id="config-boxed-layout" />
+<label for="config-boxed-layout">
+Boxed Layout
+</label>
+</div>
+</li>
+<li>
+<div class="checkbox-nice">
+<input type="checkbox" id="config-rtl-layout" />
+<label for="config-rtl-layout">
+Right-to-Left
+</label>
+</div>
+</li>
+</ul>
+<br />
+<h4>Skin Color</h4>
+<ul id="skin-colors" class="clearfix">
+<li>
+<a class="skin-changer" data-skin="" data-toggle="tooltip" title="Default" style="background-color: #34495e;">
+</a>
+</li>
+<li>
+<a class="skin-changer" data-skin="theme-white" data-toggle="tooltip" title="White/Green" style="background-color: #2ecc71;">
+</a>
+</li>
+<li>
+<a class="skin-changer blue-gradient" data-skin="theme-blue-gradient" data-toggle="tooltip" title="Gradient">
+</a>
+</li>
+<li>
+<a class="skin-changer" data-skin="theme-turquoise" data-toggle="tooltip" title="Green Sea" style="background-color: #1abc9c;">
+</a>
+</li>
+<li>
+<a class="skin-changer" data-skin="theme-amethyst" data-toggle="tooltip" title="Amethyst" style="background-color: #9b59b6;">
+</a>
+</li>
+<li>
+<a class="skin-changer" data-skin="theme-blue" data-toggle="tooltip" title="Blue" style="background-color: #2980b9;">
+</a>
+</li>
+<li>
+<a class="skin-changer" data-skin="theme-red" data-toggle="tooltip" title="Red" style="background-color: #e74c3c;">
+</a>
+</li>
+<li>
+<a class="skin-changer" data-skin="theme-whbl" data-toggle="tooltip" title="White/Blue" style="background-color: #3498db;">
+</a>
+</li>
+</ul>
+</div>
+</div>
+
+<script src="js/demo-skin-changer.js"></script> 
+<script src="components/jquery/dist/jquery.min.js"></script>
+<script src="components/bootstrap/assets/js/vendor/popper.min.js"></script>
+<script src="components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="components/nanoscroller/bin/javascripts/jquery.nanoscroller.min.js"></script>
+<script src="js/demo.js"></script> 
+
+<script src="components/nouislider/documentation/assets/wNumb.js"></script>
+<script src="components/nouislider/documentation/assets/prism.js"></script>
+<script src="components/nouislider/distribute/nouislider.min.js"></script>
+
+<script src="js/scripts.js"></script>
+<script src="components/PACE/pace.min.js"></script>
+
+<script>
+	function setColor(){
+
+		// Get the slider values,
+		// stick them together.
+		var color = 'rgb(' +
+			sliders[0].noUiSlider.get() + ',' +
+			sliders[1].noUiSlider.get() + ',' +
+			sliders[2].noUiSlider.get() + ')';
+
+		// Fill the color box.
+		resultElement.style.background = color;
+		resultElement.style.color = color;
+	}
+
+	var resultElement = document.getElementById('result'),
+		sliders = document.getElementsByClassName('sliders');
+
+	$(document).ready(function() {
+		/**** DEMO1 - Colorpicker ****/
+		for ( var i = 0; i < sliders.length; i++ ) {
+
+			noUiSlider.create(sliders[i], {
+				start: 127,
+				connect: [true, false],
+				orientation: "vertical",
+				range: {
+					'min': 0,
+					'max': 255
+				},
+				format: wNumb({
+					decimals: 0
+				})
+			});
+
+			// Bind the color changing function
+			// to the slide event.
+			sliders[i].noUiSlider.on('slide', setColor);
+		}
+		/**** DEMO1 - END - Colorpicker ****/
+
+		/**** DEMO2 - Using HTML5 input elements ****/
+		var select = document.getElementById('input-select');
+
+		// Append the option elements
+		for ( var i = -20; i <= 40; i++ ){
+
+			var option = document.createElement("option");
+				option.text = i;
+				option.value = i;
+
+			select.appendChild(option);
+		}
+
+		var html5Slider = document.getElementById('html5');
+
+		noUiSlider.create(html5Slider, {
+			start: [ 10, 30 ],
+			connect: true,
+			range: {
+				'min': -20,
+				'max': 40
+			}
+		});
+
+		var inputNumber = document.getElementById('input-number');
+
+		html5Slider.noUiSlider.on('update', function( values, handle ) {
+
+			var value = values[handle];
+
+			if ( handle ) {
+				inputNumber.value = value;
+			} else {
+				select.value = Math.round(value);
+			}
+		});
+
+		select.addEventListener('change', function(){
+			html5Slider.noUiSlider.set([this.value, null]);
+		});
+
+		inputNumber.addEventListener('change', function(){
+			html5Slider.noUiSlider.set([null, this.value]);
+		});
+		/**** DEMO2 - END - Using HTML5 input elements ****/
+
+
+		/**** DEMO3 - Non linear slider ****/
+		var nonLinearSlider = document.getElementById('nonlinear');
+
+		noUiSlider.create(nonLinearSlider, {
+			connect: true,
+			behaviour: 'tap',
+			start: [ 500, 4000 ],
+			range: {
+				// Starting at 500, step the value by 500,
+				// until 4000 is reached. From there, step by 1000.
+				'min': [ 0 ],
+				'10%': [ 500, 500 ],
+				'50%': [ 4000, 1000 ],
+				'max': [ 10000 ]
+			}
+		});
+
+		var nodes = [
+			document.getElementById('lower-value'), // 0
+			document.getElementById('upper-value')  // 1
+		];
+
+		// Display the slider value and how far the handle moved
+		// from the left edge of the slider.
+		nonLinearSlider.noUiSlider.on('update', function ( values, handle, unencoded, isTap, positions ) {
+			nodes[handle].innerHTML = values[handle] + ', ' + positions[handle].toFixed(2) + '%';
+		});
+		/**** DEMO3 - END - Non linear slider ****/
+
+		/**** DEMO4 - Locking sliders together ****/
+		// Store the locked state and slider values.
+		var lockedState = false,
+			lockedSlider = false,
+			lockedValues = [60, 80],
+			slider1 = document.getElementById('slider1'),
+			slider2 = document.getElementById('slider2'),
+			lockButton = document.getElementById('lockbutton'),
+			slider1Value = document.getElementById('slider1-span'),
+			slider2Value = document.getElementById('slider2-span');
+
+		// When the button is clicked, the locked
+		// state is inverted.
+		lockButton.addEventListener('click', function(){
+			lockedState = !lockedState;
+			this.textContent = lockedState ? 'unlock' : 'lock';
+		});
+		noUiSlider.create(slider1, {
+			start: 60,
+
+			// Disable animation on value-setting,
+			// so the sliders respond immediately.
+			animate: false,
+			range: {
+				min: 50,
+				max: 100
+			}
+		});
+
+		noUiSlider.create(slider2, {
+			start: 80,
+			animate: false,
+			range: {
+				min: 50,
+				max: 100
+			}
+		});
+
+		slider1.noUiSlider.on('update', function( values, handle ){
+			slider1Value.innerHTML = values[handle];
+		});
+
+		slider2.noUiSlider.on('update', function( values, handle ){
+			slider2Value.innerHTML = values[handle];
+		});
+		function setLockedValues ( ) {
+			lockedValues = [
+				Number(slider1.noUiSlider.get()),
+				Number(slider2.noUiSlider.get())
+			];
+		}
+
+		slider1.noUiSlider.on('change', setLockedValues);
+		slider2.noUiSlider.on('change', setLockedValues);
+
+		// The value will be send to the other slider,
+		// using a custom function as the serialization
+		// method. The function uses the global 'lockedState'
+		// variable to decide whether the other slider is updated.
+		slider1.noUiSlider.on('slide', function( values, handle ){
+			crossUpdate(values[handle], slider2);
+		});
+
+		slider2.noUiSlider.on('slide', function( values, handle ){
+			crossUpdate(values[handle], slider1);
+		});
+		function crossUpdate ( value, slider ) {
+
+			// If the sliders aren't interlocked, don't
+			// cross-update.
+			if ( !lockedState ) return;
+
+			// Select whether to increase or decrease
+			// the other slider value.
+			var a = slider1 === slider ? 0 : 1, b = a ? 0 : 1;
+
+			// Offset the slider value.
+			value -= lockedValues[b] - lockedValues[a];
+
+			// Set the value
+			slider.noUiSlider.set(value);
+		}
+		/**** DEMO4 - END - Locking sliders together ****/
+
+		/**** DEMO5 - Colored Connect Elements ****/
+		var slider = document.getElementById('slider-color');
+
+		noUiSlider.create(slider, {
+			start: [ 4000, 8000, 12000, 16000 ],
+			connect: [false, true, true, true, true],
+			range: {
+				'min': [  2000 ],
+				'max': [ 20000 ]
+			}
+		});
+
+		var connect = slider.querySelectorAll('.noUi-connect');
+		var classes = ['c-1-color', 'c-2-color', 'c-3-color', 'c-4-color', 'c-5-color'];
+
+		for ( var i = 0; i < connect.length; i++ ) {
+		    connect[i].classList.add(classes[i]);
+		}
+		/**** DEMO5 - END - Colored Connect Elements ****/
+
+		/**** DEMO6 - Changing the slider by keypress ****/
+		var keypressSlider = document.getElementById('keypress');
+		var input0 = document.getElementById('input-with-keypress-0');
+		var input1 = document.getElementById('input-with-keypress-1');
+		var inputs = [input0, input1];
+
+		noUiSlider.create(keypressSlider, {
+			start: [20, 80],
+			connect: true,
+			direction: 'rtl',
+			tooltips: [true, wNumb({ decimals: 1 })],
+			range: {
+				'min': [0],
+				'10%': [10, 10],
+				'50%': [80, 50],
+				'80%': 150,
+				'max': 200
+			}
+		});
+
+		keypressSlider.noUiSlider.on('update', function( values, handle ) {
+			inputs[handle].value = values[handle];
+		});
+		function setSliderHandle(i, value) {
+			var r = [null,null];
+			r[i] = value;
+			keypressSlider.noUiSlider.set(r);
+		}
+
+		// Listen to keydown events on the input field.
+		inputs.forEach(function(input, handle) {
+
+			input.addEventListener('change', function(){
+				setSliderHandle(handle, this.value);
+			});
+
+			input.addEventListener('keydown', function( e ) {
+
+				var values = keypressSlider.noUiSlider.get();
+				var value = Number(values[handle]);
+
+				// [[handle0_down, handle0_up], [handle1_down, handle1_up]]
+				var steps = keypressSlider.noUiSlider.steps();
+
+				// [down, up]
+				var step = steps[handle];
+
+				var position;
+
+				// 13 is enter,
+				// 38 is key up,
+				// 40 is key down.
+				switch ( e.which ) {
+
+					case 13:
+						setSliderHandle(handle, this.value);
+						break;
+
+					case 38:
+
+						// Get step to go increase slider value (up)
+						position = step[1];
+
+						// false = no step is set
+						if ( position === false ) {
+							position = 1;
+						}
+
+						// null = edge of slider
+						if ( position !== null ) {
+							setSliderHandle(handle, value + position);
+						}
+
+						break;
+
+					case 40:
+
+						position = step[0];
+
+						if ( position === false ) {
+							position = 1;
+						}
+
+						if ( position !== null ) {
+							setSliderHandle(handle, value - position);
+						}
+
+						break;
+				}
+			});
+		});
+		/**** DEMO6 - END - Changing the slider by keypress ****/
+
+		/**** DEMO7 - Skipping steps ****/
+		var skipSlider = document.getElementById('skipstep');
+
+		noUiSlider.create(skipSlider, {
+		    range: {
+		        'min': 0,
+		        '10%': 10,
+		        '20%': 20,
+		        '30%': 30,
+				// Nope, 40 is no fun.
+		        '50%': 50,
+		        '60%': 60,
+		        '70%': 70,
+				// I never liked 80.
+		        '90%': 90,
+		        'max': 100
+		    },
+		    snap: true,
+		    start: [20, 90]
+		});
+		var skipValues = [
+			document.getElementById('skip-value-lower'),
+			document.getElementById('skip-value-upper')
+		];
+
+		skipSlider.noUiSlider.on('update', function( values, handle ) {
+			skipValues[handle].innerHTML = values[handle];
+		});
+		/**** DEMO7 - END - Skipping steps ****/
+
+		/**** DEMO8 - Using the slider with huge numbers ****/
+		var bigValueSlider = document.getElementById('slider-huge'),
+			bigValueSpan = document.getElementById('huge-value');
+
+		noUiSlider.create(bigValueSlider, {
+			start: 0,
+			step: 1,
+			format: wNumb({
+				decimals: 0
+			}),
+			range: {
+				min: 0,
+				max: 13
+			}
+		});
+		// Note how these are 'string' values, not numbers.
+		var range2 = [
+			'0','2097152','4194304',
+			'8388608','16777216','33554432',
+			'67108864','134217728','268435456',
+			'536870912','1073741824',
+			'2147483648','4294967296',
+			'8589934592'
+		];
+
+		bigValueSlider.noUiSlider.on('update', function ( values, handle ) {
+			bigValueSpan.innerHTML = range2[values[handle]];
+		});
+		/**** DEMO8 - END - Using the slider with huge numbers ****/
+
+		/**** DEMO9 - Working with dates ****/
+		// Create a new date from a string, return as a timestamp.
+		function timestamp(str){
+		    return new Date(str).getTime();   
+		}
+
+		// Create a list of day and monthnames.
+		var
+			weekdays = [
+				"Sunday", "Monday", "Tuesday",
+				"Wednesday", "Thursday", "Friday",
+				"Saturday"
+			],
+			months = [
+				"January", "February", "March",
+				"April", "May", "June", "July",
+				"August", "September", "October",
+				"November", "December"
+			];
+
+		// Append a suffix to dates.
+		// Example: 23 => 23rd, 1 => 1st.
+		function nth (d) {
+		  if(d>3 && d<21) return 'th';
+		  switch (d % 10) {
+		        case 1:  return "st";
+		        case 2:  return "nd";
+		        case 3:  return "rd";
+		        default: return "th";
+		    }
+		}
+
+		// Create a string representation of the date.
+		function formatDate ( date ) {
+		    return weekdays[date.getDay()] + ", " +
+		        date.getDate() + nth(date.getDate()) + " " +
+		        months[date.getMonth()] + " " +
+		        date.getFullYear();
+		}
+
+		var dateSlider = document.getElementById('slider-date');
+
+		noUiSlider.create(dateSlider, {
+		// Create two timestamps to define a range.
+		    range: {
+		        min: timestamp('2010'),
+		        max: timestamp('2016')
+		    },
+
+		// Steps of one week
+		    step: 7 * 24 * 60 * 60 * 1000,
+
+		// Two more timestamps indicate the handle starting positions.
+		    start: [ timestamp('2011'), timestamp('2015') ],
+
+		// No decimals
+			format: wNumb({
+				decimals: 0
+			})
+		});
+
+		var dateValues = [
+			document.getElementById('event-start'),
+			document.getElementById('event-end')
+		];
+
+		dateSlider.noUiSlider.on('update', function( values, handle ) {
+			dateValues[handle].innerHTML = formatDate(new Date(+values[handle]));
+		});
+		/**** DEMO9 - END - Working with dates ****/
+
+		/**** DEMO10 - Soft limits ****/
+		var softSlider = document.getElementById('soft');
+
+		noUiSlider.create(softSlider, {
+			start: 50,
+			range: {
+				min: 0,
+				max: 100
+			},
+			pips: {
+				mode: 'values',
+				values: [20, 80],
+				density: 4
+			}
+		});
+
+		softSlider.noUiSlider.on('change', function ( values, handle ) {
+			if ( values[handle] < 20 ) {
+				softSlider.noUiSlider.set(20);
+			} else if ( values[handle] > 80 ) {
+				softSlider.noUiSlider.set(80);
+			}
+		});
+		/**** DEMO10 - END - Soft limits ****/
+
+		/**** DEMO11 - Complex range example ****/
+		var range = document.getElementById('range');
+
+		range.style.height = '400px';
+		range.style.margin = '0 auto 30px';
+
+		noUiSlider.create(range, {
+			start: [ 1450, 2050, 2350, 3000 ], // 4 handles, starting at...
+			margin: 300, // Handles must be at least 300 apart
+			limit: 600, // ... but no more than 600
+			connect: true, // Display a colored bar between the handles
+			direction: 'rtl', // Put '0' at the bottom of the slider
+			orientation: 'vertical', // Orient the slider vertically
+			behaviour: 'tap-drag', // Move handle on tap, bar is draggable
+			step: 150,
+			tooltips: true,
+			format: wNumb({
+				decimals: 0
+			}),
+			range: {
+				'min': 1300,
+				'max': 3250
+			},
+			pips: { // Show a scale with the slider
+				mode: 'steps',
+				stepped: true,
+				density: 4
+			}
+		});
+
+		var valuesDivs = [
+			document.getElementById('range-value-1'),
+			document.getElementById('range-value-2'),
+			document.getElementById('range-value-3'),
+			document.getElementById('range-value-4')
+		];
+
+		var diffDivs = [
+			document.getElementById('range-diff-1'),
+			document.getElementById('range-diff-2'),
+			document.getElementById('range-diff-3')
+		];
+
+		// When the slider value changes, update the input and span
+		range.noUiSlider.on('update', function( values, handle ) {
+			valuesDivs[handle].innerHTML = values[handle];
+			diffDivs[0].innerHTML = values[1] - values[0];
+			diffDivs[1].innerHTML = values[2] - values[1];
+			diffDivs[2].innerHTML = values[3] - values[2];
+		});
+		/**** DEMO11 - END - Complex range example ****/
+
+		/**** DEMO12 - Steps ****/
+		var range_all_sliders = {
+			'min': [     0 ],
+			'10%': [   500,  500 ],
+			'50%': [  4000, 1000 ],
+			'max': [ 6000 ]
+		};
+		function filter500( value, type ){
+			return value % 1000 ? 2 : 1;
+		}
+
+		var pipsSteps = document.getElementById('pips-steps');
+
+		noUiSlider.create(pipsSteps, {
+			range: range_all_sliders,
+			start: 0,
+			pips: {
+				mode: 'steps',
+				density: 3,
+				filter: filter500,
+				format: wNumb({
+					decimals: 2,
+					prefix: '$'
+				})
+			}
+		});
+		/**** DEMO12 - END - Steps ****/
+	});
+	</script>
+</body>
+
+<!-- Mirrored from cube-30.aircode.sk/ui-sliders.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 06 Aug 2021 13:00:06 GMT -->
+</html>

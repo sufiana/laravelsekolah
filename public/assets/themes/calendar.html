@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Mirrored from cube-30.aircode.sk/calendar.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 06 Aug 2021 12:58:51 GMT -->
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<title>Simple Tables | Cube - Bootstrap Admin Template</title>
+
+<link rel="stylesheet" type="text/css" href="components/bootstrap/dist/css/bootstrap.min.css" />
+
+<script src="js/demo-rtl.js"></script>
+
+
+<link rel="stylesheet" type="text/css" href="components/font-awesome/css/font-awesome.css" />
+<link rel="stylesheet" type="text/css" href="css/libs/nanoscroller.css" />
+
+<link rel="stylesheet" type="text/css" href="css/compiled/theme_styles.css" />
+
+<link rel="stylesheet" href="components/fullcalendar/dist/fullcalendar.min.css" type="text/css" />
+<link rel="stylesheet" href="components/fullcalendar/dist/fullcalendar.print.css" type="text/css" media="print" />
+<link rel="stylesheet" href="css/compiled/calendar.css" type="text/css" media="screen" />
+
+<link type="image/x-icon" href="favicon.png" rel="shortcut icon" />
+
+<link href='../fonts.googleapis.com/cssaaf0.css?family=Open+Sans:400,600,700,300' rel='stylesheet' type='text/css'>
+<!--[if lt IE 9]>
+	    <script src="js/html5shiv.js"></script>
+	    <script src="js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+<div id="theme-wrapper">
+<header class="navbar navbar-expand-lg navbar-light container d-block d-lg-flex" id="header-navbar">
+<a class="navbar-brand float-left float-lg-none" href="index.html" id="logo">
+<img alt="" class="normal-logo logo-white" src="img/logo.png" />
+<img alt="" class="normal-logo logo-black" src="img/logo-black.png" />
+</a>
+<button aria-controls="navbar-ex1-collapse" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler float-right float-lg-none" data-target=".navbar-ex1-collapse" data-toggle="collapse" type="button">
+<span class="fa fa-bars"></span>
+</button>
+<ul class="nav navbar-nav mr-auto d-none d-lg-block mrg-l-none">
+<li>
+<a class="btn" id="make-small-nav">
+<i class="fa fa-bars">
+</i>
+</a>
+</li>
+<li class="dropdown d-none d-md-block">
+<a class="btn dropdown-toggle dropdown-nocaret" data-toggle="dropdown">
+<i class="fa fa-bell">
+</i>
+<span class="count">
+8
+</span>
+</a>
+<ul class="dropdown-menu notifications-list">
+<li class="pointer">
+<div class="pointer-inner">
+<div class="arrow">
+</div>
+</div>
+</li>
+<li class="item-header">
+You have 6 new notifications
+</li>
+<li class="item">
+<a href="#">
+<i class="fa fa-comment">
+</i>
+<span class="content">
+New comment on ‘Awesome P...
+</span>
+<span class="time">
+<i class="fa fa-clock-o">
+</i>
+13 min.
+</span>
+</a>
+</li>
+<li class="item">
+<a href="#">
+<i class="fa fa-plus">
+</i>
+<span class="content">
+ New user registration
+</span>
+<span class="time">
+<i class="fa fa-clock-o">
+</i>
+13 min.
+</span>
+</a>
+</li>
+<li class="item">
+<a href="#">
+<i class="fa fa-envelope">
+</i>
+<span class="content">
+New Message from George
+</span>
+<span class="time">
+<i class="fa fa-clock-o">
+</i>
+13 min.
+</span>
+</a>
+</li>
+<li class="item">
+<a href="#">
+<i class="fa fa-shopping-cart">
+</i>
+<span class="content">
+New purchase
+</span>
+<span class="time">
+<i class="fa fa-clock-o">
+</i>
+13 min.
+</span>
+</a>
+</li>
+<li class="item">
+<a href="#">
+<i class="fa fa-eye">
+</i>
+<span class="content">
+New order
+</span>
+<span class="time">
+<i class="fa fa-clock-o">
+</i>
+13 min.
+</span>
+</a>
+</li>
+<li class="item-footer">
+<a href="#">
+View all notifications
+</a>
+</li>
+</ul>
+</li>
+<li class="dropdown d-none d-md-block">
+<a class="btn dropdown-toggle dropdown-nocaret" data-toggle="dropdown">
+<i class="fa fa-envelope-o">
+</i>
+<span class="count">
+16
+</span>
+</a>
+<ul class="dropdown-menu notifications-list messages-list">
+<li class="pointer">
+<div class="pointer-inner">
+<div class="arrow">
+</div>
+</div>
+</li>
+<li class="item first-item">
+<a href="#">
+<img alt="" src="img/samples/messages-photo-1.png" />
+<span class="content">
+<span class="content-headline">
+George Clooney
+</span>
+<span class="content-text">
+Look, just because I don't be givin' no man a foot massage don't make it
+right for Marsellus to throw...
+</span>
+</span>
+<span class="time">
+<i class="fa fa-clock-o">
+</i>
+13 min.
+</span>
+</a>
+</li>
+<li class="item">
+<a href="#">
+<img alt="" src="img/samples/messages-photo-2.png" />
+<span class="content">
+<span class="content-headline">
+Emma Watson
+</span>
+<span class="content-text">
+Look, just because I don't be givin' no man a foot massage don't make it
+right for Marsellus to throw...
+</span>
+</span>
+<span class="time">
+<i class="fa fa-clock-o">
+</i>
+13 min.
+</span>
+</a>
+</li>
+<li class="item">
+<a href="#">
+<img alt="" src="img/samples/messages-photo-3.png" />
+<span class="content">
+<span class="content-headline">
+Robert Downey Jr.
+</span>
+<span class="content-text">
+Look, just because I don't be givin' no man a foot massage don't make it
+right for Marsellus to throw...
+</span>
+</span>
+<span class="time">
+<i class="fa fa-clock-o">
+</i>
+13 min.
+</span>
+</a>
+</li>
+<li class="item-footer">
+<a href="#">
+View all messages
+</a>
+</li>
+</ul>
+</li>
+<li class="dropdown d-none d-md-block">
+<a class="btn dropdown-toggle" data-toggle="dropdown">
+New Item
+</a>
+<ul class="dropdown-menu">
+<li class="item">
+<a href="#">
+<i class="fa fa-archive">
+</i>
+New Product
+</a>
+</li>
+<li class="item">
+<a href="#">
+<i class="fa fa-shopping-cart">
+</i>
+New Order
+</a>
+</li>
+<li class="item">
+<a href="#">
+<i class="fa fa-sitemap">
+</i>
+New Category
+</a>
+</li>
+<li class="item">
+<a href="#">
+<i class="fa fa-file-text">
+</i>
+New Page
+</a>
+</li>
+</ul>
+</li>
+<li class="nav-item dropdown d-none d-md-block">
+<a aria-expanded="false" aria-haspopup="true" class="btn dropdown-toggle" data-toggle="dropdown" id="" role="button">
+English
+</a>
+<ul class="dropdown-menu">
+<li class="dropdown-item">
+<a href="#">
+Spanish
+</a>
+</li>
+<li class="dropdown-item">
+<a href="#">
+German
+</a>
+</li>
+<li class="dropdown-item">
+<a href="#">
+Italian
+</a>
+</li>
+</ul>
+</li>
+</ul>
+<ul class="nav navbar-nav ml-auto float-right float-lg-none" id="header-nav">
+<li class="mobile-search">
+<a class="btn">
+<i class="fa fa-search">
+</i>
+</a>
+<div class="drowdown-search">
+<form role="search">
+<div class="form-group">
+<input class="form-control" placeholder="Search..." type="text">
+<i class="fa fa-search nav-search-icon">
+</i>
+</input>
+</div>
+</form>
+</div>
+</li>
+<li class="dropdown profile-dropdown">
+<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+<img alt="" src="img/samples/scarlet-159.png" />
+<span class="d-none d-md-block">
+Scarlett Johansson
+</span>
+<b class="caret">
+</b>
+</a>
+<ul class="dropdown-menu dropdown-menu-right">
+<li>
+<a href="user-profile.html">
+<i class="fa fa-user">
+</i>
+Profile
+</a>
+</li>
+<li>
+<a href="#">
+<i class="fa fa-cog">
+</i>
+Settings
+</a>
+</li>
+<li>
+<a href="#">
+<i class="fa fa-envelope-o">
+</i>
+Messages
+</a>
+</li>
+<li>
+<a href="#">
+<i class="fa fa-power-off">
+</i>
+Logout
+</a>
+</li>
+</ul>
+</li>
+<li class="d-none d-sm-block">
+<a class="btn">
+<i class="fa fa-power-off">
+</i>
+</a>
+</li>
+</ul>
+</header>
+<div id="page-wrapper" class="container">
+<div class="row">
+<div id="nav-col">
+<section id="col-left" class="col-left-nano">
+<div id="col-left-inner" class="col-left-nano-content">
+<div id="user-left-box" class="clearfix d-none d-lg-block profile2-dropdown">
+<img alt="" src="img/samples/scarlet-159.png" />
+<div class="user-box">
+<span class="dropdown name">
+<a href="#" class="dropdown-nocaret dropdown-toggle" data-toggle="dropdown">
+Scarlett J.
+<i class="fa fa-angle-down"></i>
+</a>
+<ul class="dropdown-menu dropdown-menu-right">
+<li class="item"><a href="user-profile.html"><i class="fa fa-user"></i>Profile</a></li>
+<li class="item"><a href="#"><i class="fa fa-cog"></i>Settings</a></li>
+<li class="item"><a href="#"><i class="fa fa-envelope-o"></i>Messages</a></li>
+<li class="item"><a href="#"><i class="fa fa-power-off"></i>Logout</a></li>
+</ul>
+</span>
+<span class="status">
+<i class="fa fa-circle"></i> Online
+</span>
+</div>
+</div>
+<div class="navbar navbar-expand-lg navbar-light">
+<div class="collapse navbar-collapse navbar-ex1-collapse" id="sidebar-nav">
+<ul class="nav navbar-nav nav-pills nav-stacked">
+<li class="nav-header nav-header-first d-none d-lg-block">
+Navigation
+</li>
+<li>
+<a href="index.html">
+<i class="fa fa-dashboard"></i>
+<span>Dashboard</span>
+<span class="badge badge-primary badge-circle float-right">28</span>
+</a>
+</li>
+<li>
+<a href="#" class="dropdown-toggle dropdown-nocaret">
+<i class="fa fa-table"></i>
+<span>Tables</span>
+<i class="fa fa-angle-right drop-icon"></i>
+</a>
+<ul class="submenu">
+<li>
+<a href="tables.html">
+Simple
+</a>
+</li>
+<li>
+<a href="tables-advanced.html">
+Advanced
+</a>
+</li>
+<li>
+<a href="users.html">
+Users
+</a>
+</li>
+<li>
+<a href="tables-footables.html">
+FooTables
+<span class="badge badge-success float-right">New</span>
+</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#" class="dropdown-toggle dropdown-nocaret">
+<i class="fa fa-envelope"></i>
+<span>Email</span>
+<i class="fa fa-angle-right drop-icon"></i>
+</a>
+<ul class="submenu">
+<li>
+<a href="email-inbox.html">
+Inbox
+</a>
+</li>
+<li>
+<a href="email-detail.html">
+Detail
+</a>
+</li>
+<li>
+<a href="email-compose.html">
+Compose
+</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#" class="dropdown-toggle dropdown-nocaret">
+<i class="fa fa-bar-chart-o"></i>
+<span>Graphs</span>
+<i class="fa fa-angle-right drop-icon"></i>
+</a>
+<ul class="submenu">
+<li>
+<a href="graphs-morris.html">
+Morris &amp; Mixed
+</a>
+</li>
+<li>
+<a href="graphs-flot.html">
+Flot
+</a>
+</li>
+<li>
+<a href="graphs-dygraphs.html">
+Dygraphs
+</a>
+</li>
+<li>
+<a href="graphs-xcharts.html">
+xCharts
+</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="widgets.html">
+<i class="fa fa-th-large"></i>
+<span>Widgets</span>
+<span class="badge badge-success float-right">New</span>
+</a>
+</li>
+<li class="active">
+<a href="#" class="dropdown-toggle dropdown-nocaret">
+<i class="fa fa-copy"></i>
+<span>Pages</span>
+<i class="fa fa-angle-right drop-icon"></i>
+</a>
+<ul class="submenu">
+<li>
+<a href="calendar.html" class="active">
+Calendar
+</a>
+</li>
+<li>
+<a href="gallery.html">
+Gallery
+</a>
+</li>
+<li>
+<a href="gallery-v2.html">
+Gallery v2
+</a>
+</li>
+<li>
+<a href="pricing.html">
+Pricing
+</a>
+</li>
+<li>
+<a href="projects.html">
+Projects
+</a>
+</li>
+ <li>
+<a href="team-members.html">
+Team Members
+</a>
+</li>
+<li>
+<a href="timeline.html">
+Timeline
+</a>
+</li>
+<li>
+<a href="timeline-grid.html">
+Timeline Grid
+</a>
+</li>
+<li>
+<a href="user-profile.html">
+User Profile
+</a>
+</li>
+<li>
+<a href="search.html">
+Search Results
+</a>
+</li>
+<li>
+<a href="invoice.html">
+Invoice
+</a>
+</li>
+<li>
+<a href="intro.html">
+Tour Layout
+</a>
+</li>
+</ul>
+</li>
+<li class="nav-header d-none d-lg-block">
+Components
+</li>
+<li>
+<a href="#" class="dropdown-toggle dropdown-nocaret">
+<i class="fa fa-edit"></i>
+<span>Forms</span>
+<i class="fa fa-angle-right drop-icon"></i>
+</a>
+<ul class="submenu">
+<li>
+<a href="form-elements.html">
+Elements
+</a>
+</li>
+<li>
+<a href="x-editable.html">
+X-Editable
+</a>
+</li>
+<li>
+<a href="form-wizard.html">
+Wizard
+</a>
+</li>
+<li>
+<a href="form-wysiwyg.html">
+WYSIWYG
+</a>
+</li>
+<li>
+<a href="form-summernote.html">
+WYSIWYG Summernote
+</a>
+</li>
+<li>
+<a href="form-ckeditor.html">
+WYSIWYG CKEditor
+</a>
+</li>
+<li>
+<a href="form-dropzone.html">
+Multiple File Upload
+</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#" class="dropdown-toggle dropdown-nocaret">
+<i class="fa fa-desktop"></i>
+<span>UI Kit</span>
+<i class="fa fa-angle-right drop-icon"></i>
+</a>
+<ul class="submenu">
+<li>
+<a href="ui-elements.html">
+Elements
+</a>
+</li>
+<li>
+<a href="ui-sliders.html">
+Sliders
+</a>
+</li>
+<li>
+<a href="notifications.html">
+Notifications &amp; Alerts
+</a>
+</li>
+<li>
+<a href="modals.html">
+Modals
+</a>
+</li>
+<li>
+<a href="video.html">
+Video
+</a>
+</li>
+<li>
+<a href="#" class="dropdown-toggle dropdown-nocaret">
+Icons
+<i class="fa fa-angle-right drop-icon"></i>
+</a>
+ <ul class="submenu">
+<li>
+<a href="icons-awesome.html">
+Awesome Icons
+</a>
+</li>
+<li>
+<a href="icons-halflings.html">
+Halflings Icons
+</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="ui-nestable.html">
+Nestable List
+</a>
+</li>
+<li>
+<a href="typography.html">
+Typography
+</a>
+</li>
+<li>
+<a href="#" class="dropdown-toggle dropdown-nocaret">
+3 Level Menu
+<i class="fa fa-angle-right drop-icon"></i>
+</a>
+<ul class="submenu">
+<li>
+<a href="#">
+3rd Level
+</a>
+</li>
+<li>
+<a href="#">
+3rd Level
+</a>
+</li>
+<li>
+<a href="#">
+3rd Level
+</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<a href="maps.html">
+<i class="fa fa-map-marker"></i>
+<span>Google Maps</span>
+<span class="badge badge-danger float-right">Updated</span>
+</a>
+</li>
+<li>
+<a href="#" class="dropdown-toggle dropdown-nocaret">
+<i class="fa fa-file-text-o"></i>
+<span>Extra pages</span>
+<i class="fa fa-angle-right drop-icon"></i>
+</a>
+<ul class="submenu">
+<li>
+<a href="faq.html">
+FAQ
+</a>
+</li>
+<li>
+<a href="emails.html">
+Email Templates
+</a>
+</li>
+<li>
+<a href="login.html">
+Login
+</a>
+</li>
+<li>
+<a href="login-full.html">
+Login Full
+</a>
+</li>
+<li>
+<a href="registration.html">
+Registration
+</a>
+</li>
+<li>
+<a href="registration-full.html">
+Registration Full
+</a>
+</li>
+<li>
+<a href="forgot-password.html">
+Forgot Password
+</a>
+</li>
+<li>
+<a href="forgot-password-full.html">
+Forgot Password Full
+</a>
+</li>
+<li>
+<a href="lock-screen.html">
+Lock Screen
+</a>
+</li>
+<li>
+<a href="lock-screen-full.html">
+Lock Screen Full
+</a>
+</li>
+<li>
+<a href="error-404.html">
+Error 404
+</a>
+</li>
+<li>
+<a href="error-404-v2.html">
+ Error 404 Nested
+</a>
+</li>
+<li>
+<a href="error-500.html">
+Error 500
+</a>
+</li>
+<li>
+<a href="extra-grid.html">
+Grid
+</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<div id="nav-col-submenu"></div>
+</div>
+<div id="content-wrapper">
+<div class="row">
+<div class="col-lg-12">
+<div class="row">
+<div class="col-lg-12">
+<ol class="breadcrumb">
+<li><a href="#">Home</a></li>
+<li class="active"><span>Calendar</span></li>
+</ol>
+<h1>Calendar</h1>
+</div>
+</div>
+<div class="row">
+<div class="col-md-3 hidden-xs hidden-sm">
+<div class="main-box" id="external-events">
+<header class="main-box-header clearfix">
+<h2>Draggable Events</h2>
+</header>
+<div class="main-box-body clearfix">
+<div class="external-event badge-primary" data-eventclass="label-primary">My Event 1</div>
+<div class="external-event badge-danger" data-eventclass="label-danger">My Event 2</div>
+<div class="external-event badge-success" data-eventclass="label-success">My Event 3</div>
+<div class="external-event badge-warning" data-eventclass="label-warning">My Event 4</div>
+<div class="external-event badge-info" data-eventclass="label-info">My Event 5</div>
+<div class="external-event badge-secondary" data-eventclass="label-default">My Event 6</div>
+<div class="form-group">
+<label class="checkbox-inline">
+<input type="checkbox" id="drop-remove" value="option1"> Remove after drop
+</label>
+</div>
+</div>
+</div>
+</div>
+<div class="col-md-9">
+<div class="main-box">
+<div class="main-box-body clearfix">
+<div id="calendar"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer id="footer-bar" class="row">
+<div class="container">
+<p id="footer-copyright" class="col-12">
+Powered by Cube Theme.
+</p>
+</div>
+</footer>
+</div>
+</div>
+</div>
+</div>
+<div id="config-tool" class="closed">
+<a id="config-tool-cog">
+<i class="fa fa-cog"></i>
+</a>
+<div id="config-tool-options">
+<h4>Layout Options</h4>
+<ul>
+<li>
+<div class="checkbox-nice">
+<input type="checkbox" id="config-fixed-header" />
+<label for="config-fixed-header">
+Fixed Header
+</label>
+</div>
+</li>
+<li>
+<div class="checkbox-nice">
+<input type="checkbox" id="config-fixed-sidebar" />
+<label for="config-fixed-sidebar">
+Fixed Left Menu
+</label>
+</div>
+</li>
+<li>
+<div class="checkbox-nice">
+<input type="checkbox" id="config-fixed-footer" />
+<label for="config-fixed-footer">
+Fixed Footer
+</label>
+</div>
+</li>
+<li>
+<div class="checkbox-nice">
+<input type="checkbox" id="config-boxed-layout" />
+<label for="config-boxed-layout">
+Boxed Layout
+</label>
+</div>
+</li>
+<li>
+<div class="checkbox-nice">
+<input type="checkbox" id="config-rtl-layout" />
+<label for="config-rtl-layout">
+Right-to-Left
+</label>
+</div>
+</li>
+</ul>
+<br />
+<h4>Skin Color</h4>
+<ul id="skin-colors" class="clearfix">
+<li>
+<a class="skin-changer" data-skin="" data-toggle="tooltip" title="Default" style="background-color: #34495e;">
+</a>
+</li>
+<li>
+<a class="skin-changer" data-skin="theme-white" data-toggle="tooltip" title="White/Green" style="background-color: #2ecc71;">
+</a>
+</li>
+<li>
+<a class="skin-changer blue-gradient" data-skin="theme-blue-gradient" data-toggle="tooltip" title="Gradient">
+</a>
+</li>
+<li>
+<a class="skin-changer" data-skin="theme-turquoise" data-toggle="tooltip" title="Green Sea" style="background-color: #1abc9c;">
+</a>
+</li>
+<li>
+<a class="skin-changer" data-skin="theme-amethyst" data-toggle="tooltip" title="Amethyst" style="background-color: #9b59b6;">
+</a>
+</li>
+<li>
+<a class="skin-changer" data-skin="theme-blue" data-toggle="tooltip" title="Blue" style="background-color: #2980b9;">
+</a>
+</li>
+<li>
+<a class="skin-changer" data-skin="theme-red" data-toggle="tooltip" title="Red" style="background-color: #e74c3c;">
+</a>
+</li>
+<li>
+<a class="skin-changer" data-skin="theme-whbl" data-toggle="tooltip" title="White/Blue" style="background-color: #3498db;">
+</a>
+</li>
+</ul>
+</div>
+</div>
+
+<script src="js/demo-skin-changer.js"></script> 
+<script src="components/jquery/dist/jquery.min.js"></script>
+<script src="components/bootstrap/assets/js/vendor/popper.min.js"></script>
+<script src="components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="components/nanoscroller/bin/javascripts/jquery.nanoscroller.min.js"></script>
+<script src="js/demo.js"></script> 
+
+<script src="js/jquery-ui.custom.min.js"></script>
+<script src="components/moment/min/moment.min.js"></script>
+<script src="components/fullcalendar/dist/fullcalendar.min.js"></script>
+
+<script src="js/scripts.js"></script>
+<script src="components/PACE/pace.min.js"></script>
+
+<script>
+	$(document).ready(function() {
+		/* initialize the external events
+		-----------------------------------------------------------------*/
+		window.mobilecheck = function() {
+		  var check = false;
+		  (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
+		  return check;
+		};
+
+		$('#external-events div.external-event').each(function() {
+		
+			// store data so the calendar knows to render an event upon drop
+			$(this).data('event', {
+				title: $.trim($(this).text()), // use the element's text as the event title
+				className: $(this).data('eventclass')
+			});
+			
+			// make the event draggable using jQuery UI
+			$(this).draggable({
+				zIndex: 999,
+				revert: true,      // will cause the event to go back to its
+				revertDuration: 0  //  original position after the drag
+			});
+			
+		});
+	
+	
+		/* initialize the calendar
+		-----------------------------------------------------------------*/
+		
+		var date = new Date();
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
+
+		var calendar = $('#calendar').fullCalendar({
+			themeSystem: 'bootstrap4',
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: window.mobilecheck() ? 'month,basicWeek,basicDay' : 'month,agendaWeek,agendaDay'
+			},
+			defaultView: window.mobilecheck() ? 'basicDay' : 'agendaWeek',
+			weekNumbers: window.mobilecheck() ? false : true,
+			isRTL: $('body').hasClass('rtl'), //rtl support for calendar
+			selectable: true,
+			selectHelper: true,
+			select: function(start, end, allDay) {
+				var title = prompt('Event Title:');
+				if (title) {
+					calendar.fullCalendar('renderEvent',
+						{
+							title: title,
+							start: start,
+							end: end,
+							allDay: allDay
+						},
+						true // make the event "stick"
+					);
+				}
+				calendar.fullCalendar('unselect');
+			},
+			editable: true,
+			droppable: true, // this allows things to be dropped onto the calendar !!!
+			drop: function(date) {
+				// is the "remove after drop" checkbox checked?
+				if ($('#drop-remove').is(':checked')) {
+					// if so, remove the element from the "Draggable Events" list
+					$(this).remove();
+				}
+			},
+			events: [
+				{
+					title: 'All Day Event',
+					start: new Date(y, m, 1),
+					className: 'label-success'
+				},
+				{
+					title: 'Long Event',
+					start: new Date(y, m, d-5),
+					end: new Date(y, m, d-2)
+				},
+				{
+					id: 999,
+					title: 'Repeating Event',
+					start: new Date(y, m, d-3, 16, 0),
+					allDay: false,
+					className: 'label-danger'
+				},
+				{
+					id: 999,
+					title: 'Repeating Event',
+					start: new Date(y, m, d+4, 16, 0),
+					allDay: false
+				},
+				{
+					title: 'Meeting',
+					start: new Date(y, m, d, 10, 30),
+					allDay: false,
+					className: 'label-info'
+				},
+				{
+					title: 'Lunch',
+					start: new Date(y, m, d, 12, 0),
+					end: new Date(y, m, d, 14, 0),
+					allDay: false,
+					className: 'label-success'
+				},
+				{
+					title: 'Birthday Party',
+					start: new Date(y, m, d+1, 19, 0),
+					end: new Date(y, m, d+1, 22, 30),
+					allDay: false,
+					className: 'label-info'
+				},
+				{
+					title: 'Click for Google',
+					start: new Date(y, m, 28),
+					end: new Date(y, m, 29),
+					url: 'http://google.com/',
+					className: 'label-danger'
+				}
+			]
+		});
+	});
+	</script>
+</body>
+
+<!-- Mirrored from cube-30.aircode.sk/calendar.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 06 Aug 2021 12:58:54 GMT -->
+</html>
