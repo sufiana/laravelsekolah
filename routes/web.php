@@ -19,6 +19,10 @@ Route::get('/', function () {
 
 Route::get('/', 'HomeController@index')->name('home');
 
+Route::get('sekolahbersih/index', 'SekolahBersihController@index')->name('sekolahbersih.index');
+Route::get('sekolahbersih/getData', 'SekolahBersihController@getData')->name('sekolahbersih.getData');
+
+
 //beban
 Route::get('beban/index', 'BebanController@index')->name('beban.index');
 Route::get('beban/create', 'BebanController@create')->name('beban.create');
