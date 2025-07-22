@@ -40,49 +40,12 @@
                                         <i class="fa fa-angle-right drop-icon"></i>
                                     </a>
                                     <ul class="submenu">
-                                        <li><a href="{{ route('provinsi.index') }}">Povinsi</a></li>
-                                        <li><a href="{{ route('kabupatenkota.index') }}">Kabupaten / Kota</a></li>
-                                        <li><a href="{{ route('kecamatan.index') }}">Kecamatan</a></li>
-                                        <li><a href="{{ route('kelurahan.index') }}">kelurahan</a></li>
+                                        <li><a href="">Povinsi</a></li>
+                                        <li><a href="">Kabupaten / Kota</a></li>
+                                        <li><a href="">Kecamatan</a></li>
+                                        <li><a href="">kelurahan</a></li>
                                     </ul>
-                                </li>
-
-                                <li>
-                                    <a href="#" class="dropdown-toggle dropdown-nocaret">
-                                        Program & Kegiatan
-                                        <i class="fa fa-angle-right drop-icon"></i>
-                                    </a>
-                                    <ul class="submenu">
-                                        <li><a href="{{ route('program.index') }}">Program</a></li>
-                                        <li><a href="{{ route('programkegiatan.index') }}">Kegaiatan</a></li>
-                                        <li><a href="{{ route('subkegiatan.index') }}">Sub Kegiatan</a></li>
-                                    </ul>
-                                </li>
-
-                                <li>
-                                    <a href="#" class="dropdown-toggle dropdown-nocaret">
-                                        Ref. Kepegawaian
-                                        <i class="fa fa-angle-right drop-icon"></i>
-                                    </a>
-                                    <ul class="submenu">
-<!--                                        <li><a href="{{ route('agama.index') }}">Agama</a></li>-->
-<!--                                        <li><a href="{{ route('pendidikan.index') }}">Pendidikan</a></li>-->
-<!--                                        <li><a href="{{ route('statusjabatan.index') }}">Status Jabatan</a></li>-->
-                                        <li><a href="{{ route('pangkat.index') }}">Pangkat</a></li>
-                                        <li><a href="{{ route('golongan.index') }}">Golongan</a></li>
-                                        <li><a href="{{ route('jabatan.index') }}">Jabatan</a></li>
-                                        <li><a href="{{ route('statuspegawai.index') }}">Status Pegawai</a></li>
-                                        <li><a href="{{ route('eselon.index') }}">Eselon</a></li>
-
-                                    </ul>
-                                </li>
-
-                                <li><a href="{{ route('angkutan.index') }}">Jenis Angkutan</a></li>
-
-                                <li><a href="{{ route('transportasi.index') }}">Jenis Transportasi</a></li>
-<!--                                <li><a href="{{ route('rekening.index') }}">Rekening</a></li>-->
-                                <li><a href="{{ route('beban.index') }}">Rekening</a></li>
-                                </li>
+                                </li>                               
                             </ul>
                         </li>
                         <li>
@@ -91,24 +54,11 @@
                                 <i class="fa fa-angle-right drop-icon"></i>
                             </a>
                             <ul class="submenu">
-                                <li><a href="{{ route('jenisbiaya.index') }}">Jenis Biaya</a></li>
-                                <li><a href="{{ route('statuswilayahbiaya.index') }}">Status Wilayah Biaya</a></li>
-                                <li><a href="{{ route('biaya.index') }}">Manajemen Biaya</a></li>
+                                <li><a href="">Jenis Biaya</a></li>
+                                <li><a href="">Status Wilayah Biaya</a></li>
+                                <li><a href="">Manajemen Biaya</a></li>
                             </ul>
-                        </li>
-                        
-
-
-
-
-
-
-
-
-
-
-
-
+                        </li>    
                     </ul>
                 </div>
             </div>
