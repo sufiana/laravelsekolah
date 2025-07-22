@@ -16,12 +16,12 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="main-box clearfix">
-                    <header class="main-box-header clearfix">
+                    {{-- <header class="main-box-header clearfix">
                         <h2 class="float-left">Data @yield('title')</h2>
                         <a href="{{ route('sekolahbersih.create') }}" class="btn btn-turqoise float-right">
                             <i class="fa fa-plus-circle fa-lg"></i> Tambah
                         </a>
-                    </header>
+                    </header> --}}
 
                     <div class="main-box-body clearfix">
                         <div role="alert" id="success_message">

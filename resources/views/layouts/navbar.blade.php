@@ -2,7 +2,7 @@
     <a class="navbar-brand float-left float-lg-none" href="index.html" id="logo">
 <!--        <img alt="" class="normal-logo logo-white" src="{{ asset('assets/themes') }}/img/logo.png" />-->
 <!--        <img alt="" class="normal-logo logo-black" src="{{ asset('assets/themes') }}/img/logo-black.png" />-->
-        SPPD
+        Sekolah Bersih
     </a>
     <button aria-controls="navbar-ex1-collapse" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler float-right float-lg-none" data-target=".navbar-ex1-collapse" data-toggle="collapse" type="button">
         <span class="fa fa-bars"></span>
@@ -177,7 +177,7 @@
         <li class="dropdown profile-dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                 <img alt="" src="{{ asset('assets/themes') }}/img/samples/scarlet-159.png" />
-                <span class="d-none d-md-block">Kabupaten Deli Serdang</span><b class="caret"></b>
+                <span class="d-none d-md-block">Dinas Pendidikan Provsu </span><b class="caret"></b>
             </a>
             <ul class="dropdown-menu dropdown-menu-right">
                 <li>
