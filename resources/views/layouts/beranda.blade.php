@@ -109,18 +109,19 @@
         <div class="row">
             @foreach($icon as $i)
             <div class="col-lg-2 col-md-6 col-sm-6 col-12">
-                <div class="main-box clearfix profile-box-contact">
-                    <div class="main-box-body clearfix">
-                        <div class="profile-box-header gray-bg clearfix">
-                            <img src="img/samples/robert-300.jpg" alt="" class="profile-img img-fluid">
-                            <h2>{{$i->singkatan}}</h2>
+                <div class="main-box clearfix profile-box-contact" style="box-shadow: none; background-color: transparent; border: none;">
+                    <div class="main-box-body clearfix" style="border: none;">
+                        <div class="d-flex flex-column align-items-center justify-content-center text-center" style="height: 200px;"> <!-- Tinggi bisa disesuaikan -->
+                            <img src="img/samples/robert-300.jpg" alt="" class="profile-img img-fluid mb-2" style="width: 80px; height: 80px; object-fit: cover;"> <!-- Ukuran gambar konsisten -->
+                            <a href="{{ route('sekolahbersih.create', $i->id) }}"><h2 class="mb-0" style="font-size: 1.2rem; color: #3e5879;">{{$i->singkatan}}</h2></a>
                         </div>
                     </div>
                 </div>
             </div>
             @endforeach
         </div>
-</div>
+
+    </div>
 
 
 

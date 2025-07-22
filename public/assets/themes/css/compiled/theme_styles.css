@@ -2806,8 +2806,16 @@ h3 .small {
 
 /* line 120, Applications/MAMP/htdocs/cube/source/scss/theme/imports/_bootstrap_elem_overrides.scss */
 .btn-warning {
-  background-color: #ffc107;
-  border-color: #ffa000; }
+  background-color: #f9a11a;
+  border-color: #ffa000;
+    color: black !important;
+}
+
+.btn-sumut {
+    background-color: #3e5879;
+    border-color: #3e5879;
+    color: white;
+}
 
 /* line 124, Applications/MAMP/htdocs/cube/source/scss/theme/imports/_bootstrap_elem_overrides.scss */
 .btn-warning:hover,
@@ -2815,8 +2823,17 @@ h3 .small {
 .btn-warning:active,
 .btn-warning.active,
 .show .dropdown-toggle.btn-warning {
-  background-color: #e0b50a;
-  border-color: #bd9804; }
+  background-color: #f9a11a;
+  border-color: #f9a11a; }
+
+.btn-sumut:hover,
+.btn-sumut:focus,
+.btn-sumut:active,
+.btn-sumut.active,
+.btn-sumut.disabled,
+.show .dropdown-toggle.btn-sumut {
+    background-color: #2f477b;
+    border-color: #2f477b; }
 
 /* line 133, Applications/MAMP/htdocs/cube/source/scss/theme/imports/_bootstrap_elem_overrides.scss */
 .btn-facebook {
@@ -3470,7 +3487,7 @@ blockquote.float-right:before {
     }
     .table a.table-link.turquise:hover {
     color: #1abc9c !important;
-}	
+}
 
 
 .table a.table-link.yellow {
@@ -3480,7 +3497,7 @@ blockquote.float-right:before {
     .table a.table-link.yellow:hover {
         background-color: #ffc107;
     border-color: #ffa000;
-}	
+}
 
 /* line 88, Applications/MAMP/htdocs/cube/source/scss/theme/imports/_tables.scss */
 .table.table-sm tbody > tr > td {
@@ -9048,11 +9065,13 @@ body.theme-amethyst .btn-info,
 body.theme-amethyst .btn-success,
 body.theme-amethyst .btn-warning,
 body.theme-amethyst .btn-danger,
+body.theme-amethyst .btn-sumut,
 body.theme-amethyst .btn-primary:hover,
 body.theme-amethyst .btn-secondary:hover,
 body.theme-amethyst .btn-info:hover,
 body.theme-amethyst .btn-success:hover,
 body.theme-amethyst .btn-warning:hover,
+body.theme-amethyst .btn-sumut:hover,
 body.theme-amethyst .btn-danger:hover {
   color: #fff; }
 
@@ -9373,12 +9392,14 @@ body.theme-red .btn-secondary,
 body.theme-red .btn-info,
 body.theme-red .btn-success,
 body.theme-red .btn-warning,
+body.theme-red .btn-sumut,
 body.theme-red .btn-danger,
 body.theme-red .btn-primary:hover,
 body.theme-red .btn-secondary:hover,
 body.theme-red .btn-info:hover,
 body.theme-red .btn-success:hover,
 body.theme-red .btn-warning:hover,
+body.theme-red .btn-sumut:hover,
 body.theme-red .btn-danger:hover {
   color: #fff; }
 
@@ -9953,12 +9974,14 @@ body.theme-white .btn-secondary,
 body.theme-white .btn-info,
 body.theme-white .btn-success,
 body.theme-white .btn-warning,
+body.theme-white .btn-sumut,
 body.theme-white .btn-danger,
 body.theme-white .btn-primary:hover,
 body.theme-white .btn-secondary:hover,
 body.theme-white .btn-info:hover,
 body.theme-white .btn-success:hover,
 body.theme-white .btn-warning:hover,
+body.theme-white .btn-sumut:hover,
 body.theme-white .btn-danger:hover {
   color: #fff; }
 
@@ -10338,12 +10361,14 @@ body.theme-whbl .btn-secondary,
 body.theme-whbl .btn-info,
 body.theme-whbl .btn-success,
 body.theme-whbl .btn-warning,
+body.theme-whbl .btn-sumut,
 body.theme-whbl .btn-danger,
 body.theme-whbl .btn-primary:hover,
 body.theme-whbl .btn-secondary:hover,
 body.theme-whbl .btn-info:hover,
 body.theme-whbl .btn-success:hover,
 body.theme-whbl .btn-warning:hover,
+body.theme-whbl .btn-sumut:hover,
 body.theme-whbl .btn-danger:hover {
   color: #fff; }
 
@@ -10661,12 +10686,14 @@ body.theme-turquoise .btn-secondary,
 body.theme-turquoise .btn-info,
 body.theme-turquoise .btn-success,
 body.theme-turquoise .btn-warning,
+body.theme-turquoise .btn-sumut,
 body.theme-turquoise .btn-danger,
 body.theme-turquoise .btn-primary:hover,
 body.theme-turquoise .btn-secondary:hover,
 body.theme-turquoise .btn-info:hover,
 body.theme-turquoise .btn-success:hover,
 body.theme-turquoise .btn-warning:hover,
+body.theme-turquoise .btn-sumut:hover,
 body.theme-turquoise .btn-danger:hover {
   color: #fff; }
 

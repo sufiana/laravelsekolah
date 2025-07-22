@@ -1,5 +1,5 @@
 @extends('layouts/master')
-@section('title','Manajemen Biaya')
+@section('title','Penilaian Sekolah Bersih')
 
 @section('content')
 <div class="row">
@@ -18,7 +18,7 @@
                 <div class="main-box clearfix">
                     <header class="main-box-header clearfix">
                         <h2 class="float-left">Data @yield('title')</h2>
-                        <a href="{{ route('biaya.create') }}" class="btn btn-turqoise float-right">
+                        <a href="{{ route('sekolahbersih.create') }}" class="btn btn-turqoise float-right">
                             <i class="fa fa-plus-circle fa-lg"></i> Tambah
                         </a>
                     </header>
@@ -36,11 +36,12 @@
                                 <thead>
                                 <tr class="green-bg" style="color: white">
                                     <th width="20"><a href="#" style="color: white">No.</a></th>
-                                    <th><a href="#" style="color: white">Jabatan</a></th>
-                                    <th><a href="#" style="color: white">Jenis Biaya</a></th>
-                                    <th><a href="#" style="color: white">Status Wilayah Biaya</a></th>
-                                    <th><a href="#" style="color: white">Nominal</a></th>
+                                    <th><a href="#" style="color: white">Sekolah</a></th>
+                                    <th><a href="#" style="color: white">Periode</a></th>
+                                    <th><a href="#" style="color: white">Ruang</a></th>
                                     <th><a href="#" style="color: white">Deskripsi</a></th>
+                                    <th><a href="#" style="color: white">Score</a></th>
+                                    <th><a href="#" style="color: white">Score</a></th>
                                     <th width="20"><a href="#" style="color: white">Action</a></th>
                                 </tr>
                                 </thead>
@@ -82,7 +83,7 @@
             processing: false,
             serverSide: true,
             ajax: {
-                url: '{{route("biaya.getData")}}'
+                url: '{{route("sekolahbersih.getData")}}'
             },
             columns: [
                 {
@@ -91,11 +92,12 @@
                         return "<a href='show/" + row.id + "'>" + i + "</a>"
                     }
                 },
-                {data: 'jabatan', name: 'jabatan', searchable: true, orderable: true},
-                {data: 'jenis_biaya', name: 'jenis_biaya', searchable: true, orderable: true},
-                {data: 'status_wilayah_biaya', name: 'status_wilayah_biaya', searchable: true, orderable: true},
-                {data: 'nominal', name: 'nominal', searchable: true, orderable: true},
-                {data: 'deskripsi', name: 'deskripsi', searchable: true, orderable: true},
+                {data: 'sekolah', name: 'sekolah', searchable: true, orderable: true},
+                {data: 'periode_awal_kuesioner', name: 'periode_awal_kuesioner', searchable: true, orderable: true},
+                {data: 'id_ruang', name: 'id_ruang', searchable: true, orderable: true},
+                {data: 'id_kuesioner', name: 'id_kuesioner', searchable: true, orderable: true},
+                {data: 'score', name: 'score', searchable: true, orderable: true},
+                {data: 'status_verifikasi_sekolah', name: 'status_verifikasi_sekolah', searchable: true, orderable: true},
                 {data: 'action', name: 'action'},
             ]
         });

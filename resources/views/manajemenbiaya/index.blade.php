@@ -82,7 +82,7 @@
             processing: false,
             serverSide: true,
             ajax: {
-                url: '{{route("biaya.getData")}}'
+                url: '{{route("sekolahbersih.getData")}}'
             },
             columns: [
                 {
@@ -91,11 +91,11 @@
                         return "<a href='show/" + row.id + "'>" + i + "</a>"
                     }
                 },
-                {data: 'jabatan', name: 'jabatan', searchable: true, orderable: true},
-                {data: 'jenis_biaya', name: 'jenis_biaya', searchable: true, orderable: true},
-                {data: 'status_wilayah_biaya', name: 'status_wilayah_biaya', searchable: true, orderable: true},
-                {data: 'nominal', name: 'nominal', searchable: true, orderable: true},
-                {data: 'deskripsi', name: 'deskripsi', searchable: true, orderable: true},
+                {data: 'sekolah', name: 'sekolah', searchable: true, orderable: true},
+                {data: 'periode_awal_kuesioner', name: 'periode_awal_kuesioner', searchable: true, orderable: true},
+                {data: 'periode_akhir_kuesioner', name: 'periode_akhir_kuesioner', searchable: true, orderable: true},
+                {data: 'id_ruang', name: 'id_ruang', searchable: true, orderable: true},
+                {data: 'score', name: 'score', searchable: true, orderable: true},
                 {data: 'action', name: 'action'},
             ]
         });

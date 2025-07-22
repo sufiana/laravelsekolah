@@ -12,6 +12,7 @@ use App\models\Parameter;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Facades\Validator;
 use Session;
+use Illuminate\Support\Facades\DB;
 
 
 class SekolahBersihController extends Controller
@@ -35,19 +36,55 @@ class SekolahBersihController extends Controller
     public function getData(){
         $model=EvaluasiKuesioner::orderBy('id', 'ASC')->get();
         return Datatables::of($model)
-//            ->editColumn('jabatan',function ($data){
-//                return !$data->Jabatanlist || !$data->jabatan ?  ' - ' : $data->Jabatanlist["kode"].' - '.$data->Jabatanlist["nama"];
-//            })
-//            ->editColumn('jenis_biaya',function ($data){
-//                return !$data->Jenisbiayalist || !$data->jenis_biaya ?  ' - ' : $data->Jenisbiayalist["nama"]  ;
-//            })
-//            ->editColumn('status_wilayah_biaya',function ($data){
-//                return !$data->WilayahBiayalist || !$data->status_wilayah_biaya ?  ' - ' : $data->WilayahBiayalist["nama"]  ;
-//            })
-//            ->editColumn('nominal',function ($data){
-//                return 'Rp. '. number_format($data->nominal, 0, ",", ".");
-//            })
+            ->editColumn('periode_awal_kuesioner',function ($data){
+                if($data->periode_awal_kuesioner <> null && $data->periode_akhir_kuesioner) {
+                    $periode=date('d-M-Y', strtotime($data->periode_awal_kuesioner)).' s/d '.date('d-M-Y', strtotime($data->periode_akhir_kuesioner));
+                }
+                else {
+                    $periode=date('d-M-Y', strtotime($data->periode_awal_kuesioner));
+                }
+                return $periode;
+            })
+            ->editColumn('id_ruang',function ($data){
+                return !$data->ruanglist || !$data->id_ruang ?  ' - ' : $data->ruanglist["nama"]  ;
+            })
+            ->editColumn('id_ruang',function ($data){
+                return !$data->ruanglist || !$data->id_ruang ?  ' - ' : $data->ruanglist["nama"]  ;
+            })
+            ->editColumn('id_kuesioner', function ($data) {
+                $stringIds = $data->id_kuesioner;  // contoh: "{319,320,321}"
+                $arrayIds = explode(',', trim($stringIds, '{}'));
 
+                $hasilKuesioner = DB::table('hasil_kuesioner')
+                    ->select('p.parameter', 'hasil_kuesioner.jawaban')
+                    ->join('parameter_kebersihan as p', 'p.id', '=', 'hasil_kuesioner.id_parameter')
+                    ->join('ruang_sekolah as r', 'r.id', '=', 'hasil_kuesioner.id_ruang')
+                    ->whereIn('hasil_kuesioner.id', $arrayIds)
+                    ->get();
+
+                $html = '<div style="font-size: 13px;">';
+                $html .= '<div style="display: flex; font-weight:bold; border-bottom: 1px solid #ddd;">
+             <div style="flex: 1;">Parameter</div>
+             <div style="width: 80px; text-align:center;">Status</div>
+             </div>';
+
+                foreach ($hasilKuesioner as $row) {
+                    // Status label
+                    if ($row->jawaban == 3) {
+                        $status = '<span style="color:green;">Bersih</span>';
+                    } elseif ($row->jawaban == 2) {
+                        $status = '<span style="color:orange;">Cukup Bersih</span>';
+                    } else {
+                        $status = '<span style="color:red;">Tidak Bersih</span>';
+                    }
+
+                $html .= '<div style="display: flex; border-bottom: 1px solid #eee; padding: 2px 0;">
+                 <div style="flex: 1;">' . $row->parameter . '</div>
+                 <div style="width: 80px; text-align:center;">' . $status . '</div>
+              </div>';
+                }
+                return $html;
+            })
             ->addColumn('action', function ($model){
                 $button = "
                     <div class='btn-group-horizontal'>
@@ -62,20 +99,46 @@ class SekolahBersihController extends Controller
                 $button = $button . "</div>";
                 return $button;
             })
-            ->make(true);
+            ->editColumn('status_verifikasi_sekolah',function ($data){
+                if($data->status_verifikasi_sekolah == 1 ){
+                    $statusverifikasisekolah='<span class="fa-stack" title="Sudah Verifikasi Sekolah"><i class="fa fa-square fa-stack-2x" style="color:#3e5879;"></i><i class="fa fa-check fa-stack-1x fa-inverse"></i></span>';
+                }
+                else {
+                    $statusverifikasisekolah='<span class="fa-stack" title="Belun Verifikasi Sekolah"><i class="fa fa-square fa-stack-2x" style="color:#ffc107;"></i><i class="fa fa-exclamation-triangle fa-stack-1x fa-inverse" style="color: #3e5879"></i></span>';
+                }
+                $html='<div class="btn-group-horizontal">'.$statusverifikasisekolah.'</div>';
+                return $html;
+
+            })
+        ->rawColumns(['id_kuesioner','action','status_verifikasi_sekolah'])
+        ->make(true);
     }
 
-    public function create()
-    {
-        $golongan               = RefGolongan::all();
-        $jenisbiaya             = RefJenisBiaya::all();
-        $statusbiaya            = RefStatusWilayahBiaya::all();
+//    public function create($singkatan)
+//    {
+//        $icon = IconGrid::where('singkatan', $singkatan)->firstOrFail();
+//        return view('sekolahbersih.create', [
+//            'icon' => $icon,
+//        ]);
+//    }
 
-        return view('manajemenbiaya.create', compact(
-            'golongan',
-            'jenisbiaya',
-            'statusbiaya'
-        ));
+//    public function create()
+//    {
+//        // Cari icon berdasarkan singkatan
+//        $icon = IconGrid::all();
+//        // Kirim data icon ke view (sekolahbersih/create.blade.php)
+//        return view('sekolahbersih.create', [
+//            'icon' => $icon
+//        ]);
+//    }
+
+
+    public function create($id)
+    {
+        $model=IconGrid::find($id);
+        $parameter=Parameter::where('id_ruang',$id)->get();
+        //dd($parameter);
+        return view('sekolahbersih.create',compact('model','parameter'));
     }
 
     /**
