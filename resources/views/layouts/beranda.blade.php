@@ -53,7 +53,7 @@
             <div class="col-lg-3 col-sm-6 col-12">
                 <div class="main-box infographic-box colored green-bg">
                     <i class="fa fa-tags"></i>
-                    <span class="headline" style="font-size: 10.5px">Sekolah Belum Terintegrasi</span>
+                    <span class="headline" style="font-size: 10px">Sekolah Belum Terintegrasi</span>
                     <span class="value">45</span>
                 </div>
             </div>
