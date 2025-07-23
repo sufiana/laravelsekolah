@@ -119,7 +119,7 @@
             e.preventDefault();
             var formData = new FormData(this);
             let Id = formData.get('id');
-            var url = '{{ route("biaya.delete", ":id") }}';
+            var url = '{{ route("sekolahbersih.delete", ":id") }}';
             $.ajax({
                 url  : url.replace(':id', Id),
                 data: {_token: '{{csrf_token()}}'},

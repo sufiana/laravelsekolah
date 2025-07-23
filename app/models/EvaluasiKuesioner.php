@@ -10,6 +10,8 @@ class EvaluasiKuesioner extends Model
 {
     //
     protected $table = 'evaluasi_kuesioner';
+    const CREATED_AT = 'time_created';
+    const UPDATED_AT = 'time_update';
     protected $fillable = [
         'id_kuesioner',
         'sekolah',

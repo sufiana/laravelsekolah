@@ -11,6 +11,8 @@ class HasilKuesioner extends Model
 {
     //
     protected $table = 'hasil_kuesioner';
+    const CREATED_AT = 'time_created';
+    const UPDATED_AT = 'time_update';
     protected $fillable = [
         'id_sekolah',
         'id_user',

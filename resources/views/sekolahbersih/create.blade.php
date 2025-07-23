@@ -21,23 +21,25 @@
             </header>
 
             <div class="main-box-body clearfix">
-                <form method="POST" action="{{ route('biaya.simpan') }}" id="form-penilaian">
+                <form method="POST" action="{{ route('sekolahbersih.store') }}" id="form-penilaian">
                     @csrf
-                    <div class="row">
+                    <input type="hidden" name="id_ruang" value="{{ $model->id }}">
+                    <div class="row" style="margin-top: 20px">
                         <div class="col-lg-8 col-sm-6 col-12">
+                            <div class="form-group">
+                                <h2 for="periode">Periode Kuesioner</h2>
+                                <input type="text" name="periode" class="form-control" id="daterange" />
+                            </div>
 
                             <!-- Tempat menampilkan total -->
-<!--                            <div class="text-center my-3">-->
-<!--                                <h4>Total Nilai: <span id="totalDisplay">0</span></h4>-->
-<!--                            </div>-->
-                            <input type="hidden" name="id_ruang" id="total">
+                            <div class="text-center my-3" style="display:none;">
+                                <h4>Total Nilai: <span id="totalDisplay">0</span></h4>
+                            </div>
 
                             <div id="parameterContainer">
                                 @php $no = 1; @endphp
                                 @foreach($parameter as $index => $p)
                                 <div class="parameter-item" style="{{ $index == 0 ? '' : 'display: none;' }}">
-                                    <input type="hidden" name="id_parameter[{{ $p->id }}]" id="total">
-
                                     <h2>{{ $no++. '. ' . $p->parameter }}</h2>
 
                                     <div class="btn-group btn-group-toggle d-flex flex-wrap" data-toggle="buttons">
@@ -65,7 +67,9 @@
 
                             <div class="d-flex  my-4">
                                 <button type="button" class="btn btn-sumut" id="prevBtn" disabled>Previous</button>
-                                <button type="button" class="btn btn-warning" id="nextBtn" style="margin-left: 10px">Next</button>
+                                <button type="button" class="btn btn-sumut" id="nextBtn" style="margin-left: 10px">Next</button>
+<!--                                <button type="submit" class="btn btn-success">Simpan Kuesioner</button>-->
+
                             </div>
 
                             <!-- Input hidden untuk total nilai -->
@@ -85,7 +89,20 @@
 @endsection
 
 @section('js')
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
 <script>
+    $(function() {
+        $('#daterange').daterangepicker({
+            opens: 'left',
+            locale: {
+              format: 'YYYY-MM-DD'
+            }
+        });
+    });
+
     const items = document.querySelectorAll('.parameter-item');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
@@ -104,12 +121,12 @@
 
         if (index === items.length - 1) {
             nextBtn.textContent = 'Simpan';
-            nextBtn.classList.remove('btn-warning');
-            nextBtn.classList.add('btn-success');
+            nextBtn.classList.remove('btn-sumut');
+            nextBtn.classList.add('btn-sumut');
         } else {
             nextBtn.textContent = 'Next';
-            nextBtn.classList.remove('btn-success');
-            nextBtn.classList.add('btn-warning');
+            nextBtn.classList.remove('btn-sumut');
+            nextBtn.classList.add('btn-sumut');
         }
 
         restoreAnswers(index);
@@ -195,6 +212,7 @@
         if (!validasiAlasan()) return;
 
         if (currentIndex === items.length - 1) {
+            console.log('Submitting form...');
             document.getElementById('form-penilaian').submit();
         } else {
             currentIndex++;

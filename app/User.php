@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'username', 'email', 'password_hash', 'google_id', 'google_email', 'google_name', 'role', 'id_sekolah', 'is_active', 'is_verified', 'verification_token', 'verification_expires', 'refresh_token', 'refresh_token_expires', 'last_login',
     ];
 
     /**
@@ -25,7 +25,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password_hash', 'remember_token',
     ];
 
     /**
@@ -34,6 +34,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'verification_expires' => 'datetime',
+        'refresh_token_expires' => 'datetime',
+        'last_login' => 'datetime',
     ];
 }
