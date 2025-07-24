@@ -1,5 +1,5 @@
 @extends('layouts/master')
-@section('title','Detail Penilaian Sekolah Bersih')
+@section('title','Verifikasi Penilaian Sekolah Bersih')
 
 @section('content')
 <div class="row">
@@ -68,56 +68,29 @@
                                     @endforeach
                                 </table>
                             </div>
-                        </div>
 
-                        <div class="profile-box-footer clearfix" style="background-color: #3e5879">
-                            <a href="#" style="color: white">
-                                <span class="value">
-                                    @if($model->status_verifikasi_sekolah == 1)
-                                        <i class="fa fa-check-square"></i>
-                                    @else
-                                        <i class="fa fa-exclamation-triangle text-warning"></i>
-                                    @endif
-                                </span>
-                                <span class="label"><b>Verifikasi Sekolah</b></span><br/>
-                                @if($model->status_verifikasi_sekolah == 1)
-                                    <span class="label">Nama : {{$model->user_verifikasi}}</span><br/>
-                                    <span class="label">Jabatan : {{$model->jabatan_verifikasi}}</span><br/>
-                                    <span class="label">Tanggal : {{date('d-M-Y', strtotime($model->tanggal_verifikasi))}}</span><br/>
-                                @endif
-                            </a>
-                            <a href="#" style="color: white">
-                                <span class="value">
-                                    @if($model->status_verifikasi_pengawas == 1)
-                                        <i class="fa fa-check-square"></i>
-                                    @else
-                                        <i class="fa fa-exclamation-triangle text-warning"></i>
-                                    @endif
-                                </span>
-                                <span class="label">Verifikasi Pengawas</span><br/>
-                                @if($model->status_evaluasi_pengawas == 1)
-                                <span class="label">Nama : {{$model->user_approval_pengawas}}</span><br/>
-                                <span class="label">Jabatan : {{$model->jabatan_approval_pengawas}}</span><br/>
-                                <span class="label">Tanggal : {{date('d-M-Y', strtotime($model->tanggal_approval_pengawas))}}</span><br/>
-                                @endif
-                            </a>
-                            <a href="#" style="color: white">
-                                <span class="value">
-                                    @if($model->status_verifikasi_cabdis == 1)
-                                        <i class="fa fa-check-square"></i>
-                                    @else
-                                        <i class="fa fa-exclamation-triangle text-warning"></i>
-                                    @endif
-                                </span>
-                                <span class="label">Verifikasi Cabdis</span><br/>
-                                @if($model->status_evaluasi_cabdis == 1)
-                                    <span class="label">Nama : {{$model->user_approval_cabdis}}</span><br/>
-                                    <span class="label">Jabatan : {{$model->jabatan_approval_cabdis}}</span><br/>
-                                    <span class="label">Tanggal : {{date('d-M-Y', strtotime($model->tanggal_approval_cabdis))}}</span><br/>
-                                @endif
-                            </a>
+                            <div class="main-box-body clearfix" style="padding: 20px">
+                                <form method="POST" action="{{ route('sekolahbersih.storeverifikasi') }}" id="form-penilaian">
+                                    @csrf
+                                    <input type="hidden" name="id" value="{{ $model->id }}">
+                                    <div class="form-group row">
+                                        <label for="inputEmail3" class="col-sm-2 col-form-label">User Verifikator <span class="wajib"></span></label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="user_verifikasi" name="user_verifikasi" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="inputEmail3" class="col-sm-2 col-form-label">Jabatan Verifikator <span class="wajib"></span></label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="jabatan_verifikasi" name="jabatan_verifikasi" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group text-center">
+                                        <button class="btn btn-primary tambah" type="submit">Verifikasi</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>

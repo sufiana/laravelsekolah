@@ -3482,6 +3482,13 @@ blockquote.float-right:before {
     .table a.table-link.danger:hover {
       color: #dd191d !important;
     }
+
+.table a.table-link.sumut {
+    color: #3e5879; }
+/* line 79, Applications/MAMP/htdocs/cube/source/scss/theme/imports/_tables.scss */
+.table a.table-link.sumut:hover {
+    color: #2c3e50 !important;
+}
     .table a.table-link.turquise {
     color: #1abc9c;
     }

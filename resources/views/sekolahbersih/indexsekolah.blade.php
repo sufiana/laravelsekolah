@@ -83,7 +83,7 @@
             processing: false,
             serverSide: true,
             ajax: {
-                url: '{{route("sekolahbersih.getData")}}'
+                url: '{{route("sekolahbersih.getDataSekolah")}}'
             },
             columns: [
                 {
