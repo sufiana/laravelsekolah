@@ -3,7 +3,7 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\IconGrid;
+use App\models\IconGrid;
 
 class Parameter extends Model
 {

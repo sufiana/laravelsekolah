@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pegawai;
+use App\models\Pegawai;
 use Illuminate\Http\Request;
 use App\models\ManajemenBiaya;
 use App\models\RefGolongan;

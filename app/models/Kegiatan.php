@@ -3,7 +3,7 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Program;
+use App\models\Program;
 
 class Kegiatan extends Model
 {

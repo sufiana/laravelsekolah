@@ -3,7 +3,7 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\RefGolongan;
+use App\models\RefGolongan;
 
 
 class RefJabatan extends Model

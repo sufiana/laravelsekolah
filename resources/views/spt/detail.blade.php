@@ -84,14 +84,14 @@
                                             $categoryIds = explode(',', $categoryIdString);
                                             if($categoryIdString <> NULL)
                                             {
-                                            $articles = App\Models\Pegawai::select("*")
+                                            $articles = App\models\Pegawai::select("*")
                                             ->whereIn('id', $categoryIds)
                                             ->orderByRaw('FIELD(id, '.implode(", " , $categoryIds).')')
                                             ->get();
                                             }
                                             else
                                             {
-                                            $articles = App\Models\Pegawai::select("*")
+                                            $articles = App\models\Pegawai::select("*")
                                             ->where('id','=','0')
                                             ->get();
                                             }
@@ -107,7 +107,7 @@
                                                 <td>{{$pegawai->nama_pegawai}}</td>
                                                 <td>
                                                     @php
-                                                        $jabatanpeg=App\Models\RefJabatan::find($pegawai->id_jabatan);
+                                                        $jabatanpeg=App\models\RefJabatan::find($pegawai->id_jabatan);
                                                         if($jabatanpeg <> NULL)
                                                         echo $jabatanpeg->nama;
                                                         else

@@ -132,7 +132,7 @@ $tanggalspt = date('d', strtotime($model->tgl_spt)).' '.$bulan[$bulanspt].' '.da
                         $categoryIdString = $model->pegawai;
                         $categoryIds = explode(',', $categoryIdString);
 
-                        $articles = App\Models\Pegawai::select("*")
+                        $articles = App\models\Pegawai::select("*")
                         ->whereIn('id', $categoryIds)
                         ->get();
                         $cetak=array();

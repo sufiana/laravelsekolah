@@ -3,9 +3,9 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Kecamatan;
-use App\Models\Kabupatenkota;
-use App\Models\Provinsi;
+use App\models\Kecamatan;
+use App\models\Kabupatenkota;
+use App\models\Provinsi;
 
 class Kelurahan extends Model
 {

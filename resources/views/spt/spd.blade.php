@@ -47,7 +47,7 @@ $bulan      = array(
 $tanggalspt = date('d', strtotime($model->tgl_spt)).' '.$bulan[$bulanspt].' '.date('Y', strtotime($model->tgl_spt));
 if($ttd <> NULL)
 {
-    $jabatan=App\Models\RefJabatanTtd::find($ttd->id_jabatan_ttd);
+    $jabatan=App\models\RefJabatanTtd::find($ttd->id_jabatan_ttd);
     if($jabatan == null)
     {
         $cetakjabatan='-';
@@ -57,7 +57,7 @@ if($ttd <> NULL)
         $cetakjabatan=$jabatan->nama;
     }
 
-    $pegawaittd=App\Models\Pegawai::find($ttd->id_pegawai);
+    $pegawaittd=App\models\Pegawai::find($ttd->id_pegawai);
     if($pegawaittd == null)
     {
         $nipttd='-';
@@ -68,7 +68,7 @@ if($ttd <> NULL)
         $nipttd=$pegawaittd->nip;
         $namattd=$pegawaittd->nama_pegawai;
 
-        $gol=App\Models\RefGolongan::find($pegawaittd->golongan);
+        $gol=App\models\RefGolongan::find($pegawaittd->golongan);
         if($gol == null)
         {
             $golongan='-';
@@ -197,14 +197,14 @@ else
                         $categoryIds = explode(',', $categoryIdString);
                         if($categoryIdString <> NULL)
                         {
-                            $articles = App\Models\Pegawai::select("*")
+                            $articles = App\models\Pegawai::select("*")
                             ->whereIn('id', $categoryIds)
                             ->orderByRaw('FIELD(id, '.implode(", " , $categoryIds).')')
                             ->get();
                         }
                         else
                         {
-                            $articles = App\Models\Pegawai::select("*")
+                            $articles = App\models\Pegawai::select("*")
                             ->where('id','=','0')
                             ->get();
                         }
@@ -226,7 +226,7 @@ else
                             @endphp                        </td>
                         <td style="text-align: left; vertical-align: middle; padding-left: 5px">
                             @php
-                                $jabatanpeg=App\Models\RefJabatan::find($pegawai->id_jabatan);
+                                $jabatanpeg=App\models\RefJabatan::find($pegawai->id_jabatan);
                                 if($jabatanpeg <> NULL)
                                     echo $jabatanpeg->nama;
                                 else

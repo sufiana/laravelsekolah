@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Models;
+namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\RefAgama;
-use App\Models\RefStatusPegawai;
-use App\Models\RefPangkat;
-use App\Models\RefGolongan;
-use App\Models\RefStatusJabatan;
-use App\Models\RefJabatan;
-use App\Models\UnitKerja;
-use App\Models\RefEselon;
-use App\Models\RefPendidikanTerakhir;
+use App\models\RefAgama;
+use App\models\RefStatusPegawai;
+use App\models\RefPangkat;
+use App\models\RefGolongan;
+use App\models\RefStatusJabatan;
+use App\models\RefJabatan;
+use App\models\UnitKerja;
+use App\models\RefEselon;
+use App\models\RefPendidikanTerakhir;
 
 class Pegawai extends Model
 {

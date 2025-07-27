@@ -131,7 +131,7 @@ $tanggalspt = date('d', strtotime($model->tgl_spt)).' '.$bulan[$bulanspt].' '.da
                     @php
                     $categoryIdString = $model->pegawai;
                     $categoryIds = explode(',', $categoryIdString);
-                    $articles = App\Models\Pegawai::select("*")
+                    $articles = App\models\Pegawai::select("*")
                     ->whereIn('id', $categoryIds)
                     ->orderByRaw('FIELD(id, '.implode(", " , $categoryIds).')')
                     ->get();

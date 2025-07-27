@@ -14,4 +14,7 @@ class Role extends Model
         'butuh_sekolah'
     ];
 
+    public $timestamps = false; // <-- tambahkan ini jika tabel tidak punya created_at/updated_at
+
+
 }

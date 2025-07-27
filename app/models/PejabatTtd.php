@@ -3,8 +3,8 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Pegawai;
-use App\Models\RefJabatanTtd;
+use App\models\Pegawai;
+use App\models\RefJabatanTtd;
 
 
 class PejabatTtd extends Model

@@ -3,8 +3,8 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Program;
-use App\Models\Kegiatan;
+use App\models\Program;
+use App\models\Kegiatan;
 
 class SubKegiatan extends Model
 {

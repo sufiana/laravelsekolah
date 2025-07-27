@@ -3,9 +3,9 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Sppd;
-use App\Models\Pegawai;
-use App\Models\RefJenisBiaya;
+use App\models\Sppd;
+use App\models\Pegawai;
+use App\models\RefJenisBiaya;
 class SppdTandaTerimaDalamDaerah extends Model
 {
     protected $table = 'sppd_tandaterima_dalamdaerah';

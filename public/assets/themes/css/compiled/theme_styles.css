@@ -4728,7 +4728,7 @@ input[type="radio"] {
 
 /* line 8, Applications/MAMP/htdocs/cube/source/scss/theme/imports/_login_stuff.scss */
 #login-box {
-  max-width: 350px;
+  max-width: 400px;
   min-width: 280px;
   margin: 60px auto 20px;
   overflow: hidden;
@@ -4770,7 +4770,7 @@ input[type="radio"] {
   border-radius: 0 0 3px 3px;
   border: 1px solid #e1e1e1;
   border-bottom-width: 5px;
-  padding: 40px 25px; }
+  padding: 20px 25px; }
   /* line 54, Applications/MAMP/htdocs/cube/source/scss/theme/imports/_login_stuff.scss */
   #login-box-inner.with-heading {
     padding-top: 20px; }
@@ -4790,7 +4790,7 @@ input[type="radio"] {
   display: block;
   font-size: 2em;
   font-weight: 400;
-  padding: 35px 0;
+  padding: 10px 0;
   text-align: center;
   text-transform: uppercase; }
   /* line 76, Applications/MAMP/htdocs/cube/source/scss/theme/imports/_login_stuff.scss */

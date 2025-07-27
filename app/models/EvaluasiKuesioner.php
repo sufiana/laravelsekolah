@@ -3,8 +3,8 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\IconGrid;
-use App\Models\Sekolah;
+use App\models\IconGrid;
+use App\models\Sekolah;
 
 class EvaluasiKuesioner extends Model
 {

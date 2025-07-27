@@ -3,9 +3,9 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\IconGrid;
-use App\Models\Parameter;
-use App\Models\Sekolah;
+use App\models\IconGrid;
+use App\models\Parameter;
+use App\models\Sekolah;
 
 class HasilKuesioner extends Model
 {

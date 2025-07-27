@@ -3,13 +3,13 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\nppd;
-use App\Models\Program;
-use App\Models\Kegiatan;
-use App\Models\SubKegiatan;
-use App\Models\Pegawai;
-use App\Models\PejabatTtd;
-use App\Models\Beban;
+use App\models\nppd;
+use App\models\Program;
+use App\models\Kegiatan;
+use App\models\SubKegiatan;
+use App\models\Pegawai;
+use App\models\PejabatTtd;
+use App\models\Beban;
 
 class Spt extends Model
 {

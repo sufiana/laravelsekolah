@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\GoogleAuthController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,11 +14,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('/layouts/beranda');
-});
+//Route::get('/', function () {
+//    return view('/layouts/beranda');
+//});
 
 Route::get('/', 'HomeController@index')->name('home');
+Route::get('/HomeSekolah', 'HomeController@indexSekolah')->name('site.sekolah');
+Route::get('/HomeCabdis', 'HomeController@indexCabdis')->name('site.cabdis');
+Route::get('/HomeKadis', 'HomeController@indexKadis')->name('site.kadis');
+Route::get('/HomePengawas', 'HomeController@indexPengawas')->name('site.pengawas');
+Route::get('/HomeDeveloper', 'HomeController@indexDeveloper')->name('site.developer');
 
 Route::get('sekolahbersih/index', 'SekolahBersihController@index')->name('sekolahbersih.index');
 Route::get('sekolahbersih/indexsekolah', 'SekolahBersihController@indexsekolah')->name('sekolahbersih.indexsekolah');
@@ -42,6 +48,7 @@ Route::get('sekolahbersih/print/{id}', 'SekolahBersihController@print')->name('s
 
 
 // Authentication Routes
+/*
 Route::get('login', 'AuthController@showLoginForm')->name('login');
 Route::post('login', 'AuthController@login');
 Route::post('logout', 'AuthController@logout')->name('logout');
@@ -53,3 +60,11 @@ Route::post('register', 'AuthController@register');
 // Google SSO Routes
 Route::get('auth/google', 'AuthController@redirectToGoogle')->name('auth.google');
 Route::get('auth/google/callback', 'AuthController@handleGoogleCallback');
+*/
+
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
