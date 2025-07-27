@@ -15,9 +15,10 @@ class HomeController extends Controller
     public function index()
     {
         $user = Auth::user();
+        $role = Role::where('id',$user->role)->first();
         //dd(Auth::user()->toArray());
         if($user) {
-            switch ($user->role) {
+            switch ($role->name) {
                 case 'developer' : case 'superadmin':
                     return redirect()->route('site.developer');
                 case 'sekolah': case 'tata_usaha':
@@ -38,6 +39,9 @@ class HomeController extends Controller
     public function indexSekolah()
     {
         $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Anda belum login.');
+        }
         $icon = IconGrid::all()->sortBy("id");
         $role = Role::where('id',$user->role)->first();
         $sekolah = Sekolah::where('id',$user->id_sekolah)->first();
@@ -52,6 +56,9 @@ class HomeController extends Controller
     public function indexKadis()
     {
         $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Anda belum login.');
+        }
         $icon = IconGrid::all()->sortBy("id");
         $role = Role::where('id',$user->role)->first();
         $sekolah = Sekolah::where('id',$user->id_sekolah)->first();
@@ -66,6 +73,9 @@ class HomeController extends Controller
     public function indexCabdis()
     {
         $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Anda belum login.');
+        }
         $icon = IconGrid::all()->sortBy("id");
         $role = Role::where('id',$user->role)->first();
         $sekolah = Sekolah::where('id',$user->id_sekolah)->first();
@@ -80,6 +90,9 @@ class HomeController extends Controller
     public function indexPengawas()
     {
         $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Anda belum login.');
+        }
         $icon = IconGrid::all()->sortBy("id");
         $role = Role::where('id',$user->role)->first();
         $sekolah = Sekolah::where('id',$user->id_sekolah)->first();
@@ -94,6 +107,9 @@ class HomeController extends Controller
     public function indexDeveloper()
     {
         $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Anda belum login.');
+        }
         $icon = IconGrid::all()->sortBy("id");
         $role = Role::where('id',$user->role)->first();
         $sekolah = Sekolah::where('id',$user->id_sekolah)->first();

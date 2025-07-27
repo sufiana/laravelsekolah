@@ -29,6 +29,7 @@ class User extends Authenticatable
         'refresh_token',
         'refresh_token_expires',
         'last_login',
+        'img',
     ];
 
     protected $hidden = [
