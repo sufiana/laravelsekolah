@@ -5,22 +5,22 @@ namespace App\models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\IconGrid;
 
-class Parameter extends Model
+
+class PenilaianKuesioner extends Model
 {
     //
-    protected $table = 'parameter_kebersihan';
+    protected $table = 'penilaian_kuesioner';
     protected $fillable = [
         'id_ruang',
-        'parameter',
-        'deskripsi',
-        'user_created',
-        'time_created',
-        'user_update',
-        'time_update'
+        'batas_atas',
+        'batas_bawah',
+        'hasil',
+        'score'
     ];
 
     public function ruanglist(){
         return $this->belongsTo(IconGrid::class,'id_ruang','id');
     }
+
 
 }

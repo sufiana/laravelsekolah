@@ -12,30 +12,35 @@ use App\models\User;
 
 class HomeController extends Controller
 {
-    public function index()
-    {
-        $user = Auth::user();
-        $role = Role::where('id',$user->role)->first();
-        //dd(Auth::user()->toArray());
-        if($user) {
-            switch ($role->name) {
-                case 'developer' : case 'superadmin':
-                    return redirect()->route('site.developer');
-                case 'sekolah': case 'tata_usaha':
-                    return redirect()->route('site.sekolah');
-                case 'kepala_dinas':
-                    return redirect()->route('site.kadis');
-                case 'pengawas_sekolah':
-                    return redirect()->route('site.pengawas');
-                default:
-                    return redirect()->route('site.cabdis');
-            }
-        }
-        else {
-            return redirect('login');
-        }
+  public function index()
+{
+    $user = Auth::user();
+
+    if (!$user) {
+            return redirect()->route('login')->with('error', 'Anda belum login.');
     }
 
+    $role = Role::where('id', $user->role)->first();
+
+    switch ($role->name) {
+        case 'developer':
+        case 'superadmin':
+            return redirect()->route('site.developer');
+
+        case 'sekolah':
+        case 'tata_usaha':
+            return redirect()->route('site.sekolah');
+
+        case 'kepala_dinas':
+            return redirect()->route('site.kadis');
+
+        case 'pengawas_sekolah':
+            return redirect()->route('site.pengawas');
+
+        default:
+            return redirect()->route('site.cabdis');
+    }
+}
     public function indexSekolah()
     {
         $user = Auth::user();
