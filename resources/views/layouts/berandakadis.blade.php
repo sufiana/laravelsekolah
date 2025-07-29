@@ -76,9 +76,9 @@
                         @else
                         <img src="{{ asset('images/user/user.png') }}" alt="Default Foto" class="profile-img img-fluid">
                         @endif
-                        <h2>{{$user->username}}</h2>
+                        <h2>{{$user->username}} {{$user->email}}</h2>
                         <div class="job-position">
-                            {{$role->name}}
+                            {{$role->name}} {{$user->role}}
                         </div>
                         <ul class="contact-details">
                             <li>

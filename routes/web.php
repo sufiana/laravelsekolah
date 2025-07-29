@@ -19,6 +19,8 @@ use App\Http\Controllers\Auth\GoogleAuthController;
 //});
 
 Route::get('/', 'HomeController@index')->name('home');
+Route::get('/logout', 'HomeController@logout')->name('logout');
+
 Route::get('/HomeSekolah', 'HomeController@indexSekolah')->name('site.sekolah');
 Route::get('/HomeCabdis', 'HomeController@indexCabdis')->name('site.cabdis');
 Route::get('/HomeKadis', 'HomeController@indexKadis')->name('site.kadis');

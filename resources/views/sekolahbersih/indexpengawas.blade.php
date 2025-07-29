@@ -38,10 +38,9 @@
                                     <th width="20"><a href="#" style="color: white">No.</a></th>
                                     <th><a href="#" style="color: white">Sekolah</a></th>
                                     <th><a href="#" style="color: white">Periode</a></th>
-                                    <th><a href="#" style="color: white">Ruang</a></th>
-                                    <th><a href="#" style="color: white">Deskripsi</a></th>
-                                    <th><a href="#" style="color: white">Score</a></th>
-                                    <th width="20"><a href="#" style="color: white">Status</th>
+                                    <th><a href="#" style="color: white">Tanggal Supervisi</a></th>
+                                    <th><a href="#" style="color: white">Tingkat Kepatuhan</a></th>
+                                    <th width="20"><a href="#" style="color: white">Kesimpulan</th>
                                     <th width="40"><a href="#" style="color: white">Action</a></th>
                                 </tr>
                                 </thead>
@@ -94,7 +93,7 @@
                 },
                 {data: 'sekolah', name: 'sekolah', searchable: true, orderable: true},
                 {data: 'periode_awal_kuesioner', name: 'periode_awal_kuesioner', searchable: true, orderable: true},
-                {data: 'id_ruang', name: 'id_ruang', searchable: true, orderable: true},
+                {data: 'tanggal_supervisi', name: 'tanggal_supervisi', searchable: true, orderable: true},
                 {data: 'id_kuesioner', name: 'id_kuesioner', searchable: true, orderable: true},
                 {data: 'score', name: 'score', searchable: true, orderable: true},
                 {data: 'status_verifikasi_sekolah', name: 'status_verifikasi_sekolah', searchable: true, orderable: true},

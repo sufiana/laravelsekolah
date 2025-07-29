@@ -3,7 +3,7 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\models\RefGolongan;
+use App\Models\RefGolongan;
 use App\models\RefJenisBiaya;
 use App\models\RefStatusWilayahBiaya;
 

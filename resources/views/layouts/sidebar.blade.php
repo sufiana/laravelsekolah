@@ -1,21 +1,16 @@
 <div id="nav-col">
     <section id="col-left" class="col-left-nano">
         <div id="col-left-inner" class="col-left-nano-content">
-            <div id="user-left-box" class="clearfix d-none d-lg-block profile2-dropdown">
-                <img alt="" src="{{ asset('assets/themes') }}/img/samples/scarlet-159.png" />
-                <div class="user-box">
-                    <span class="dropdown name">
-                        <a href="#" class="dropdown-nocaret dropdown-toggle" data-toggle="dropdown">SPPD<i class="fa fa-angle-down"></i></a>
-                        <ul class="dropdown-menu dropdown-menu-right">
-                            <li class="item"><a href="user-profile.html"><i class="fa fa-user"></i>Profile</a></li>
-                            <li class="item"><a href="#"><i class="fa fa-cog"></i>Settings</a></li>
-                            <li class="item"><a href="#"><i class="fa fa-envelope-o"></i>Messages</a></li>
-                            <li class="item"><a href="#"><i class="fa fa-power-off"></i>Logout</a></li>
-                        </ul>
-                    </span>
-                    <span class="status"><i class="fa fa-circle"></i> Online</span>
+            <div id="user-left-box" class="clearfix d-none d-lg-block profile2-dropdown text-center">
+                <div style="display: flex; justify-content: center;">
+                    <img src="{{ asset('images/logosm.png') }}" style="width: 60%;" />
                 </div>
+                <h5 style="font-size: 16px; color: #3e5879">KOLABORASI</h5>
+                <h5 style="font-size: 12px; color: #3e5879; font-weight: bold; line-height: 1px">SUMUT BERKAH</h5>
+                <h5 style="font-size: 12px; color: #3e5879">DISDIK</h5>
+                <h5 style="font-size: 12px; color: #3e5879; font-weight: bold; line-height: 10px">SEKOLAH BERSIH</h5>
             </div>
+
             <div class="navbar navbar-expand-lg navbar-light">
                 <div class="collapse navbar-collapse navbar-ex1-collapse" id="sidebar-nav">
                     <ul class="nav navbar-nav nav-pills nav-stacked">
@@ -45,7 +40,7 @@
                                         <li><a href="">Kecamatan</a></li>
                                         <li><a href="">kelurahan</a></li>
                                     </ul>
-                                </li>                               
+                                </li>
                             </ul>
                         </li>
                         <li>
@@ -58,7 +53,7 @@
                                 <li><a href="">Status Wilayah Biaya</a></li>
                                 <li><a href="">Manajemen Biaya</a></li>
                             </ul>
-                        </li>    
+                        </li>
                     </ul>
                 </div>
             </div>

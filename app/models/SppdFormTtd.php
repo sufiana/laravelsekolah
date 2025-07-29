@@ -3,8 +3,8 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\models\Sppd;
-use App\models\Spt;
+use App\Models\Sppd;
+use App\Models\Spt;
 
 
 class SppdFormTtd extends Model

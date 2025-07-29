@@ -3,8 +3,8 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\models\Kabupatenkota;
-use App\models\Provinsi;
+use App\Models\Kabupatenkota;
+use App\Models\Provinsi;
 
 
 class Kecamatan extends Model

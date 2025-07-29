@@ -3,14 +3,14 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\models\Spt;
-use App\models\JenisTransportasi;
-use App\models\JenisAngkutan;
-use App\models\Provinsi;
-use App\models\Kabupatenkota;
-use App\models\Kecamatan;
-use App\models\Kelurahan;
-use App\models\Beban;
+use App\Models\Spt;
+use App\Models\JenisTransportasi;
+use App\Models\JenisAngkutan;
+use App\Models\Provinsi;
+use App\Models\Kabupatenkota;
+use App\Models\Kecamatan;
+use App\Models\Kelurahan;
+use App\Models\Beban;
 
 class Sppd extends Model
 {

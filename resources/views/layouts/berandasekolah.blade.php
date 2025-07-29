@@ -37,7 +37,7 @@
             <div class="col-lg-3 col-sm-6 col-12">
                 <div class="main-box infographic-box colored emerald-bg">
                     <i class="fa fa-user"></i>
-                    <span class="headline" style="font-size: 10.5px">Jumlah sekolah</span>
+                    <span class="headline" style="font-size: 9px">Komponen Terkirim <br/> (bulan ini)</span>
                     <span class="value">46</span>
                 </div>
             </div>
@@ -45,7 +45,7 @@
             <div class="col-lg-3 col-sm-6 col-12">
                 <div class="main-box infographic-box colored red-bg">
                     <i class="fa fa-tag"></i>
-                    <span class="headline" style="font-size: 10.5px">Sekolah Terintegrasi</span>
+                    <span class="headline" style="font-size: 9px">Komponen Belum Terkirim (bulan ini)</span>
                     <span class="value">9</span>
                 </div>
             </div>
@@ -53,16 +53,16 @@
             <div class="col-lg-3 col-sm-6 col-12">
                 <div class="main-box infographic-box colored green-bg">
                     <i class="fa fa-tags"></i>
-                    <span class="headline" style="font-size: 9px">Sekolah Belum Terintegrasi</span>
-                    <span class="value">45</span>
+                    <span class="headline" style="font-size: 9px">Persentase Sekolah Bersih (bulan ini)</span>
+                    <span class="value">45%</span>
                 </div>
             </div>
 
             <div class="col-lg-3 col-sm-6 col-12">
                 <div class="main-box infographic-box colored purple-bg">
                     <i class="fa fa-credit-card"></i>
-                    <span class="headline" style="font-size: 10.5px">Persentase Sekolah Bersih</span>
-                    <span class="value">42</span>
+                    <span class="headline" style="font-size: 9px">Rata2 Persentase Sekolah Bersih</span>
+                    <span class="value">42%</span>
                 </div>
             </div>
         </div>
@@ -82,32 +82,35 @@
                         </div>
                         <ul class="contact-details">
                             <li>
-                                <i class="fa fa-map-marker"></i> {{$sekolah->nama}} {{$sekolah->kabupaten_kota}}
+                                <i class="fa fa-bank"></i> {{$sekolah->nama}} {{$sekolah->kabupaten_kota}}
                             </li>
                             <li>
-                                <i class="fa fa-email"></i> {{$role->email}}
+                                <i class="fa fa-envelope"></i> {{$user->email}}
+                            </li>
+                            <li>
+                                <i class="fa fa-map-marker"></i> {{$sekolah->alamat_jalan ? $sekolah->alamat_jalan : '-'}}
                             </li>
                         </ul>
                     </div>
                     <div class="profile-box-footer clearfix">
                         <a href="#">
-                            <span class="value">44</span>
-                            <span class="label">Messages</span>
+                            <span class="value">Baik</span>
+                            <span class="label">Hasil Evaluasi Bulan ini</span>
                         </a>
                         <a href="#">
-                            <span class="value">91</span>
-                            <span class="label">Sales</span>
+                            <span class="value">Baik</span>
+                            <span class="label">Tingkat Kepatuhan Bulan Ini</span>
                         </a>
                         <a href="#">
-                            <span class="value">3</span>
-                            <span class="label">Projects</span>
+                            <span class="value">Penghargaan</span>
+                            <span class="label">Penilaian Sekolah Bersih</span>
                         </a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
+        <div class="row" style="padding-top: 40px">
             @foreach($icon as $i)
             <div class="col-lg-2 col-md-6 col-sm-6 col-12">
                 <div class="main-box clearfix profile-box-contact" style="box-shadow: none; background-color: transparent; border: none;">

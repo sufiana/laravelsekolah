@@ -81,9 +81,7 @@
                             {{$role->name}}
                         </div>
                         <ul class="contact-details">
-                            <li>
-                                <i class="fa fa-map-marker"></i> {{$sekolah->nama}} {{$sekolah->kabupaten_kota}}
-                            </li>
+
                             <li>
                                 <i class="fa fa-email"></i> {{$role->email}}
                             </li>

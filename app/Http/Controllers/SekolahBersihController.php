@@ -261,7 +261,18 @@ class SekolahBersihController extends Controller
     }
 
     public function getDataPengawas(){
-        $model=EvaluasiKuesioner::orderBy('id', 'ASC')->get();
+        $model = DB::select("
+                    SELECT *
+                    FROM (
+                        SELECT *,
+                            ROW_NUMBER() OVER (
+                                PARTITION BY sekolah, periode_awal_kuesioner, periode_akhir_kuesioner
+                                ORDER BY time_created DESC
+                            ) AS rn
+                        FROM evaluasi_kuesioner
+                    ) t
+                    WHERE rn = 1
+        ");
         return Datatables::of($model)
             ->editColumn('periode_awal_kuesioner',function ($data){
                 if($data->periode_awal_kuesioner <> null && $data->periode_akhir_kuesioner) {
@@ -272,46 +283,12 @@ class SekolahBersihController extends Controller
                 }
                 return $periode;
             })
-            ->editColumn('id_ruang',function ($data){
-                return !$data->ruanglist || !$data->id_ruang ?  ' - ' : $data->ruanglist["nama"]  ;
+
+            ->editColumn('sekolah',function ($data){
+                $a= Sekolah::find($data->sekolah);
+                return !$a || !$data->sekolah ?  ' - ' : $a["nama"]  ;
             })
-            ->editColumn('id_ruang',function ($data){
-                return !$data->ruanglist || !$data->id_ruang ?  ' - ' : $data->ruanglist["nama"]  ;
-            })
-            ->editColumn('id_kuesioner', function ($data) {
-                $stringIds = $data->id_kuesioner;  // contoh: "{319,320,321}"
-                $arrayIds = explode(',', trim($stringIds, '{}'));
 
-                $hasilKuesioner = DB::table('hasil_kuesioner')
-                    ->select('p.parameter', 'hasil_kuesioner.jawaban')
-                    ->join('parameter_kebersihan as p', 'p.id', '=', 'hasil_kuesioner.id_parameter')
-                    ->join('ruang_sekolah as r', 'r.id', '=', 'hasil_kuesioner.id_ruang')
-                    ->whereIn('hasil_kuesioner.id', $arrayIds)
-                    ->get();
-
-                $html = '<div style="font-size: 13px;">';
-                $html .= '<div style="display: flex; font-weight:bold; border-bottom: 1px solid #ddd;">
-             <div style="flex: 1;">Parameter</div>
-             <div style="width: 80px; text-align:center;">Status</div>
-             </div>';
-
-                foreach ($hasilKuesioner as $row) {
-                    // Status label
-                    if ($row->jawaban == 3) {
-                        $status = '<span style="color:green;">Bersih</span>';
-                    } elseif ($row->jawaban == 2) {
-                        $status = '<span style="color:orange;">Cukup Bersih</span>';
-                    } else {
-                        $status = '<span style="color:red;">Tidak Bersih</span>';
-                    }
-
-                    $html .= '<div style="display: flex; border-bottom: 1px solid #eee; padding: 2px 0;">
-                 <div style="flex: 1;">' . $row->parameter . '</div>
-                 <div style="width: 80px; text-align:center;">' . $status . '</div>
-              </div>';
-                }
-                return $html;
-            })
             ->addColumn('action', function ($model){
                 if($model->status_verifikasi_sekolah ==1) {
                     $button = "
@@ -322,9 +299,7 @@ class SekolahBersihController extends Controller
                     <a class='table-link sumut' href='" . route("sekolahbersih.print", $model->id) . "' id='printbtn' >
                         <span class='fa-stack' ><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-file-pdf-o fa-stack-1x fa-inverse'></i></span>
                     </a>
-                    <a href='#' class='table-link danger' data-id='" . $model->id . "' data-nama='" . $model->nama . "' id='deletebtn' data-toggle='modal' data-target='#delModal'>
-                        <span class='fa-stack'><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-trash-o fa-stack-1x fa-inverse'></i></span>
-                    </a>
+
                 ";
                 }
                 else {
@@ -336,26 +311,14 @@ class SekolahBersihController extends Controller
                     <a class='table-link sumut' href='" . route("sekolahbersih.verifikasi", $model->id) . "' id='verifikasibtn' >
                         <span class='fa-stack' ><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-check-square fa-stack-1x fa-inverse'></i></span>
                     </a>
-                    <a href='#' class='table-link danger' data-id='" . $model->id . "' data-nama='" . $model->nama . "' id='deletebtn' data-toggle='modal' data-target='#delModal'>
-                        <span class='fa-stack'><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-trash-o fa-stack-1x fa-inverse'></i></span>
-                    </a>
+
                 ";
                 }
 
                 $button = $button . "</div>";
                 return $button;
             })
-            ->editColumn('status_verifikasi_sekolah',function ($data){
-                if($data->status_verifikasi_sekolah == 1 ){
-                    $statusverifikasisekolah='<span class="badge badge-success">Terverifikasi</span>';
-                }
-                else {
-                    $statusverifikasisekolah='<span class="badge badge-warning">Belum Verifikasi</span>';
-                }
-                $html='<div class="btn-group-horizontal">'.$statusverifikasisekolah.'</div>';
-                return $html;
 
-            })
             ->rawColumns(['id_kuesioner','action','status_verifikasi_sekolah'])
             ->make(true);
     }

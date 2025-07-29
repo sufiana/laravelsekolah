@@ -22,7 +22,24 @@ class EvaluasiKuesioner extends Model
         'status_evaluasi_cabdis',
         'id_ruang',
         'score',
-        'hasil_score'
+        'hasil_score',
+        'user_verifikasi',
+        'jabatan_verifikasi',
+        'tanggal_verifikasi',
+        'jabatan_approval_pengawas',
+        'user_approval_pengawas',
+        'tanggal_approval_pengawas',
+        'jabatan_approval_cabdis',
+        'user_approval_cabdis',
+        'tanggal_approval_cabdis',
+        'tanggal_supervisi',
+        'score_pengawas',
+        'catatan_pengawas',
+        'dokumentasi_pengawas',
+        'catatan_dokumentasi_pengawas',
+        'tingkat_kepatuhan',
+        'kesimpulan_pengawas',
+
     ];
 
     public function ruanglist(){

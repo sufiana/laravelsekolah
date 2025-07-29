@@ -3,7 +3,7 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\models\RefBebanJenis;
+use App\Models\RefBebanJenis;
 
 
 class Beban extends Model

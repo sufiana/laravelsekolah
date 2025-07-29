@@ -3,7 +3,7 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\models\RefPangkat;
+use App\Models\RefPangkat;
 
 
 class RefGolongan extends Model

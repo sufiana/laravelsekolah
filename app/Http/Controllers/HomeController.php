@@ -126,6 +126,15 @@ class HomeController extends Controller
         ]);
     }
 
+    public function logout(Request $request)
+    {
+        Auth::logout(); // <== ini pakai facade yang kamu tunjukkan
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login'); // atau halaman lain setelah logout
+    }
 
 
 }

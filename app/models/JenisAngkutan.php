@@ -3,7 +3,7 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\models\JenisTransportasi;
+use App\Models\JenisTransportasi;
 
 class JenisAngkutan extends Model
 {

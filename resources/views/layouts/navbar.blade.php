@@ -183,14 +183,14 @@
                 <li>
                     <a href="user-profile.html"><i class="fa fa-user"></i>Profile</a>
                 </li>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
                 <li>
-                    <a href="#"><i class="fa fa-cog"></i>Settings</a>
-                </li>
-                <li>
-                    <a href="#"><i class="fa fa-envelope-o"></i>Messages</a>
-                </li>
-                <li>
-                    <a href="#"><i class="fa fa-power-off"></i>Logout</a>
+                    <a href="{{ route('logout') }}"
+                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <i class="fa fa-power-off"></i>{{ __('Logout') }}
+                    </a>
                 </li>
             </ul>
         </li>

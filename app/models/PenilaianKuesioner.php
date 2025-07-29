@@ -3,7 +3,7 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\models\IconGrid;
+use App\Models\IconGrid;
 
 
 class PenilaianKuesioner extends Model
