@@ -45,7 +45,7 @@
             <div class="col-lg-3 col-sm-6 col-12">
                 <div class="main-box infographic-box colored red-bg">
                     <i class="fa fa-tag"></i>
-                    <span class="headline" style="font-size: 10.5px">Sekolah Terintegrasi</span>
+                    <span class="headline" style="font-size: 10.5px">Sekolah Patuh</span>
                     <span class="value">9</span>
                 </div>
             </div>
@@ -53,7 +53,7 @@
             <div class="col-lg-3 col-sm-6 col-12">
                 <div class="main-box infographic-box colored green-bg">
                     <i class="fa fa-tags"></i>
-                    <span class="headline" style="font-size: 9px">Sekolah Belum Terintegrasi</span>
+                    <span class="headline" style="font-size: 9px">Sekolah Bersih</span>
                     <span class="value">45</span>
                 </div>
             </div>
@@ -61,7 +61,7 @@
             <div class="col-lg-3 col-sm-6 col-12">
                 <div class="main-box infographic-box colored purple-bg">
                     <i class="fa fa-credit-card"></i>
-                    <span class="headline" style="font-size: 10.5px">Persentase Sekolah Bersih</span>
+                    <span class="headline" style="font-size: 9px">Persentase Sekolah Bersih</span>
                     <span class="value">42</span>
                 </div>
             </div>
@@ -90,15 +90,15 @@
                     <div class="profile-box-footer clearfix">
                         <a href="#">
                             <span class="value">44</span>
-                            <span class="label">Messages</span>
+                            <span class="label">Evaluasi Sekolah</span>
                         </a>
                         <a href="#">
                             <span class="value">91</span>
-                            <span class="label">Sales</span>
+                            <span class="label">Jumlah Sekolah Sudah Lapor </span>
                         </a>
                         <a href="#">
                             <span class="value">3</span>
-                            <span class="label">Projects</span>
+                            <span class="label">Jumlah Sekolah Belum Lapor</span>
                         </a>
                     </div>
                 </div>
@@ -111,8 +111,9 @@
                 <div class="main-box clearfix profile-box-contact" style="box-shadow: none; background-color: transparent; border: none;">
                     <div class="main-box-body clearfix" style="border: none;">
                         <div class="d-flex flex-column align-items-center justify-content-center text-center" style="height: 200px;">
-                            <img src="{{ asset('images/icon/' . $i->gambar) }}" alt="" style="width: 80px; height: 80px; object-fit: cover;">
-                            <a href="{{ route('sekolahbersih.create', $i->id) }}">
+                            <a href="{{ route('sekolahbersih.indexdinas') }}">
+                                <img src="{{ asset('images/icon/' . $i->gambar) }}" alt="" style="width: 80px; height: 80px; object-fit: cover;">
+                                <br/>
                                 <h2 class="mb-0" style="font-size: 1.2rem; color: #3e5879;">{{ $i->singkatan }}</h2>
                             </a>
                         </div>

@@ -36,7 +36,6 @@
                                 <thead>
                                 <tr class="green-bg" style="color: white">
                                     <th width="20"><a href="#" style="color: white">No.</a></th>
-                                    <th><a href="#" style="color: white">Sekolah</a></th>
                                     <th><a href="#" style="color: white">Periode</a></th>
                                     <th><a href="#" style="color: white">Ruang</a></th>
                                     <th><a href="#" style="color: white">Deskripsi</a></th>
@@ -92,7 +91,6 @@
                         return "<a href='show/" + row.id + "'>" + i + "</a>"
                     }
                 },
-                {data: 'sekolah', name: 'sekolah', searchable: true, orderable: true},
                 {data: 'periode_awal_kuesioner', name: 'periode_awal_kuesioner', searchable: true, orderable: true},
                 {data: 'id_ruang', name: 'id_ruang', searchable: true, orderable: true},
                 {data: 'id_kuesioner', name: 'id_kuesioner', searchable: true, orderable: true},

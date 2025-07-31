@@ -37,23 +37,54 @@
                                     <ul class="submenu">
                                         <li><a href="">Povinsi</a></li>
                                         <li><a href="">Kabupaten / Kota</a></li>
-                                        <li><a href="">Kecamatan</a></li>
-                                        <li><a href="">kelurahan</a></li>
+                                        <li><a href="">Sekolah</a></li>
+                                        <li><a href="">Cabdis</a></li>
+                                        <li><a href="">Parameter</a></li>
+
                                     </ul>
                                 </li>
                             </ul>
                         </li>
+                        @php $user = Auth::user(); @endphp
+                        @if($user)
+                        @if($user->role==4)
                         <li>
                             <a href="#" class="dropdown-toggle dropdown-nocaret">
-                                <i class="fa fa-money"></i><span>Manajemen Anggaran</span>
+                                <i class="fa fa-money"></i><span>Manajemen Data</span>
                                 <i class="fa fa-angle-right drop-icon"></i>
                             </a>
                             <ul class="submenu">
-                                <li><a href="">Jenis Biaya</a></li>
-                                <li><a href="">Status Wilayah Biaya</a></li>
-                                <li><a href="">Manajemen Biaya</a></li>
+                                <li><a href="{{ route('sekolahbersih.indexdinas') }}">Verifikasi</a></li>
+                                <li><a href="">Rekap</a></li>
+                                <li><a href="">Laporan</a></li>
                             </ul>
                         </li>
+                        @elseif($user->role==6)
+                        <li>
+                            <a href="#" class="dropdown-toggle dropdown-nocaret">
+                                <i class="fa fa-money"></i><span>Manajemen Data</span>
+                                <i class="fa fa-angle-right drop-icon"></i>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="{{ route('sekolahbersih.indexpengawas') }}">Verifikasi</a></li>
+                                <li><a href="">Rekap</a></li>
+                                <li><a href="">Laporan</a></li>
+                            </ul>
+                        </li>
+                        @elseif($user->role==2 || $user->role==3)
+                        <li>
+                            <a href="#" class="dropdown-toggle dropdown-nocaret">
+                                <i class="fa fa-money"></i><span>Manajemen Data</span>
+                                <i class="fa fa-angle-right drop-icon"></i>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="{{ route('sekolahbersih.indexsekolah') }}">Lihat Data</a></li>
+                                <li><a href="">Rekap</a></li>
+                                <li><a href="">Laporan</a></li>
+                            </ul>
+                        </li>
+                        @endif
+                        @endif
                     </ul>
                 </div>
             </div>

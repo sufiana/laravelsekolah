@@ -44,6 +44,7 @@ Route::post('sekolahbersih/storeverifikasi', 'SekolahBersihController@storeverif
 Route::delete('sekolahbersih/destroy/{id}', 'SekolahBersihController@destroy')->name('sekolahbersih.delete');
 Route::get('sekolahbersih/edit/{id}', 'SekolahBersihController@edit')->name('sekolahbersih.edit');
 Route::get('sekolahbersih/verifikasi/{id}', 'SekolahBersihController@verifikasi')->name('sekolahbersih.verifikasi');
+Route::get('sekolahbersih/verifikasiPengawas/{id}', 'SekolahBersihController@verifikasiPengawas')->name('sekolahbersih.verifikasiPengawas');
 Route::get('sekolahbersih/show/{id}', 'SekolahBersihController@show')->name('sekolahbersih.show');
 Route::get('sekolahbersih/print/{id}', 'SekolahBersihController@print')->name('sekolahbersih.print');
 

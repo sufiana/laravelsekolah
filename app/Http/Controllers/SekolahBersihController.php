@@ -172,9 +172,7 @@ class SekolahBersihController extends Controller
                 }
                 return $periode;
             })
-            ->editColumn('id_ruang',function ($data){
-                return !$data->ruanglist || !$data->id_ruang ?  ' - ' : $data->ruanglist["nama"]  ;
-            })
+
             ->editColumn('id_ruang',function ($data){
                 return !$data->ruanglist || !$data->id_ruang ?  ' - ' : $data->ruanglist["nama"]  ;
             })
@@ -189,7 +187,7 @@ class SekolahBersihController extends Controller
                     ->whereIn('hasil_kuesioner.id', $arrayIds)
                     ->get();
 
-                $html = '<div style="font-size: 13px;">';
+                $html = '<div style="font-size: 10px; line-height: 12px">';
                 $html .= '<div style="display: flex; font-weight:bold; border-bottom: 1px solid #ddd;">
              <div style="flex: 1;">Parameter</div>
              <div style="width: 80px; text-align:center;">Status</div>
@@ -283,17 +281,66 @@ class SekolahBersihController extends Controller
                 }
                 return $periode;
             })
-
             ->editColumn('sekolah',function ($data){
                 $a= Sekolah::find($data->sekolah);
-                return !$a || !$data->sekolah ?  ' - ' : $a["nama"]  ;
+                return !$a || !$data->sekolah ?  ' - ' : $a["nama"]  ;            
+                
             })
+            // ->editColumn('id_ruang',function ($data){
+            //     $a= IconGrid::find($data->id_ruang);
+            //     return !$a || !$data->id_ruang ?  ' - ' : $a["nama"]  ;
+            // })
+            
+             ->editColumn('id_ruang', function ($data) {
+                 $sekolahId= $data->sekolah; 
+                 $periodeAwal= $data->periode_awal_kuesioner;
+                 $periodeAkhir= $data->periode_akhir_kuesioner;
+
+$hasilKuesioner = DB::table('ruang_sekolah as rs')
+    ->leftJoin('evaluasi_kuesioner as ek', function($join) use ($sekolahId, $periodeAwal, $periodeAkhir) {
+        $join->on('ek.id_ruang', '=', 'rs.id')
+            ->where('ek.sekolah', '=', $sekolahId)
+            ->where('ek.periode_awal_kuesioner', '=', $periodeAwal)
+            ->where('ek.periode_akhir_kuesioner', '=', $periodeAkhir);
+    })
+    ->select(
+        'rs.nama',
+        DB::raw('COALESCE(SUM(ek.score), 0) as score'),
+        DB::raw('(SELECT COUNT(*) FROM parameter_kebersihan p WHERE p.id_ruang = rs.id) as jumlah_parameter')
+
+    )
+    ->groupBy('rs.id', 'rs.nama')
+    ->orderBy('rs.nama')
+    ->get();
+
+    $html = '<div style="font-size: 10px; line-height: 12px">';
+    $html .= '<div style="display: flex; font-weight:bold; border-bottom: 1px solid #ddd;">
+         <div style="flex: 1;">Parameter</div>
+         <div style="width: 80px; text-align:center;">Score</div>
+         <div style="width: 80px; text-align:center;">Penilaian</div>
+
+         </div>';
+
+    foreach ($hasilKuesioner as $row) {
+        $hasil=$row->score/$row->jumlah_parameter;
+        $html .= '<div style="display: flex; border-bottom: 1px solid #eee; padding: 2px 0;">
+             <div style="flex: 1;">' . $row->nama .' ('. $row->jumlah_parameter.')'. '</div>
+             <div style="width: 80px; text-align:center;">' . $row->score . '</div>
+            <div style="width: 80px; text-align:center;">' . $hasil . '</div>
+
+          </div>';
+    }
+
+    $html .= '</div>';
+    return $html;
+})
+
 
             ->addColumn('action', function ($model){
                 if($model->status_verifikasi_sekolah ==1) {
                     $button = "
                     <div class='btn-group-horizontal'>
-                    <a class='table-link success' href='" . route("sekolahbersih.edit", $model->id) . "' id='editbtn' >
+                    <a class='table-link success' href='" . route("sekolahbersih.verifikasiPengawas", $model->id) . "' id='editbtn' >
                         <span class='fa-stack'><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-edit fa-stack-1x fa-inverse'></i></span>
                     </a>
                     <a class='table-link sumut' href='" . route("sekolahbersih.print", $model->id) . "' id='printbtn' >
@@ -305,26 +352,36 @@ class SekolahBersihController extends Controller
                 else {
                     $button = "
                     <div class='btn-group-horizontal'>
-                    <a class='table-link success' href='" . route("sekolahbersih.edit", $model->id) . "' id='editbtn' >
+                    <a class='table-link success' href='" . route("sekolahbersih.verifikasiPengawas", $model->id) . "' id='editbtn' >
                         <span class='fa-stack'><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-edit fa-stack-1x fa-inverse'></i></span>
                     </a>
                     <a class='table-link sumut' href='" . route("sekolahbersih.verifikasi", $model->id) . "' id='verifikasibtn' >
                         <span class='fa-stack' ><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-check-square fa-stack-1x fa-inverse'></i></span>
                     </a>
-
+   
                 ";
                 }
 
                 $button = $button . "</div>";
                 return $button;
             })
-
-            ->rawColumns(['id_kuesioner','action','status_verifikasi_sekolah'])
+            ->rawColumns(['id_ruang','action'])
             ->make(true);
     }
 
     public function getDataDinas(){
-        $model=EvaluasiKuesioner::orderBy('id', 'ASC')->get();
+        $model = DB::select("
+                    SELECT *
+                    FROM (
+                        SELECT *,
+                            ROW_NUMBER() OVER (
+                                PARTITION BY sekolah, periode_awal_kuesioner, periode_akhir_kuesioner
+                                ORDER BY time_created DESC
+                            ) AS rn
+                        FROM evaluasi_kuesioner
+                    ) t
+                    WHERE rn = 1
+        ");
         return Datatables::of($model)
             ->editColumn('periode_awal_kuesioner',function ($data){
                 if($data->periode_awal_kuesioner <> null && $data->periode_akhir_kuesioner) {
@@ -335,46 +392,56 @@ class SekolahBersihController extends Controller
                 }
                 return $periode;
             })
-            ->editColumn('id_ruang',function ($data){
-                return !$data->ruanglist || !$data->id_ruang ?  ' - ' : $data->ruanglist["nama"]  ;
+            ->editColumn('sekolah',function ($data){
+                $a= Sekolah::find($data->sekolah);
+                return !$a || !$data->sekolah ?  ' - ' : $a["nama"]  ;            
+                
             })
-            ->editColumn('id_ruang',function ($data){
-                return !$data->ruanglist || !$data->id_ruang ?  ' - ' : $data->ruanglist["nama"]  ;
-            })
-            ->editColumn('id_kuesioner', function ($data) {
-                $stringIds = $data->id_kuesioner;  // contoh: "{319,320,321}"
-                $arrayIds = explode(',', trim($stringIds, '{}'));
+            // ->editColumn('id_ruang',function ($data){
+            //     $a= IconGrid::find($data->id_ruang);
+            //     return !$a || !$data->id_ruang ?  ' - ' : $a["nama"]  ;
+            // })
+            
+             ->editColumn('id_ruang', function ($data) {
+                 $sekolahId= $data->sekolah; 
+                 $periodeAwal= $data->periode_awal_kuesioner;
+                 $periodeAkhir= $data->periode_akhir_kuesioner;
 
-                $hasilKuesioner = DB::table('hasil_kuesioner')
-                    ->select('p.parameter', 'hasil_kuesioner.jawaban')
-                    ->join('parameter_kebersihan as p', 'p.id', '=', 'hasil_kuesioner.id_parameter')
-                    ->join('ruang_sekolah as r', 'r.id', '=', 'hasil_kuesioner.id_ruang')
-                    ->whereIn('hasil_kuesioner.id', $arrayIds)
-                    ->get();
+$hasilKuesioner = DB::table('ruang_sekolah as rs')
+    ->leftJoin('evaluasi_kuesioner as ek', function($join) use ($sekolahId, $periodeAwal, $periodeAkhir) {
+        $join->on('ek.id_ruang', '=', 'rs.id')
+            ->where('ek.sekolah', '=', $sekolahId)
+            ->where('ek.periode_awal_kuesioner', '=', $periodeAwal)
+            ->where('ek.periode_akhir_kuesioner', '=', $periodeAkhir);
+    })
+    ->select(
+        'rs.nama',
+        DB::raw('COALESCE(SUM(ek.score), 0) as score'),
+        DB::raw('(SELECT COUNT(*) FROM parameter_kebersihan p WHERE p.id_ruang = rs.id) as jumlah_parameter')
 
-                $html = '<div style="font-size: 13px;">';
-                $html .= '<div style="display: flex; font-weight:bold; border-bottom: 1px solid #ddd;">
-             <div style="flex: 1;">Parameter</div>
-             <div style="width: 80px; text-align:center;">Status</div>
-             </div>';
+    )
+    ->groupBy('rs.id', 'rs.nama')
+    ->orderBy('rs.nama')
+    ->get();
 
-                foreach ($hasilKuesioner as $row) {
-                    // Status label
-                    if ($row->jawaban == 3) {
-                        $status = '<span style="color:green;">Bersih</span>';
-                    } elseif ($row->jawaban == 2) {
-                        $status = '<span style="color:orange;">Cukup Bersih</span>';
-                    } else {
-                        $status = '<span style="color:red;">Tidak Bersih</span>';
-                    }
+    $html = '<div style="font-size: 10px; line-height: 12px">';
+    $html .= '<div style="display: flex; font-weight:bold; border-bottom: 1px solid #ddd;">
+         <div style="flex: 1;">Parameter</div>
+         <div style="width: 80px; text-align:center;">Status</div>
+         </div>';
 
-                    $html .= '<div style="display: flex; border-bottom: 1px solid #eee; padding: 2px 0;">
-                 <div style="flex: 1;">' . $row->parameter . '</div>
-                 <div style="width: 80px; text-align:center;">' . $status . '</div>
-              </div>';
-                }
-                return $html;
-            })
+    foreach ($hasilKuesioner as $row) {
+        $html .= '<div style="display: flex; border-bottom: 1px solid #eee; padding: 2px 0;">
+             <div style="flex: 1;">' . $row->nama . '</div>
+             <div style="width: 80px; text-align:center;">' . $row->score . '</div>
+            <div style="width: 80px; text-align:center;">' . $row->jumlah_parameter . '</div>
+
+          </div>';
+    }
+
+    $html .= '</div>';
+    return $html;
+})
             ->addColumn('action', function ($model){
                 if($model->status_verifikasi_sekolah ==1) {
                     $button = "
@@ -385,9 +452,7 @@ class SekolahBersihController extends Controller
                     <a class='table-link sumut' href='" . route("sekolahbersih.print", $model->id) . "' id='printbtn' >
                         <span class='fa-stack' ><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-file-pdf-o fa-stack-1x fa-inverse'></i></span>
                     </a>
-                    <a href='#' class='table-link danger' data-id='" . $model->id . "' data-nama='" . $model->nama . "' id='deletebtn' data-toggle='modal' data-target='#delModal'>
-                        <span class='fa-stack'><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-trash-o fa-stack-1x fa-inverse'></i></span>
-                    </a>
+
                 ";
                 }
                 else {
@@ -399,27 +464,14 @@ class SekolahBersihController extends Controller
                     <a class='table-link sumut' href='" . route("sekolahbersih.verifikasi", $model->id) . "' id='verifikasibtn' >
                         <span class='fa-stack' ><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-check-square fa-stack-1x fa-inverse'></i></span>
                     </a>
-                    <a href='#' class='table-link danger' data-id='" . $model->id . "' data-nama='" . $model->nama . "' id='deletebtn' data-toggle='modal' data-target='#delModal'>
-                        <span class='fa-stack'><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-trash-o fa-stack-1x fa-inverse'></i></span>
-                    </a>
+   
                 ";
                 }
 
                 $button = $button . "</div>";
                 return $button;
             })
-            ->editColumn('status_verifikasi_sekolah',function ($data){
-                if($data->status_verifikasi_sekolah == 1 ){
-                    $statusverifikasisekolah='<span class="badge badge-success">Terverifikasi</span>';
-                }
-                else {
-                    $statusverifikasisekolah='<span class="badge badge-warning">Belum Verifikasi</span>';
-                }
-                $html='<div class="btn-group-horizontal">'.$statusverifikasisekolah.'</div>';
-                return $html;
-
-            })
-            ->rawColumns(['id_kuesioner','action','status_verifikasi_sekolah'])
+            ->rawColumns(['id_ruang','action'])
             ->make(true);
     }
 
@@ -610,7 +662,37 @@ class SekolahBersihController extends Controller
             ->join('ruang_sekolah as r', 'r.id', '=', 'hasil_kuesioner.id_ruang')
             ->whereIn('hasil_kuesioner.id', $arrayIds)
             ->get();
+            
+            
         return view('sekolahbersih.verifikasi',compact('model','ruang','hasilKuesioner','sekolah'));
+    }
+    
+    public function verifikasiPengawas($id)
+    {
+        $model=EvaluasiKuesioner::findOrFail($id);
+        $sekolah=Sekolah::find($model->sekolah);
+
+        $sekolahId= $model->sekolah; 
+        $periodeAwal= $model->periode_awal_kuesioner;
+        $periodeAkhir= $model->periode_akhir_kuesioner;
+        $hasilKuesioner = DB::table('ruang_sekolah as rs')
+            ->leftJoin('evaluasi_kuesioner as ek', function($join) use ($sekolahId, $periodeAwal, $periodeAkhir) {
+                $join->on('ek.id_ruang', '=', 'rs.id')
+                    ->where('ek.sekolah', '=', $sekolahId)
+                    ->where('ek.periode_awal_kuesioner', '=', $periodeAwal)
+                    ->where('ek.periode_akhir_kuesioner', '=', $periodeAkhir);
+            })
+            ->select(
+                'rs.nama',
+                DB::raw('COALESCE(SUM(ek.score), 0) as score'),
+                DB::raw('(SELECT COUNT(*) FROM parameter_kebersihan p WHERE p.id_ruang = rs.id) as jumlah_parameter')
+        
+            )
+            ->groupBy('rs.id', 'rs.nama')
+            ->orderBy('rs.nama')
+            ->get();
+        
+        return view('sekolahbersih.verifikasipengawas',compact('model','sekolah','sekolahId','periodeAwal','periodeAkhir','hasilKuesioner'));
     }
 
     public function print($id)
@@ -628,7 +710,7 @@ class SekolahBersihController extends Controller
             ->whereIn('hasil_kuesioner.id', $arrayIds)
             ->get();
 
-        $pdf= PDF::loadView('sekolahbersih.cetak',compact('model','ruang','hasilKuesioner','sekolah'))->setPaper('a4', 'portrait');
+        $pdf= PDF::loadView('sekolahbersih.cetak',compact('model','hasilKuesioner','sekolah'))->setPaper('a4', 'portrait');
         return $pdf->stream();
        // return view('sekolahbersih.verifikasi',compact('model','ruang','hasilKuesioner','sekolah'));
     }

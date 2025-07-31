@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <title>SPPD</title>
+    <title>SEKOLAH BERSIH</title>
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/themes') }}/components/bootstrap/dist/css/bootstrap.min.css" />
     <script src="{{ asset('assets/themes') }}/js/demo-rtl.js"></script>
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/themes') }}/components/font-awesome/css/font-awesome.css" />
