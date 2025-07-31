@@ -283,16 +283,16 @@ class SekolahBersihController extends Controller
             })
             ->editColumn('sekolah',function ($data){
                 $a= Sekolah::find($data->sekolah);
-                return !$a || !$data->sekolah ?  ' - ' : $a["nama"]  ;            
-                
+                return !$a || !$data->sekolah ?  ' - ' : $a["nama"]  ;
+
             })
             // ->editColumn('id_ruang',function ($data){
             //     $a= IconGrid::find($data->id_ruang);
             //     return !$a || !$data->id_ruang ?  ' - ' : $a["nama"]  ;
             // })
-            
+
              ->editColumn('id_ruang', function ($data) {
-                 $sekolahId= $data->sekolah; 
+                 $sekolahId= $data->sekolah;
                  $periodeAwal= $data->periode_awal_kuesioner;
                  $periodeAkhir= $data->periode_akhir_kuesioner;
 
@@ -358,7 +358,7 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                     <a class='table-link sumut' href='" . route("sekolahbersih.verifikasi", $model->id) . "' id='verifikasibtn' >
                         <span class='fa-stack' ><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-check-square fa-stack-1x fa-inverse'></i></span>
                     </a>
-   
+
                 ";
                 }
 
@@ -394,16 +394,16 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             })
             ->editColumn('sekolah',function ($data){
                 $a= Sekolah::find($data->sekolah);
-                return !$a || !$data->sekolah ?  ' - ' : $a["nama"]  ;            
-                
+                return !$a || !$data->sekolah ?  ' - ' : $a["nama"]  ;
+
             })
             // ->editColumn('id_ruang',function ($data){
             //     $a= IconGrid::find($data->id_ruang);
             //     return !$a || !$data->id_ruang ?  ' - ' : $a["nama"]  ;
             // })
-            
+
              ->editColumn('id_ruang', function ($data) {
-                 $sekolahId= $data->sekolah; 
+                 $sekolahId= $data->sekolah;
                  $periodeAwal= $data->periode_awal_kuesioner;
                  $periodeAkhir= $data->periode_akhir_kuesioner;
 
@@ -464,7 +464,7 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                     <a class='table-link sumut' href='" . route("sekolahbersih.verifikasi", $model->id) . "' id='verifikasibtn' >
                         <span class='fa-stack' ><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-check-square fa-stack-1x fa-inverse'></i></span>
                     </a>
-   
+
                 ";
                 }
 
@@ -662,17 +662,17 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             ->join('ruang_sekolah as r', 'r.id', '=', 'hasil_kuesioner.id_ruang')
             ->whereIn('hasil_kuesioner.id', $arrayIds)
             ->get();
-            
-            
+
+
         return view('sekolahbersih.verifikasi',compact('model','ruang','hasilKuesioner','sekolah'));
     }
-    
+
     public function verifikasiPengawas($id)
     {
         $model=EvaluasiKuesioner::findOrFail($id);
         $sekolah=Sekolah::find($model->sekolah);
 
-        $sekolahId= $model->sekolah; 
+        $sekolahId= $model->sekolah;
         $periodeAwal= $model->periode_awal_kuesioner;
         $periodeAkhir= $model->periode_akhir_kuesioner;
         $hasilKuesioner = DB::table('ruang_sekolah as rs')
@@ -683,15 +683,15 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                     ->where('ek.periode_akhir_kuesioner', '=', $periodeAkhir);
             })
             ->select(
+                DB::raw('COALESCE(max(ek.id), 0) as idnya'),
                 'rs.nama',
                 DB::raw('COALESCE(SUM(ek.score), 0) as score'),
                 DB::raw('(SELECT COUNT(*) FROM parameter_kebersihan p WHERE p.id_ruang = rs.id) as jumlah_parameter')
-        
+
             )
             ->groupBy('rs.id', 'rs.nama')
-            ->orderBy('rs.nama')
+            ->orderBy('rs.id')
             ->get();
-        
         return view('sekolahbersih.verifikasipengawas',compact('model','sekolah','sekolahId','periodeAwal','periodeAkhir','hasilKuesioner'));
     }
 

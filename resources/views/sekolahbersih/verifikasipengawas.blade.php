@@ -120,11 +120,13 @@
 
                                     @php $no=0; @endphp
                                     @foreach($hasilKuesioner as $i)
-                                    @php 
-                                        $no++; 
+                                    @php
+                                        $no++;
                                         $ratarata = $i->score / $i->jumlah_parameter;
                                         $switchId = 'switch_' . $no;
-                                    
+
+
+
                                         if ($ratarata >= 2.75) {
                                             $kesimpulan = '<span class="badge badge-primary">Sangat Bersih</span>';
                                             $nilai = 4;
@@ -149,8 +151,9 @@
                                         <td>{{$i->score}}</td>
                                         <td>{{$ratarata}}</td>
                                         <td>
-                                            {!!$kesimpulan!!} 
+                                            {!!$kesimpulan!!}
                                             <input type="hidden" class="form-control" id="nilai[{{$no}}]" name="nilai[{{$no}}]" value="{{$nilai}}">
+                                            <input type="text" class="form-control" id="id[{{$no}}]" name="id[{{$no}}]" value="{{$i->idnya}}">
                                         </td>
                                         <td>
                                             <textarea class="form-control form-control-sm" id="catatan[{{$no}}]" name="catatan[{{$no}}]" rows="1"></textarea>
@@ -166,11 +169,11 @@
                                            <!-- </div>-->
 
                                         <div class="form-check form-check-inline checkbox-nice">
-                                            
-                                            <input 
-                                                class="form-check-input" 
-                                                type="checkbox" 
-                                                id="dokumentasi_{{ $no }}" 
+
+                                            <input
+                                                class="form-check-input"
+                                                type="checkbox"
+                                                id="dokumentasi_{{ $no }}"
                                                 onchange="updateCheckboxValue({{ $no }})"
                                             >
                                             <label class="form-check-label" for="dokumentasi_{{ $no }}">Ada</label>
@@ -179,7 +182,7 @@
                                             <input type="hidden" id="dokumentasi_hidden_{{ $no }}" name="dokumentasi[{{ $no }}]" value="0">
 
 
-                                            
+
                                         </td>
                                         <td width="10%">
                                             <textarea class="form-control form-control-sm" id="catatanpemeriksaan[{{$no}}]" name="catatanpemeriksaan[{{$no}}]" rows="1"></textarea>
@@ -222,7 +225,7 @@
 function updateCheckboxValue(no) {
     const checkbox = document.getElementById('dokumentasi_' + no);
     const hiddenInput = document.getElementById('dokumentasi_hidden_' + no);
-    
+
     if (checkbox.checked) {
         hiddenInput.value = 1;
     } else {
