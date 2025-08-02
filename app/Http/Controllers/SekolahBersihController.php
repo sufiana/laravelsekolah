@@ -310,7 +310,7 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
 
     )
     ->groupBy('rs.id', 'rs.nama')
-    ->orderBy('rs.nama')
+    ->orderBy('rs.id')
     ->get();
 
     $html = '<div style="font-size: 10px; line-height: 12px">';
@@ -421,7 +421,7 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
 
     )
     ->groupBy('rs.id', 'rs.nama')
-    ->orderBy('rs.nama')
+    ->orderBy('rs.id')
     ->get();
 
     $html = '<div style="font-size: 10px; line-height: 12px">';

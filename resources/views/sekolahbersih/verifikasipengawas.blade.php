@@ -3,67 +3,67 @@
 
 @section('content')
 <style>
-.table td, .table th {
-    padding: .5rem;
-    vertical-align: top;
-    border-top: 1px solid #dee2e6;
-    font-size: 10px;
-}
-.table tbody > tr > td:first-child {
-    font-size: 12px;
-    font-weight: 300;
-}
+    .table td, .table th {
+        padding: .5rem;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+        font-size: 10px;
+    }
+    .table tbody > tr > td:first-child {
+        font-size: 12px;
+        font-weight: 300;
+    }
 
-.onoffswitch-sm {
-  width: 60px;
-  height: 24px;
-}
+    .onoffswitch-sm {
+        width: 60px;
+        height: 24px;
+    }
 
-.onoffswitch-sm .onoffswitch-label {
-  display: block;
-  overflow: hidden;
-  cursor: pointer;
-  height: 24px;
-  padding: 0;
-  line-height: 24px;
-  border: 2px solid #E74C3C;
-  border-radius: 24px;
-  background-color: #E74C3C;
-  font-size: 6px; /* Tambahkan ini untuk kecilkan font */
-}
+    .onoffswitch-sm .onoffswitch-label {
+        display: block;
+        overflow: hidden;
+        cursor: pointer;
+        height: 24px;
+        padding: 0;
+        line-height: 24px;
+        border: 2px solid #E74C3C;
+        border-radius: 24px;
+        background-color: #E74C3C;
+        font-size: 6px; /* Tambahkan ini untuk kecilkan font */
+    }
 
-.onoffswitch-sm .onoffswitch-inner {
-  display: block;
-  width: 200%;
-  margin-left: -100%;
-  transition: margin 0.3s ease-in 0s;
-}
+    .onoffswitch-sm .onoffswitch-inner {
+        display: block;
+        width: 200%;
+        margin-left: -100%;
+        transition: margin 0.3s ease-in 0s;
+    }
 
-.onoffswitch-sm .onoffswitch-switch {
-  width: 10px;
-  height: 10px;
-  background: white;
-  position: absolute;
-  top: 1px; /* Sesuaikan agar vertikalnya pas */
-  right: 26px;
-  border: 1px solid #E74C3C;
-  border-radius: 50%; /* Pastikan ini untuk bentuk bulat */
-  transition: all 0.3s ease-in 0s;
-  margin: 5px 18px 30px 40px;
-}
+    .onoffswitch-sm .onoffswitch-switch {
+        width: 10px;
+        height: 10px;
+        background: white;
+        position: absolute;
+        top: 1px; /* Sesuaikan agar vertikalnya pas */
+        right: 26px;
+        border: 1px solid #E74C3C;
+        border-radius: 50%; /* Pastikan ini untuk bentuk bulat */
+        transition: all 0.3s ease-in 0s;
+        margin: 5px 18px 30px 40px;
+    }
 
 
-.onoffswitch-sm .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
-  margin-left: 0;
-}
+    .onoffswitch-sm .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+        margin-left: 0;
+    }
 
-.onoffswitch-sm .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
-  right: -10px;
-}
+    .onoffswitch-sm .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+        right: -10px;
+    }
 
-.onoffswitch-inner:before {
-    padding-left: 5px;
-}
+    .onoffswitch-inner:before {
+        padding-left: 5px;
+    }
 
 
 </style>
@@ -74,7 +74,7 @@
             <div class="col-lg-12">
                 <ol class="breadcrumb">
                     <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i> Home</a></li>
-                    <li><span><a href="{{ route('sekolahbersih.index') }}"><i class="fa fa-list"></i> Data @yield('title')</a></span></li>
+                    <li><span><a href="{{ route('sekolahbersih.indexpengawas') }}"><i class="fa fa-list"></i> Data @yield('title')</a></span></li>
                     <li class="active"><span>@yield('title')</span></li>
                 </ol>
                 <h1>Lihat Data @yield('title') #{{$model->id}}</h1>
@@ -111,84 +111,137 @@
                                         <td width="30%">Parameter</td>
                                         <td width="5%">Score</td>
                                         <td width="8%">Rata-rata</td>
-                                        <td width="8%">Keterangan</td>
-                                        <td width="22%">Catatan/Temuan</td>
+                                        <td width="8%">Kepatuhan</td>
+                                        <td width="8%">Keterangan <br/> Kebersihan </td>
+                                        <td width="14%">Catatan/Temuan</td>
                                         <td width="5%">Dokumentasi</td>
                                         <td width="15%">Catatan Pemeriksaan</td>
                                     </tr>
                                     </thead>
 
-                                    @php $no=0; @endphp
+                                    @php
+                                    $no=0;
+                                    $totalrerata = 0;
+                                    $totalkebersihan=0;
+                                    $amountkepatuhan=0;
+                                    $totalkepatuhan=0;
+
+                                    @endphp
                                     @foreach($hasilKuesioner as $i)
                                     @php
-                                        $no++;
-                                        $ratarata = $i->score / $i->jumlah_parameter;
-                                        $switchId = 'switch_' . $no;
+                                    $no++;
+                                    $ratarata = $i->score / $i->jumlah_parameter;
+                                    $switchId = 'switch_' . $no;
+                                    $totalrerata += $ratarata;
+                                    $totalkebersihan = $totalrerata/12;
+                                    $max=$i->jumlah_parameter*3;
+                                    $kepatuhan = round(($i->score / $max) * 100);
+                                    $amountkepatuhan += $kepatuhan;
+                                    $totalkepatuhan = $amountkepatuhan /12;
 
 
+                                    if ($ratarata >= 2.75) {
+                                    $kesimpulan = '<span class="badge badge-primary">Sangat Bersih</span>';
+                                    $nilai = 4;
+                                    } elseif ($ratarata >= 2.00 && $ratarata < 2.75) {
+                                    $kesimpulan = '<span class="badge badge-success">Bersih</span>';
+                                    $nilai = 3;
+                                    } elseif ($ratarata >= 1.00 && $ratarata < 2.00) {
+                                    $kesimpulan = '<span class="badge badge-info">Cukup Bersih</span>';
+                                    $nilai = 2;
+                                    } elseif ($ratarata == 0) {
+                                    $kesimpulan = '<span class="badge badge-danger">Belum isi</span>';
+                                    $nilai = 0;
+                                    } else {
+                                    $kesimpulan = '<span class="badge badge-warning">Kurang Bersih</span>';
+                                    $nilai = 1;
+                                    }
 
-                                        if ($ratarata >= 2.75) {
-                                            $kesimpulan = '<span class="badge badge-primary">Sangat Bersih</span>';
-                                            $nilai = 4;
-                                        } elseif ($ratarata >= 2.00 && $ratarata < 2.75) {
-                                            $kesimpulan = '<span class="badge badge-success">Bersih</span>';
-                                            $nilai = 3;
-                                        } elseif ($ratarata >= 1.00 && $ratarata < 2.00) {
-                                            $kesimpulan = '<span class="badge badge-info">Cukup Bersih</span>';
-                                            $nilai = 2;
-                                        } elseif ($ratarata == 0) {
-                                            $kesimpulan = '<span class="badge badge-danger">Belum isi</span>';
-                                            $nilai = 0;
-                                        } else {
-                                            $kesimpulan = '<span class="badge badge-warning">Kurang Bersih</span>';
-                                            $nilai = 1;
-                                        }
+                                    if ($kepatuhan >= 85)
+                                    {
+                                    $nilaikepatuhan = 4;
+                                    $kesimpulankepatuhan = '<span class="badge badge-primary">Sangat Patuh </span>';
+                                    }
+                                    elseif ($kepatuhan >= 70)
+                                    {
+                                    $nilaikepatuhan = 3;
+                                    $kesimpulankepatuhan = '<span class="badge badge-info">Patuh  </span>';
+                                    }
+                                    elseif ($kepatuhan >= 50)
+                                    {
+                                    $nilaikepatuhan = 2;
+                                    $kesimpulankepatuhan = '<span class="badge badge-danger"> Kurang Patuh </span>';
+                                    }
+                                    else {
+                                    $nilaikepatuhan = 1;
+                                    $kesimpulankepatuhan = '<span class="badge badge-warning"> Tidak Patuh </span>';
+                                    }
+
                                     @endphp
 
                                     <tr>
                                         <td style="text-align: center">{{$no}}</td>
                                         <td>{{$i->nama.' ('.$i->jumlah_parameter.')'}}</td>
                                         <td>{{$i->score}}</td>
-                                        <td>{{$ratarata}}</td>
+                                        <td>{{round($ratarata, 2)}}</td>
                                         <td>
-                                            {!!$kesimpulan!!}
-                                            <input type="hidden" class="form-control" id="nilai[{{$no}}]" name="nilai[{{$no}}]" value="{{$nilai}}">
-                                            <input type="text" class="form-control" id="id[{{$no}}]" name="id[{{$no}}]" value="{{$i->idnya}}">
+                                            <!--{{round($kepatuhan)}}-->
+                                            {!!$kesimpulankepatuhan!!}
+                                            <input type="hidden" id="kepatuhan[{{$no}}]" name="kepatuhan[{{$no}}]" value="{{$nilaikepatuhan}}">
+                                            <input type="hidden" id="persenkepatuhan[{{$no}}]" name="persenkepatuhan[{{$no}}]" value="{{$kepatuhan}}">
                                         </td>
                                         <td>
-                                            <textarea class="form-control form-control-sm" id="catatan[{{$no}}]" name="catatan[{{$no}}]" rows="1"></textarea>
+                                            {!!$kesimpulan!!}
+                                            <input type="hidden" id="nilai[{{$no}}]" name="nilai[{{$no}}]" value="{{$nilai}}">
+                                        </td>
+                                        <td>
+                                            <!--<textarea class="form-control form-control-sm" id="catatan[{{$no}}]" name="catatan[{{$no}}]" rows="1"></textarea>-->
+
+                                            <a href="#"
+                                               class="editable-catatan"
+                                               data-type="text"
+                                               data-pk="{{ $no }}"
+                                               data-name="catatan[{{ $no }}]"
+                                               data-title="Masukkan catatan">
+                                                {{ old("catatan[$no]") ?? '' }}
+                                            </a>
+
+                                            <input type="hidden" name="txtcatatan[{{ $no }}]" id="txtcatatan_{{ $no }}" value="{{old("catatan[$no]") }}">
+
                                         </td>
                                         <td>
                                             <div class="float-left">
-                                           <!--<div class="onoffswitch onoffswitch-danger onoffswitch-sm">-->
-                                           <!--   <input type="checkbox" name="kategori[{{$no}}]" class="onoffswitch-checkbox" id="switch_{{$no}}" checked>-->
-                                           <!--   <label class="onoffswitch-label" for="switch_{{$no}}">-->
-                                           <!--     <div class="onoffswitch-inner"></div>-->
-                                           <!--     <div class="onoffswitch-switch"></div>-->
-                                           <!--   </label>-->
-                                           <!-- </div>-->
+                                                <!--<div class="onoffswitch onoffswitch-danger onoffswitch-sm">-->
+                                                <!--   <input type="checkbox" name="kategori[{{$no}}]" class="onoffswitch-checkbox" id="switch_{{$no}}" checked>-->
+                                                <!--   <label class="onoffswitch-label" for="switch_{{$no}}">-->
+                                                <!--     <div class="onoffswitch-inner"></div>-->
+                                                <!--     <div class="onoffswitch-switch"></div>-->
+                                                <!--   </label>-->
+                                                <!-- </div>-->
 
-                                        <div class="form-check form-check-inline checkbox-nice">
-
-                                            <input
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                id="dokumentasi_{{ $no }}"
-                                                onchange="updateCheckboxValue({{ $no }})"
-                                            >
-                                            <label class="form-check-label" for="dokumentasi_{{ $no }}">Ada</label>
-                                        </div>
-                                        <br/>
-                                            <input type="hidden" id="dokumentasi_hidden_{{ $no }}" name="dokumentasi[{{ $no }}]" value="0">
-
-
-
+                                                <div class="form-check form-check-inline checkbox-nice">
+                                                    <input
+                                                        class="form-check-input"
+                                                        type="checkbox"
+                                                        id="dokumentasi_{{ $no }}"
+                                                        onchange="updateCheckboxValue({{ $no }})"
+                                                    >
+                                                    <label class="form-check-label" for="dokumentasi_{{ $no }}">Ada</label>
+                                                </div>
+                                                <br/>
+                                                <input type="hidden" id="dokumentasi_hidden_{{ $no }}" name="dokumentasi[{{ $no }}]" value="0">
                                         </td>
                                         <td width="10%">
                                             <textarea class="form-control form-control-sm" id="catatanpemeriksaan[{{$no}}]" name="catatanpemeriksaan[{{$no}}]" rows="1"></textarea>
                                         </td>
                                     </tr>
+
                                     @endforeach
+                                    <tr class="green-bg" style="color: white">
+                                        <td colspan="2" style="text-align: center">total</td>
+                                        <td colspan="4">{{round($totalrerata, 2)}} Rata-Rata setelah di bagi 12 Komponen = {{round($totalkebersihan,2)}}</td>
+                                        <td colspan="3" style="text-align: center">Tingkat Kepatuhan : {{$totalkepatuhan}} </td>
+                                    </tr>
                                 </table>
                             </div>
 
@@ -197,17 +250,66 @@
                                     @csrf
                                     <input type="hidden" name="id" value="{{ $model->id }}">
                                     <div class="form-group row">
-                                        <label for="inputEmail3" class="col-sm-2 col-form-label">User Verifikator <span class="wajib"></span></label>
+                                        <label for="inputEmail3" class="col-sm-2 col-form-label">Tanggal Supervisi <span class="wajib"></span></label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="user_verifikasi" name="user_verifikasi" required>
+                                            <input type="text" class="form-control" id="tanggal" name="tanggal" required>
                                         </div>
                                     </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="row" id="popoverPwd-container">
+                                                <div class="form-group col-md-12">
+                                                    <label for="popoverName">Tingkat Kepatuhan</label>
+                                                    <div class="form-group">
+                                                        <div class="radio">
+                                                            <input type="radio" name="optionsRadios" id="optionsRadios1" value=4 checked="">
+                                                            <label for="optionsRadios1">Sangat Patuh (≥ 90%)</label>
+                                                        </div>
+                                                        <div class="radio">
+                                                            <input type="radio" name="optionsRadios" id="optionsRadios2" value=3>
+                                                            <label for="optionsRadios2">Patuh (75% – < 90%)</label>
+                                                        </div>
+                                                        <div class="radio">
+                                                            <input type="radio" name="optionsRadios" id="optionsRadios3" value=2>
+                                                            <label for="optionsRadios2">Kurang Patuh (50% – < 75%)</label>
+                                                        </div>
+                                                        <div class="radio">
+                                                            <input type="radio" name="optionsRadios" id="optionsRadios4" value=1>
+                                                            <label for="optionsRadios2">Tidak Patuh (< 50%)</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="form-group col-md-12">
+                                                    <label for="popoverName">Tingkat Kebersihan</label>
+                                                    <input type="text" class="form-control" id="popoverName">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
                                     <div class="form-group row">
-                                        <label for="inputEmail3" class="col-sm-2 col-form-label">Jabatan Verifikator <span class="wajib"></span></label>
+                                        <label for="inputEmail3" class="col-sm-2 col-form-label">Tingkat Kepatuhan <span class="wajib"></span></label>
                                         <div class="col-sm-10">
                                             <input type="text" class="form-control" id="jabatan_verifikasi" name="jabatan_verifikasi" required>
                                         </div>
                                     </div>
+
+                                    <div class="form-group row">
+                                        <label for="inputEmail3" class="col-sm-2 col-form-label">Tingkat Kebersihan <span class="wajib"></span></label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="jabatan_verifikasi" name="jabatan_verifikasi" required>
+                                        </div>
+                                    </div>
+
+
+
                                     <div class="form-group text-center">
                                         <button class="btn btn-primary tambah" type="submit">Verifikasi</button>
                                     </div>
@@ -220,18 +322,51 @@
         </div>
     </div>
 </div>
-@section('js')
-<script>
-function updateCheckboxValue(no) {
-    const checkbox = document.getElementById('dokumentasi_' + no);
-    const hiddenInput = document.getElementById('dokumentasi_hidden_' + no);
 
-    if (checkbox.checked) {
-        hiddenInput.value = 1;
-    } else {
-        hiddenInput.value = 0;
+@section('css')
+<link rel="stylesheet" href="{{ asset('assets/themes') }}/components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+@endsection
+
+@section('js')
+<script src="{{ asset('assets/themes') }}/components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+
+<script>
+    function updateCheckboxValue(no) {
+        const checkbox = document.getElementById('dokumentasi_' + no);
+        const hiddenInput = document.getElementById('dokumentasi_hidden_' + no);
+
+        if (checkbox.checked) {
+            hiddenInput.value = 1;
+        } else {
+            hiddenInput.value = 0;
+        }
     }
-}
+
+    $(function($) {
+        $('#tanggal').datepicker({
+            format: 'dd-M-yyyy',
+            autoclose: true
+        });
+    });
+
+
+    $(document).ready(function () {
+        $.fn.editable.defaults.mode = 'inline';
+
+        $('.editable-catatan').editable({
+            success: function(response, newValue) {
+                var pk = $(this).data('pk');
+                var $hiddenInput = $('#txtcatatan_' + pk); // berdasarkan id unik
+                if ($hiddenInput.length) {
+                    $hiddenInput.val(newValue);
+                }
+                console.log('Hidden input for ' + pk + ' updated to:', newValue);
+            }
+        });
+    });
+
 </script>
 
 @endsection
