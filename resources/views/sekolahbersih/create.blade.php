@@ -21,6 +21,16 @@
             </header>
 
             <div class="main-box-body clearfix">
+                @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
+
                 <form method="POST" action="{{ route('sekolahbersih.store') }}" id="form-penilaian">
                     @csrf
                     <input type="hidden" name="id_ruang" value="{{ $model->id }}">
@@ -96,9 +106,11 @@
 <script>
     $(function() {
         $('#daterange').daterangepicker({
+            startDate: moment().startOf('month'),   // 1 bulan ini
+            endDate: moment().endOf('month'),       // Akhir bulan ini
             opens: 'left',
             locale: {
-              format: 'YYYY-MM-DD'
+                format: 'YYYY-MM-DD'
             }
         });
     });

@@ -85,23 +85,45 @@
                 <div class="main-box clearfix profile-box-contact">
                     <div class="main-box-body clearfix">
                         <div class="profile-box-header gray-bg clearfix" style="background-color: #3e5879 !important;">
-                            <img src="img/samples/angelina-300.jpg" alt="" class="profile-img img-fluid">
-                            <h2>{{$sekolah->nama}}</h2>
-                            <div class="job-position">
-                                Parameter Penilaian {{!$model->ruanglist || !$model->id_ruang ?  ' - ' : $model->ruanglist["nama"]}}
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h2>{{$sekolah->nama}}</h2>
+                                    <div class="job-position">
+                                        Parameter Penilaian {{!$model->ruanglist || !$model->id_ruang ?  ' - ' : $model->ruanglist["nama"]}}
+                                    </div>
+                                    <ul class="contact-details">
+                                        <li>
+                                            <i class="fa fa-calendar"></i> Periode {{date('d-M-Y',strtotime($model->periode_awal_kuesioner)).' s/d '.date('d-M-Y',strtotime($model->periode_awal_kuesioner))}}
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-percent"></i> Score {{$model->score}}
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-envelope-open-o"></i> Hasil Evaluasi {{$model->hasil_score}}
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <h2>{{$sekolah->nama}}</h2>
+                                    <div class="job-position">
+                                        Parameter Penilaian {{!$model->ruanglist || !$model->id_ruang ?  ' - ' : $model->ruanglist["nama"]}}
+                                    </div>
+                                    <ul class="contact-details">
+                                        <li>
+                                            <i class="fa fa-calendar"></i> Periode {{date('d-M-Y',strtotime($model->periode_awal_kuesioner)).' s/d '.date('d-M-Y',strtotime($model->periode_awal_kuesioner))}}
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-percent"></i> Score {{$model->score}}
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-envelope-open-o"></i> Hasil Evaluasi {{$model->hasil_score}}
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
-                            <ul class="contact-details">
-                                <li>
-                                    <i class="fa fa-calendar"></i> Periode {{date('d-M-Y',strtotime($model->periode_awal_kuesioner)).' s/d '.date('d-M-Y',strtotime($model->periode_awal_kuesioner))}}
-                                </li>
-                                <li>
-                                    <i class="fa fa-percent"></i> Score {{$model->score}}
-                                </li>
-                                <li>
-                                    <i class="fa fa-envelope-open-o"></i> Hasil Evaluasi {{$model->hasil_score}}
-                                </li>
-                            </ul>
                         </div>
+
                         <div class="main-box-body clearfix">
                             <div class="table-responsive">
                                 <table width="98%" class="table">
@@ -160,21 +182,26 @@
                                     if ($kepatuhan >= 85)
                                     {
                                     $nilaikepatuhan = 4;
-                                    $kesimpulankepatuhan = '<span class="badge badge-primary">Sangat Patuh </span>';
+                                    $kesimpulankepatuhan = '<span class="badge badge-primary">Sangat Baik </span>';
                                     }
                                     elseif ($kepatuhan >= 70)
                                     {
                                     $nilaikepatuhan = 3;
-                                    $kesimpulankepatuhan = '<span class="badge badge-info">Patuh  </span>';
+                                    $kesimpulankepatuhan = '<span class="badge badge-success">Baik  </span>';
                                     }
                                     elseif ($kepatuhan >= 50)
                                     {
                                     $nilaikepatuhan = 2;
-                                    $kesimpulankepatuhan = '<span class="badge badge-danger"> Kurang Patuh </span>';
+                                    $kesimpulankepatuhan = '<span class="badge badge-info"> Cukup </span>';
+                                    }
+                                    elseif ($kepatuhan ==0)
+                                    {
+                                    $nilaikepatuhan = 0;
+                                    $kesimpulankepatuhan = '<span class="badge badge-danger"> Belum isi </span>';
                                     }
                                     else {
                                     $nilaikepatuhan = 1;
-                                    $kesimpulankepatuhan = '<span class="badge badge-warning"> Tidak Patuh </span>';
+                                    $kesimpulankepatuhan = '<span class="badge badge-warning"> Kurang </span>';
                                     }
 
                                     @endphp
@@ -232,7 +259,16 @@
                                                 <input type="hidden" id="dokumentasi_hidden_{{ $no }}" name="dokumentasi[{{ $no }}]" value="0">
                                         </td>
                                         <td width="10%">
-                                            <textarea class="form-control form-control-sm" id="catatanpemeriksaan[{{$no}}]" name="catatanpemeriksaan[{{$no}}]" rows="1"></textarea>
+                                            <a href="#"
+                                               class="editable-pemeriksaan"
+                                               data-type="text"
+                                               data-pk="{{ $no }}"
+                                               data-name="pemeriksaan[{{ $no }}]"
+                                               data-title="Masukkan catatan pemeriksaan">
+                                                {{ old("pemeriksaan[$no]") ?? '' }}
+                                            </a>
+                                            <input type="hidden" name="txtpemeriksaan[{{ $no }}]" id="txtpemeriksaan_{{ $no }}" value="{{old("pemeriksaan[$no]") }}">
+
                                         </td>
                                     </tr>
 
@@ -240,43 +276,65 @@
                                     <tr class="green-bg" style="color: white">
                                         <td colspan="2" style="text-align: center">total</td>
                                         <td colspan="4">{{round($totalrerata, 2)}} Rata-Rata setelah di bagi 12 Komponen = {{round($totalkebersihan,2)}}</td>
-                                        <td colspan="3" style="text-align: center">Tingkat Kepatuhan : {{$totalkepatuhan}} </td>
+                                        <td colspan="3" style="text-align: center">Tingkat Kepatuhan : {{round($totalkepatuhan,2). ' %'}}</td>
                                     </tr>
                                 </table>
                             </div>
+
+                            @php
+                                if($totalkepatuhan >= 85 ) {
+                                    $nilaiakhirkepatuhan = 4;
+                                }
+                                elseif ($totalkepatuhan >= 70) {
+                                    $nilaiakhirkepatuhan = 3;
+                                }
+                                elseif ($totalkepatuhan >= 50) {
+                                    $nilaiakhirkepatuhan = 2;
+                                }
+                                else {
+                                    $nilaiakhirkepatuhan = 1;
+                                }
+
+                                if($totalkebersihan  >= 2.75) {
+                                    $nilaiakhirkebersihan=4;
+                                }
+                                else if($totalkebersihan  >= 2.00 && $totalkebersihan < 2.75) {
+                                    $nilaiakhirkebersihan=3;
+                                }
+                                else if($totalkebersihan  >= 1.00 && $totalkebersihan < 2.00) {
+                                    $nilaiakhirkebersihan=2;
+                                }
+                                else {
+                                    $nilaiakhirkebersihan=1;
+                                }
+
+                            @endphp
 
                             <div class="main-box-body clearfix" style="padding: 20px">
                                 <form method="POST" action="{{ route('sekolahbersih.storeverifikasi') }}" id="form-penilaian">
                                     @csrf
                                     <input type="hidden" name="id" value="{{ $model->id }}">
-                                    <div class="form-group row">
-                                        <label for="inputEmail3" class="col-sm-2 col-form-label">Tanggal Supervisi <span class="wajib"></span></label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="tanggal" name="tanggal" required>
-                                        </div>
-                                    </div>
-
                                     <div class="row">
                                         <div class="col-lg-6">
                                             <div class="row" id="popoverPwd-container">
                                                 <div class="form-group col-md-12">
-                                                    <label for="popoverName">Tingkat Kepatuhan</label>
+                                                    <label for="popoverName">Tingkat Kepatuhan </label>
                                                     <div class="form-group">
                                                         <div class="radio">
-                                                            <input type="radio" name="optionsRadios" id="optionsRadios1" value=4 checked="">
-                                                            <label for="optionsRadios1">Sangat Patuh (≥ 90%)</label>
+                                                            <input type="radio" name="optionsRadios" id="optionsRadios1" value=4 <?php echo ($nilaiakhirkepatuhan == 4) ? 'checked' : ''; ?> >
+                                                            <label for="optionsRadios1">Sangat Baik (≥ 90%)</label>
                                                         </div>
                                                         <div class="radio">
-                                                            <input type="radio" name="optionsRadios" id="optionsRadios2" value=3>
-                                                            <label for="optionsRadios2">Patuh (75% – < 90%)</label>
+                                                            <input type="radio" name="optionsRadios" id="optionsRadios2" value=3 <?php echo ($nilaiakhirkepatuhan == 3) ? 'checked' : ''; ?>>
+                                                            <label for="optionsRadios2">Baik (75% – < 90%)</label>
                                                         </div>
                                                         <div class="radio">
-                                                            <input type="radio" name="optionsRadios" id="optionsRadios3" value=2>
-                                                            <label for="optionsRadios2">Kurang Patuh (50% – < 75%)</label>
+                                                            <input type="radio" name="optionsRadios" id="optionsRadios3" value=2 <?php echo ($nilaiakhirkepatuhan == 2) ? 'checked' : ''; ?>>
+                                                            <label for="optionsRadios3">Cukup (50% – < 75%)</label>
                                                         </div>
                                                         <div class="radio">
-                                                            <input type="radio" name="optionsRadios" id="optionsRadios4" value=1>
-                                                            <label for="optionsRadios2">Tidak Patuh (< 50%)</label>
+                                                            <input type="radio" name="optionsRadios" id="optionsRadios4" value=1 <?php echo ($nilaiakhirkepatuhan == 1) ? 'checked' : ''; ?>>
+                                                            <label for="optionsRadios4">Kurang (< 50%)</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -287,28 +345,35 @@
                                             <div class="row">
                                                 <div class="form-group col-md-12">
                                                     <label for="popoverName">Tingkat Kebersihan</label>
-                                                    <input type="text" class="form-control" id="popoverName">
+                                                    <div class="form-group">
+                                                        <div class="radio">
+                                                            <input type="radio" name="optionsKebersihan" id="optionsKebersihan1" value=4 <?php echo ($nilaiakhirkebersihan == 4) ? 'checked' : ''; ?> >
+                                                            <label for="optionsRadios1">Sangat Baik (≥ 2.75) </label>
+                                                        </div>
+                                                        <div class="radio">
+                                                            <input type="radio" name="optionsKebersihan" id="optionsKebersihan2" value=3 <?php echo ($nilaiakhirkebersihan == 3) ? 'checked' : ''; ?>>
+                                                            <label for="optionsRadios2">Baik (> 2.00 – < 2.75)</label>
+                                                        </div>
+                                                        <div class="radio">
+                                                            <input type="radio" name="optionsKebersihan" id="optionsKebersihan3" value=2 <?php echo ($nilaiakhirkebersihan == 2) ? 'checked' : ''; ?>>
+                                                            <label for="optionsRadios2">Cukup (1.00 – < 2.00)</label>
+                                                        </div>
+                                                        <div class="radio">
+                                                            <input type="radio" name="optionsKebersihan" id="optionsKebersihans4" value=1 <?php echo ($nilaiakhirkebersihan == 4) ? 'checked' : ''; ?> >
+                                                            <label for="optionsRadios2">Kurang (< 1)</label>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-
                                     <div class="form-group row">
-                                        <label for="inputEmail3" class="col-sm-2 col-form-label">Tingkat Kepatuhan <span class="wajib"></span></label>
+                                        <label for="inputEmail3" class="col-sm-2 col-form-label">Tanggal Supervisi <span class="wajib"></span></label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="jabatan_verifikasi" name="jabatan_verifikasi" required>
+                                            <input type="text" class="form-control" id="tanggal" name="tanggal" required data-provide="datepicker">
                                         </div>
                                     </div>
-
-                                    <div class="form-group row">
-                                        <label for="inputEmail3" class="col-sm-2 col-form-label">Tingkat Kebersihan <span class="wajib"></span></label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="jabatan_verifikasi" name="jabatan_verifikasi" required>
-                                        </div>
-                                    </div>
-
-
 
                                     <div class="form-group text-center">
                                         <button class="btn btn-primary tambah" type="submit">Verifikasi</button>
@@ -322,43 +387,50 @@
         </div>
     </div>
 </div>
+@endsection
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('assets/themes') }}/components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css">
+<!--<link rel="stylesheet" href="{{ asset('assets/themes') }}/components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css">-->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 @endsection
 
 @section('js')
-<script src="{{ asset('assets/themes') }}/components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>-->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
-    function updateCheckboxValue(no) {
-        const checkbox = document.getElementById('dokumentasi_' + no);
-        const hiddenInput = document.getElementById('dokumentasi_hidden_' + no);
-
-        if (checkbox.checked) {
-            hiddenInput.value = 1;
-        } else {
-            hiddenInput.value = 0;
-        }
-    }
-
-    $(function($) {
-        $('#tanggal').datepicker({
-            format: 'dd-M-yyyy',
-            autoclose: true
-        });
-    });
-
-
     $(document).ready(function () {
+        // Inisialisasi datepicker
+        $('#tanggal').datepicker({
+            format: 'dd-mm-yyyy',
+            autoclose: true,
+            todayHighlight: true,
+            container: 'body'
+        });
+
+
+        // Inisialisasi x-editable catatan
         $.fn.editable.defaults.mode = 'inline';
 
         $('.editable-catatan').editable({
             success: function(response, newValue) {
                 var pk = $(this).data('pk');
-                var $hiddenInput = $('#txtcatatan_' + pk); // berdasarkan id unik
+                var $hiddenInput = $('#txtcatatan_' + pk);
+                if ($hiddenInput.length) {
+                    $hiddenInput.val(newValue);
+                }
+                console.log('Hidden input for ' + pk + ' updated to:', newValue);
+            }
+        });
+
+        // Inisialisasi x-editable pemeriksaan
+        $('.editable-pemeriksaan').editable({
+            success: function(response, newValue) {
+                var pk = $(this).data('pk');
+                var $hiddenInput = $('#txtpemeriksaan_' + pk);
                 if ($hiddenInput.length) {
                     $hiddenInput.val(newValue);
                 }
@@ -367,7 +439,12 @@
         });
     });
 
-</script>
+    // Fungsi checkbox update
+    function updateCheckboxValue(no) {
+        const checkbox = document.getElementById('dokumentasi_' + no);
+        const hiddenInput = document.getElementById('dokumentasi_hidden_' + no);
 
-@endsection
+        hiddenInput.value = checkbox.checked ? 1 : 0;
+    }
+</script>
 @endsection

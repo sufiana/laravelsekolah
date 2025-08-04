@@ -296,13 +296,13 @@ class SekolahBersihController extends Controller
                  $periodeAwal= $data->periode_awal_kuesioner;
                  $periodeAkhir= $data->periode_akhir_kuesioner;
 
-$hasilKuesioner = DB::table('ruang_sekolah as rs')
-    ->leftJoin('evaluasi_kuesioner as ek', function($join) use ($sekolahId, $periodeAwal, $periodeAkhir) {
-        $join->on('ek.id_ruang', '=', 'rs.id')
-            ->where('ek.sekolah', '=', $sekolahId)
-            ->where('ek.periode_awal_kuesioner', '=', $periodeAwal)
-            ->where('ek.periode_akhir_kuesioner', '=', $periodeAkhir);
-    })
+            $hasilKuesioner = DB::table('ruang_sekolah as rs')
+                ->leftJoin('evaluasi_kuesioner as ek', function($join) use ($sekolahId, $periodeAwal, $periodeAkhir) {
+                    $join->on('ek.id_ruang', '=', 'rs.id')
+                        ->where('ek.sekolah', '=', $sekolahId)
+                        ->where('ek.periode_awal_kuesioner', '=', $periodeAwal)
+                        ->where('ek.periode_akhir_kuesioner', '=', $periodeAkhir);
+                })
     ->select(
         'rs.nama',
         DB::raw('COALESCE(SUM(ek.score), 0) as score'),
@@ -521,35 +521,39 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
         }
 
         if (!Auth::check()) {
-            //return redirect()->route('login')->withErrors(['Anda harus login.']);
             $user = 3;
             $id_sekolah = 103;
+            $id_user = 3;
+        } else {
+            $user = Auth::user();
+            $id_sekolah = $user->id_sekolah;
+            $id_user = $user->id;
+        }
+
+        if (!$id_sekolah) {
+            return redirect()->back()->withInput()->withErrors(['User tidak memiliki id_sekolah.']);
+        }
+
+        // Pisahkan periode menjadi awal dan akhir
+        $periode_parts = explode(' - ', $request->periode);
+        $periode_awal = $periode_parts[0] ?? now()->format('Y-m-d');
+        $periode_akhir = $periode_parts[1] ?? now()->format('Y-m-d');
+
+        // ✅ Cek apakah kombinasi sudah pernah diinput sebelumnya
+        $existing = EvaluasiKuesioner::where('id_ruang', $request->id_ruang)
+            ->where('sekolah', $id_sekolah)
+            ->whereDate('periode_awal_kuesioner', $periode_awal)
+            ->whereDate('periode_akhir_kuesioner', $periode_akhir)
+            ->exists();
+
+        if ($existing) {
+            return redirect()->back()->withInput()->withErrors([
+                'Data untuk ruang dan periode tersebut sudah pernah diinput, silahkan coba periode dan komponen ruang yang lain'
+            ]);
         }
 
         DB::beginTransaction();
         try {
-    //        $user = Auth::user();
-    //        $id_sekolah = $user->id_sekolah;
-            if (!Auth::check()) {
-                //$user = 3;
-                $id_sekolah = 103;
-                $id_user=3;
-            }
-            else {
-                $user = Auth::user();
-                $id_sekolah = $user->id_sekolah;
-                $id_user = $user->id;
-
-            }
-
-            if (!$id_sekolah) {
-                throw new \Exception('User tidak memiliki id_sekolah.');
-            }
-
-            $periode_parts = explode(' - ', $request->periode);
-            $periode_awal = $periode_parts[0] ?? now()->format('Y-m-d');
-            $periode_akhir = $periode_parts[1] ?? now()->format('Y-m-d');
-
             $totalScore = 0;
             $hasilKuesionerIds = [];
 
@@ -563,6 +567,8 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                     'deskripsi_jawaban' => $request->alasan[$id_parameter] ?? null,
                     'tahun_ajaran'      => env('TAHUN_AJARAN'),
                     'periode'           => 1,
+                    'periode_awal_kuesioner'     => $periode_awal,
+                    'periode_akhir_kuesioner'    => $periode_akhir,
                 ]);
                 $hasilKuesionerIds[] = $hasil->id;
                 $totalScore += $jawaban;
@@ -584,7 +590,7 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             DB::commit();
 
             return redirect()->route('sekolahbersih.index')
-                             ->with('berhasil', 'Kuesioner berhasil disimpan.');
+                ->with('berhasil', 'Kuesioner berhasil disimpan.');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -594,6 +600,7 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             ]);
         }
     }
+
 
     public function storeverifikasi(Request $request)
     {
