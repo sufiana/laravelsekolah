@@ -6470,7 +6470,7 @@ input[type="radio"] {
 
 /* line 5, Applications/MAMP/htdocs/cube/source/scss/theme/imports/widgets/_profile_box_contact.scss */
 .profile-box-contact .profile-box-header {
-  padding: 30px 20px;
+  padding: 10px 20px;
   color: #fff;
   border-radius: 3px 3px 0 0; }
 
