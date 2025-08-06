@@ -1,6 +1,17 @@
 @extends('layouts/master')
 @section('title','Dashboard')
 @section('css')
+<style>
+.row.grid-equal-height {
+  display: grid;
+  grid-auto-rows: 1fr;
+}
+
+.row.grid-equal-height > [class*='col-'] {
+  display: flex;
+}
+
+</style>
 @endsection
 @section('content')
 <div class="row">
@@ -33,39 +44,41 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-lg-3 col-sm-6 col-12">
-                <div class="main-box infographic-box colored emerald-bg">
-                    <i class="fa fa-user"></i>
-                    <span class="headline" style="font-size: 10.5px">Jumlah sekolah</span>
-                    <span class="value">46</span>
-                </div>
-            </div>
+       <div class="row g-3 d-flex flex-wrap align-items-stretch">
+  <div class="col-lg-3 col-sm-6 col-12 d-flex">
+    <div class="info-box emerald-bg w-100 d-flex flex-column">
+      <i class="fa fa-user icon"></i>
+      <span class="headline">Jumlah Sekolah</span>
+      <span class="value">46</span>
+    </div>
+  </div>
 
-            <div class="col-lg-3 col-sm-6 col-12">
-                <div class="main-box infographic-box colored red-bg">
-                    <i class="fa fa-tag"></i>
-                    <span class="headline" style="font-size: 10.5px">Sekolah Terintegrasi</span>
-                    <span class="value">9</span>
-                </div>
-            </div>
+  <div class="col-lg-3 col-sm-6 col-12 d-flex">
+    <div class="info-box red-bg w-100 d-flex flex-column">
+      <i class="fa fa-tag icon"></i>
+      <span class="headline">Sekolah Terintegrasi</span>
+      <span class="value">9</span>
+    </div>
+  </div>
 
-            <div class="col-lg-3 col-sm-6 col-12">
-                <div class="main-box infographic-box colored green-bg">
-                    <i class="fa fa-tags"></i>
-                    <span class="headline" style="font-size: 9px">Sekolah Belum Terintegrasi</span>
-                    <span class="value">45</span>
-                </div>
-            </div>
+  <div class="col-lg-3 col-sm-6 col-12 d-flex">
+    <div class="info-box green-bg w-100 d-flex flex-column">
+      <i class="fa fa-tags icon"></i>
+      <span class="headline">Sekolah Belum Terintegrasi</span>
+      <span class="value">45</span>
+    </div>
+  </div>
 
-            <div class="col-lg-3 col-sm-6 col-12">
-                <div class="main-box infographic-box colored purple-bg">
-                    <i class="fa fa-credit-card"></i>
-                    <span class="headline" style="font-size: 10.5px">Persentase Sekolah Bersih</span>
-                    <span class="value">42</span>
-                </div>
-            </div>
-        </div>
+  <div class="col-lg-3 col-sm-6 col-12 d-flex">
+    <div class="info-box purple-bg w-100 d-flex flex-column">
+      <i class="fa fa-credit-card icon"></i>
+      <span class="headline">Persentase Sekolah Bersih</span>
+      <span class="value">42</span>
+    </div>
+  </div>
+</div>
+
+       
 
         <div class="col-md-12">
             <div class="main-box clearfix profile-box-contact">
