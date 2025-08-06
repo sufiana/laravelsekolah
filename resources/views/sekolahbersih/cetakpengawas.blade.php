@@ -150,7 +150,7 @@
                             <td width="88%" align="center">
                                 <span class="kop1">GERAKAN KOLABORASI SUMUT BERKAH</span><br />
                                 <span class="kop2">SEKOLAH BERSIH</span><br />
-                                <span class="kop1">FORMAT CHECKLIST HARIAN KEBERSIHAN {{strtoupper($ruang->nama)}}</span><br />
+                                <span class="kop1">FORMAT SUPERVISI PENGAWAS SEKOLAH </span><br />
                                 <span class="kop1">{{strtoupper($sekolah->nama)}}</span>
                             </td>
                         </tr>
@@ -163,7 +163,7 @@
         <tr><td colspan="2" valign="top">&nbsp;</td></tr>
 
         <tr>
-            <td colspan="2" valign="top">
+          <td colspan="2" valign="top">
                 <table width="95%" border="0" class="baris" align="center">
                     <tr>
                         <td width="17%">Hari / Tanggal</td>
@@ -173,14 +173,32 @@
                     <tr><td>Nama Petugas</td><td>:</td><td>&nbsp;</td></tr>
                     <tr><td>Nama Guru Piket</td><td>:</td><td>&nbsp;</td></tr>
                 </table>
-            </td>
+                <p>&nbsp;</p>
+                <table width="95%" border="0" class="baris" align="center">
+                  <tr>
+                    <td width="17%">Hari / Tanggal</td>
+                    <td width="2%">:</td>
+                    <td width="81%">x</td>
+                  </tr>
+                  <tr>
+                    <td>Nama Petugas</td>
+                    <td>:</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>Nama Guru Piket</td>
+                    <td>:</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                </table>
+            <p>&nbsp;</p></td>
         </tr>
 
-        <tr><td colspan="2" align="center" style="letter-spacing: 2px">&nbsp;</td></tr>
+        <tr><td colspan="2" align="center" style="letter-spacing: 2px"><div align="left"></div></td></tr>
 
         <tr>
             <td colspan="2" align="center" style="letter-spacing: 2px">
-                <table width="100%" style="line-height: 11px" class="tabel" align="center">
+                <table width="95%" style="line-height: 11px" class="tabel" align="center">
                     <tr>
                         <td width="5%"><b>No.</b></td>
                         <td width="37%"><b>Komponen {{$ruang->nama}}</b></td>
@@ -218,7 +236,7 @@
                             <td align="left" style="text-align: left; padding-left: 5px">{{$item->deskripsi_jawaban}}</td>
                         </tr>
                    @endforeach
-                </table>
+              </table>
             </td>
         </tr>
 
