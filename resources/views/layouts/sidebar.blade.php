@@ -16,7 +16,7 @@
                     <ul class="nav navbar-nav nav-pills nav-stacked">
                         <li class="nav-header nav-header-first d-none d-lg-block">Navigation</li>
                         <li class="active">
-                            <a href="index.html">
+                            <a href="{{ route('home') }}">
                                 <i class="fa fa-dashboard"></i>
                                 <span>Dashboard</span>
                             </a>
@@ -28,22 +28,22 @@
                                 <span>Data Master</span>
                                 <i class="fa fa-angle-right drop-icon"></i>
                             </a>
-                            <ul class="submenu">
-                                <li>
-                                    <a href="#" class="dropdown-toggle dropdown-nocaret">
-                                        Lokasi
-                                        <i class="fa fa-angle-right drop-icon"></i>
-                                    </a>
-                                    <ul class="submenu">
-                                        <li><a href="">Povinsi</a></li>
-                                        <li><a href="">Kabupaten / Kota</a></li>
-                                        <li><a href="">Sekolah</a></li>
-                                        <li><a href="">Cabdis</a></li>
-                                        <li><a href="">Parameter</a></li>
+                            <!--<ul class="submenu">-->
+                            <!--    <li>-->
+                            <!--        <a href="#" class="dropdown-toggle dropdown-nocaret">-->
+                            <!--            Lokasi-->
+                            <!--            <i class="fa fa-angle-right drop-icon"></i>-->
+                            <!--        </a>-->
+                            <!--        <ul class="submenu">-->
+                            <!--            <li><a href="">Povinsi</a></li>-->
+                            <!--            <li><a href="">Kabupaten / Kota</a></li>-->
+                            <!--            <li><a href="">Sekolah</a></li>-->
+                            <!--            <li><a href="">Cabdis</a></li>-->
+                            <!--            <li><a href="">Parameter</a></li>-->
 
-                                    </ul>
-                                </li>
-                            </ul>
+                            <!--        </ul>-->
+                            <!--    </li>-->
+                            <!--</ul>-->
                         </li>
                         @php $user = Auth::user(); @endphp
                         @if($user)
@@ -79,8 +79,8 @@
                             </a>
                             <ul class="submenu">
                                 <li><a href="{{ route('sekolahbersih.indexsekolah') }}">Lihat Data</a></li>
-                                <li><a href="">Rekap</a></li>
-                                <li><a href="">Laporan</a></li>
+                                <!--<li><a href="">Rekap</a></li>-->
+                                <!--<li><a href="">Laporan</a></li>-->
                             </ul>
                         </li>
                         @endif
