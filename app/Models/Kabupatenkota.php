@@ -7,11 +7,12 @@ use app\models\Provinsi;
 
 class Kabupatenkota extends Model
 {
-    protected $table = 'kabupatenkota';
+    protected $table = 'kabupaten';
     protected $fillable = [
-        'id',
-        'id_provinsi',
-        'nama'
+        'kode_kabupaten',
+        'nama_kabupaten',
+        'jenis',
+        'id_provinsi'
     ];
 
     public function provinsilist(){

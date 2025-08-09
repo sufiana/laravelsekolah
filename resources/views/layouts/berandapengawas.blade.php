@@ -95,10 +95,15 @@
                         </div>
                         <ul class="contact-details">
                             <li>
-                                <i class="fa fa-map-marker"></i> {{$sekolah->nama}} {{$sekolah->kabupaten_kota}}
+                                <i class="fa fa-map-marker"></i> Wilayah Binaan : {{$user->binaan}}
                             </li>
                             <li>
-                                <i class="fa fa-email"></i> {{$role->email}}
+                                <i class="fa fa-map-o"></i>  
+                                @php 
+                                    $cabdis = App\Models\Cabdis::where('id',$user->cabdis)->first();
+                                @endphp
+                                Instansi: {{$cabdis->deskripsi}}
+                                
                             </li>
                         </ul>
                     </div>

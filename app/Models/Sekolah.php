@@ -36,6 +36,7 @@ class Sekolah extends Model
         'semester_id',
         'create_date',
         'last_update',
+        'kepalasekolah',
     ];
 
 }

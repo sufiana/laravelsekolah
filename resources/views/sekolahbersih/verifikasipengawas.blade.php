@@ -87,37 +87,34 @@
                         <div class="profile-box-header gray-bg clearfix" style="background-color: #3e5879 !important;">
                             <div class="row">
                                 <div class="col-lg-6">
+                                    <h2>I. Identitas Sekolah </h2> <br/>
                                     <h2>{{$sekolah->nama}}</h2>
-                                    <div class="job-position">
-                                        Parameter Penilaian {{!$model->ruanglist || !$model->id_ruang ?  ' - ' : $model->ruanglist["nama"]}}
-                                    </div>
                                     <ul class="contact-details">
                                         <li>
-                                            <i class="fa fa-calendar"></i> Periode {{date('d-M-Y',strtotime($model->periode_awal_kuesioner)).' s/d '.date('d-M-Y',strtotime($model->periode_awal_kuesioner))}}
+                                            <i class="fa fa-calendar"></i> NPSN : {{$sekolah->npsn}}
                                         </li>
                                         <li>
-                                            <i class="fa fa-percent"></i> Score {{$model->score}}
+                                            <i class="fa fa-map-marker"></i> Alamat Sekolah : {{$sekolah->alamat_jalan}}
                                         </li>
                                         <li>
-                                            <i class="fa fa-envelope-open-o"></i> Hasil Evaluasi {{$model->hasil_score}}
+                                            <i class="fa fa-envelope-open-o"></i> Kecamatan/Kabupatenkota : {{$kabupaten || !$sekolah->kabupaten_kota ?  ' - ' : $kabupaten->nama_kabupaten}}
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-user"></i> Nama Kepala Sekolah : {{!$sekolah->kepalasekolah ? '-' : $sekolah->kepalasekolah}}
                                         </li>
                                     </ul>
                                 </div>
 
                                 <div class="col-lg-6">
-                                    <h2>{{$sekolah->nama}}</h2>
-                                    <div class="job-position">
-                                        Parameter Penilaian {{!$model->ruanglist || !$model->id_ruang ?  ' - ' : $model->ruanglist["nama"]}}
-                                    </div>
+                                    <h2>II. Identitas Pengawas </h2> <br/>
+                                    <h2>{{$user->username}}</h2>
+                                    
                                     <ul class="contact-details">
                                         <li>
-                                            <i class="fa fa-calendar"></i> Periode {{date('d-M-Y',strtotime($model->periode_awal_kuesioner)).' s/d '.date('d-M-Y',strtotime($model->periode_awal_kuesioner))}}
+                                            <i class="fa fa-map-marker"></i> Wilayah Binaan : {{$user->binaan}}
                                         </li>
                                         <li>
-                                            <i class="fa fa-percent"></i> Score {{$model->score}}
-                                        </li>
-                                        <li>
-                                            <i class="fa fa-envelope-open-o"></i> Hasil Evaluasi {{$model->hasil_score}}
+                                            <i class="fa fa-users"></i> Cabdis :  {{ $wilayah[0]->nama_kabupaten }}
                                         </li>
                                     </ul>
                                 </div>
@@ -126,6 +123,10 @@
 
                         <div class="main-box-body clearfix">
                             <div class="table-responsive">
+                                <input type="text" id="periode_awal_kuesioner" name="periode_awal_kuesioner" value="{{$model->periode_awal_kuesioner}}">
+                                <input type="text" id="periode_akhir_kuesioner" name="periode_akhir_kuesioner" value="{{$model->periode_akhir_kuesioner}}">
+                                <input type="text" id="sekolah" name="sekolah" value="{{$model->sekolah}}">
+
                                 <table width="98%" class="table">
                                     <thead>
                                     <tr>
@@ -147,6 +148,7 @@
                                     $totalkebersihan=0;
                                     $amountkepatuhan=0;
                                     $totalkepatuhan=0;
+                                    $total_score=0;
 
                                     @endphp
                                     @foreach($hasilKuesioner as $i)
@@ -160,6 +162,8 @@
                                     $kepatuhan = round(($i->score / $max) * 100);
                                     $amountkepatuhan += $kepatuhan;
                                     $totalkepatuhan = $amountkepatuhan /12;
+                                    
+                                    $total_score += $i->score;
 
 
                                     if ($ratarata >= 2.75) {
@@ -203,6 +207,9 @@
                                     $nilaikepatuhan = 1;
                                     $kesimpulankepatuhan = '<span class="badge badge-warning"> Kurang </span>';
                                     }
+                                    
+                                    //untuk akhir
+                                    
 
                                     @endphp
 
@@ -214,16 +221,15 @@
                                         <td>
                                             <!--{{round($kepatuhan)}}-->
                                             {!!$kesimpulankepatuhan!!}
-                                            <input type="hidden" id="kepatuhan[{{$no}}]" name="kepatuhan[{{$no}}]" value="{{$nilaikepatuhan}}">
-                                            <input type="hidden" id="persenkepatuhan[{{$no}}]" name="persenkepatuhan[{{$no}}]" value="{{$kepatuhan}}">
+                                            <input type="text" id="kepatuhan[{{$no}}]" name="kepatuhan[{{$no}}]" value="{{$nilaikepatuhan}}">
+                                            <input type="text" id="persenkepatuhan[{{$no}}]" name="persenkepatuhan[{{$no}}]" value="{{$kepatuhan}}">
+                                            <input type="text" name="id" value="{{ $i->idnya }}">
                                         </td>
                                         <td>
                                             {!!$kesimpulan!!}
-                                            <input type="hidden" id="nilai[{{$no}}]" name="nilai[{{$no}}]" value="{{$nilai}}">
+                                            <input type="text" id="nilai[{{$no}}]" name="nilai[{{$no}}]" value="{{$nilai}}">
                                         </td>
                                         <td>
-                                            <!--<textarea class="form-control form-control-sm" id="catatan[{{$no}}]" name="catatan[{{$no}}]" rows="1"></textarea>-->
-
                                             <a href="#"
                                                class="editable-catatan"
                                                data-type="text"
@@ -233,7 +239,7 @@
                                                 {{ old("catatan[$no]") ?? '' }}
                                             </a>
 
-                                            <input type="hidden" name="txtcatatan[{{ $no }}]" id="txtcatatan_{{ $no }}" value="{{old("catatan[$no]") }}">
+                                            <input type="text" name="txtcatatan[{{ $no }}]" id="txtcatatan_{{ $no }}" value="{{old("catatan[$no]") }}">
 
                                         </td>
                                         <td>
@@ -256,7 +262,7 @@
                                                     <label class="form-check-label" for="dokumentasi_{{ $no }}">Ada</label>
                                                 </div>
                                                 <br/>
-                                                <input type="hidden" id="dokumentasi_hidden_{{ $no }}" name="dokumentasi[{{ $no }}]" value="0">
+                                                <input type="text" id="dokumentasi_hidden_{{ $no }}" name="dokumentasi[{{ $no }}]" value="0">
                                         </td>
                                         <td width="10%">
                                             <a href="#"
@@ -267,7 +273,7 @@
                                                data-title="Masukkan catatan pemeriksaan">
                                                 {{ old("pemeriksaan[$no]") ?? '' }}
                                             </a>
-                                            <input type="hidden" name="txtpemeriksaan[{{ $no }}]" id="txtpemeriksaan_{{ $no }}" value="{{old("pemeriksaan[$no]") }}">
+                                            <input type="text" name="txtpemeriksaan[{{ $no }}]" id="txtpemeriksaan_{{ $no }}" value="{{old("pemeriksaan[$no]") }}">
 
                                         </td>
                                     </tr>
@@ -309,11 +315,22 @@
                                 }
 
                             @endphp
+                            
+                            <!-- Hidden Inputs untuk total -->
+                            <input type="number" id="total_score" name="total_score" value="{{$total_score}}">
+                            <input type="number" id="total_ratarata" name="total_ratarata" value="{{round($totalrerata,2)}}">
+                            <input type="number" id="total_akhir" name="total_akhir" value="">
+                            <input type="number" id="nilai_kepatuhan" name="nilai_kepatuhan" value="{{$nilaiakhirkepatuhan}}">
+                            <input type="number" id="nilai_kebersihan" name="nilai_kebersihan" value="">
+                            <input type="number" id="status_kebersihan" name="status_kebersihan" value="">
+                            
+                            
+	status_kepatuhan
+
 
                             <div class="main-box-body clearfix" style="padding: 20px">
-                                <form method="POST" action="{{ route('sekolahbersih.storeverifikasi') }}" id="form-penilaian">
+                                <form method="POST" action="{{ route('sekolahbersih.storeVerifikasi') }}" id="form-penilaian">
                                     @csrf
-                                    <input type="hidden" name="id" value="{{ $model->id }}">
                                     <div class="row">
                                         <div class="col-lg-6">
                                             <div class="row" id="popoverPwd-container">
@@ -367,11 +384,34 @@
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class="form-group row">
-                                        <label for="inputEmail3" class="col-sm-2 col-form-label">Tanggal Supervisi <span class="wajib"></span></label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="tanggal" name="tanggal" required data-provide="datepicker">
+                                    
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="row" id="popoverPwd-container">
+                                                <div class="form-group col-md-12">
+                                                    <label for="popoverName">Tanggal Supervisi </label>
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control" id="tanggal" name="tanggal" required data-provide="datepicker">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="form-group col-md-12">
+                                                    <label for="popoverName">Hasil Rekomendasi</label>
+                                                    <div class="form-group">
+                                                        <select class="form-control" id="jenis_tindak_lanjut">
+                                                            <option value="" disabled selected>Pilih jenis tindak lanjut</option>
+                                                            <option value="1">Pembinaan</option>
+                                                            <option value="2">Penguatan</option>
+                                                            <option value="3">Penghargaan</option>
+                                                            <option value="4">Monitoring Lanjutan</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 

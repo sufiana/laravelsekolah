@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Kabupatenkota;
+use App\Models\Cabdis;
 
 class SekolahBersihController extends Controller
 {
@@ -602,35 +604,35 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
     }
 
 
-    public function storeverifikasi(Request $request)
-    {
-        $messages = [
-            'required'                  => 'Kolom :attribute Wajib diisi',
-        ];
-        $validator = Validator::make($request->all(), [
-            'jabatan_verifikasi'                =>'required',
-            'user_verifikasi'                   =>'required',
-        ],$messages);
+    // public function storeverifikasi(Request $request)
+    // {
+    //     $messages = [
+    //         'required'                  => 'Kolom :attribute Wajib diisi',
+    //     ];
+    //     $validator = Validator::make($request->all(), [
+    //         'jabatan_verifikasi'                =>'required',
+    //         'user_verifikasi'                   =>'required',
+    //     ],$messages);
 
-        if($validator->fails())
-        {
-            return redirect()->back()->withInput()->withErrors($validator->errors());
-        }
-        else {
-            $post                           = EvaluasiKuesioner::where('id', $request->id)->first();
-            $post->jabatan_verifikasi       = $request->jabatan_verifikasi;
-            $post->user_verifikasi          = $request->user_verifikasi;
-            $post->tanggal_verifikasi       = date('Y-m-d');
-            $post->status_verifikasi_sekolah= 1;
-            $simpan = $post->save();
-            if ($simpan) {
-                Session::flash('berhasil', 'Verifikasi Berhasil');
-                return redirect()->route('sekolahbersih.index');
-            } else
-                return back()->withErrors(['Gagal' => ['Verifikasi Gagal']]);
-        }
+    //     if($validator->fails())
+    //     {
+    //         return redirect()->back()->withInput()->withErrors($validator->errors());
+    //     }
+    //     else {
+    //         $post                           = EvaluasiKuesioner::where('id', $request->id)->first();
+    //         $post->jabatan_verifikasi       = $request->jabatan_verifikasi;
+    //         $post->user_verifikasi          = $request->user_verifikasi;
+    //         $post->tanggal_verifikasi       = date('Y-m-d');
+    //         $post->status_verifikasi_sekolah= 1;
+    //         $simpan = $post->save();
+    //         if ($simpan) {
+    //             Session::flash('berhasil', 'Verifikasi Berhasil');
+    //             return redirect()->route('sekolahbersih.index');
+    //         } else
+    //             return back()->withErrors(['Gagal' => ['Verifikasi Gagal']]);
+    //     }
 
-    }
+    // }
 
     /**
      * Display the specified resource.
@@ -678,6 +680,38 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
     {
         $model=EvaluasiKuesioner::findOrFail($id);
         $sekolah=Sekolah::find($model->sekolah);
+        $kabupaten=Kabupatenkota::where('kode_kabupaten',$sekolah->kabupaten_kota)->first();
+        if (Auth::check()) {
+            $user = Auth::user();
+            $cabdis = Cabdis::find($user->cabdis);
+            if ($cabdis) {
+                $wilayah = DB::select("
+                    SELECT 
+                        cab.id,
+                        cab.nama,
+                        cab.kabupatenkota,
+                        string_agg(kab.nama_kabupaten, ', ' ORDER BY kab.nama_kabupaten) AS nama_kabupaten
+                    FROM 
+                        cabdis cab
+                    JOIN 
+                        LATERAL unnest(string_to_array(cab.kabupatenkota, ', ')) AS kab_id ON TRUE
+                    JOIN 
+                        kabupaten kab ON kab.kode_kabupaten::text = kab_id
+                    WHERE 
+                        cab.id = ?
+                    GROUP BY 
+                        cab.id, cab.nama, cab.kabupatenkota
+                ", [$user->cabdis]);
+                  
+            } else {
+                $wilayah = [];
+            }
+
+        } else {
+            $user = null;
+            $cabdis = null;
+            $wilayah = [];
+        }
 
         $sekolahId= $model->sekolah;
         $periodeAwal= $model->periode_awal_kuesioner;
@@ -699,7 +733,7 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             ->groupBy('rs.id', 'rs.nama')
             ->orderBy('rs.id')
             ->get();
-        return view('sekolahbersih.verifikasipengawas',compact('model','sekolah','sekolahId','periodeAwal','periodeAkhir','hasilKuesioner'));
+        return view('sekolahbersih.verifikasipengawas',compact('model','sekolah','kabupaten','sekolahId','periodeAwal','periodeAkhir','hasilKuesioner','user','cabdis','wilayah'));
     }
 
     public function print($id)
@@ -809,4 +843,138 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             ], 404);
         }
     }
+    
+    public function storeVerifikasi(Request $request)
+    {
+        // Validasi input dasar
+        $request->validate([
+            'sekolah' => 'required|integer',
+            'periode_awal_kuesioner' => 'required|date',
+            'periode_akhir_kuesioner' => 'required|date',
+            'tanggal' => 'required|date',
+            'optionsRadios' => 'required|in:1,2,3,4',
+            'optionsKebersihan' => 'required|in:1,2,3,4',
+        ]);
+
+        $sekolah = $request->sekolah;
+        $periode_awal = $request->periode_awal_kuesioner;
+        $periode_akhir = $request->periode_akhir_kuesioner;
+        $tgl_supervisi = $request->tanggal;
+        $user = Auth::check() ? Auth::user()->name : 'system';
+
+        // Mapping nilai kepatuhan
+        $mappingKepatuhan = [
+            4 => ['status' => 'Sangat Baik', 'min' => 90],
+            3 => ['status' => 'Baik', 'min' => 75],
+            2 => ['status' => 'Cukup', 'min' => 50],
+            1 => ['status' => 'Kurang', 'min' => 0],
+        ];
+
+        // Mapping nilai kebersihan
+        $mappingKebersihan = [
+            4 => ['status' => 'Sangat Baik', 'min' => 2.75],
+            3 => ['status' => 'Baik', 'min' => 2.00],
+            2 => ['status' => 'Cukup', 'min' => 1.00],
+            1 => ['status' => 'Kurang', 'min' => 0],
+        ];
+
+        $nilaiKepatuhan = $request->optionsRadios;
+        $statusKepatuhan = $mappingKepatuhan[$nilaiKepatuhan]['status'];
+
+        $nilaiKebersihan = $request->optionsKebersihan;
+        $statusKebersihan = $mappingKebersihan[$nilaiKebersihan]['status'];
+
+        // Ambil data total dari frontend (dari baris terakhir)
+        // Anda bisa kirim via hidden input, atau hitung di backend
+        // Di sini kita asumsikan dari request (tambahkan hidden field di form jika perlu)
+        $totalScore = $request->total_score ?? 18; // dari "total" di tabel
+        $totalRataRata = $request->total_ratarata ?? 1.5;
+        $totalAkhir = $request->total_akhir ?? 49.92; // Tingkat kepatuhan %
+
+        // Cek apakah sudah ada data di evaluasi_pengawas
+        $existing = DB::table('evaluasi_pengawas')
+            ->where('sekolah', $sekolah)
+            ->where('periode_awal_kuesioner', $periode_awal)
+            ->where('periode_akhir_kuesioner', $periode_akhir)
+            ->first();
+
+        $now = Carbon::now();
+
+        if ($existing) {
+            // Update existing record
+            DB::table('evaluasi_pengawas')->where('id', $existing->id)->update([
+                'tgl_supervisi' => $tgl_supervisi,
+                'total_score' => $totalScore,
+                'total_ratarata' => $totalRataRata,
+                'total_akhir' => $totalAkhir,
+                'nilai_kepatuhan' => $nilaiKepatuhan,
+                'status_kepatuhan' => $statusKepatuhan,
+                'nilai_kebersihan' => $nilaiKebersihan,
+                'status_kebersihan' => $statusKebersihan,
+                'time_update' => $now,
+                'user_updated' => $user,
+            ]);
+
+            $evaluasiPengawasId = $existing->id;
+        } else {
+            // Insert new record
+            $evaluasiPengawasId = DB::table('evaluasi_pengawas')->insertGetId([
+                'sekolah' => $sekolah,
+                'periode_awal_kuesioner' => $periode_awal,
+                'periode_akhir_kuesioner' => $periode_akhir,
+                'tgl_supervisi' => $tgl_supervisi,
+                'total_score' => $totalScore,
+                'total_ratarata' => $totalRataRata,
+                'total_akhir' => $totalAkhir,
+                'nilai_kepatuhan' => $nilaiKepatuhan,
+                'status_kepatuhan' => $statusKepatuhan,
+                'nilai_kebersihan' => $nilaiKebersihan,
+                'status_kebersihan' => $statusKebersihan,
+                'time_created' => $now,
+                'user_created' => $user,
+                'time_update' => $now,
+                'user_updated' => $user,
+            ]);
+        }
+
+        // Loop untuk update evaluasi_kuesioner berdasarkan id[index]
+        // Asumsi: input name seperti id[1], dokumentasi[1], txtcatatan[1], dll.
+        $count = 12; // Total baris
+
+        for ($i = 1; $i <= $count; $i++) {
+            $idKuesioner = $request->input("id[$i]");
+
+            // Skip jika id tidak ada atau 0 (seperti Ruang Ibadah dst)
+            if (!$idKuesioner || $idKuesioner == 0) {
+                continue;
+            }
+
+            $scorePengawas = $request->input("score[$i]") ?? null;
+            $catatanPengawas = $request->input("txtcatatan[$i]") ?? null;
+            $dokumentasi = $request->input("dokumentasi[$i]") == '1' ? true : false;
+            $tingkatKepatuhan = $request->input("kepatuhan[$i]") ?? null;
+            $kesimpulanPengawas = $request->input("nilai[$i]") ?? null;
+
+            // Update evaluasi_kuesioner
+            DB::table('evaluasi_kuesioner')
+                ->where('id', $idKuesioner)
+                ->update([
+                    'score_pengawas' => $scorePengawas,
+                    'status_evaluasi_pengawas' => 1, // sudah dievaluasi
+                    'catatan_pengawas' => $catatanPengawas,
+                    'dokumentasi_pengawas' => $dokumentasi,
+                    'catatan_dokumentasi_pengawas' => $dokumentasi ? 'Dokumentasi terlampir' : 'Tidak ada dokumentasi',
+                    'tingkat_kepatuhan' => $tingkatKepatuhan,
+                    'kesimpulan_pengawas' => $kesimpulanPengawas,
+                    'updated_at' => $now,
+                ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Verifikasi berhasil disimpan.',
+            'id_evaluasi_pengawas' => $evaluasiPengawasId,
+        ], 200);
+    }
+
 }

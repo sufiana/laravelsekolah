@@ -37,7 +37,7 @@ Route::get('sekolahbersih/getDataPengawas', 'SekolahBersihController@getDataPeng
 Route::get('sekolahbersih/getDataDinas', 'SekolahBersihController@getDataDinas')->name('sekolahbersih.getDataDinas');
 Route::get('sekolahbersih/create/{id}', 'SekolahBersihController@create')->name('sekolahbersih.create');
 Route::post('sekolahbersih/store', 'SekolahBersihController@store')->name('sekolahbersih.store');
-Route::post('sekolahbersih/storeverifikasi', 'SekolahBersihController@storeverifikasi')->name('sekolahbersih.storeverifikasi');
+Route::post('sekolahbersih/storeVerifikasi', 'SekolahBersihController@storeVerifikasi')->name('sekolahbersih.storeVerifikasi');
 //Route::get('sekolahbersih/create/{singkatan}', 'SekolahBersihController@create')
 //    ->where('singkatan', '[A-Za-z0-9]+')  // ini sebenarnya opsional jika tanpa karakter khusus
 //    ->name('sekolahbersih.create');
