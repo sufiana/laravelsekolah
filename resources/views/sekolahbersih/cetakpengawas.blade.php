@@ -126,14 +126,20 @@
         .ikonchecklist {
             font-family: DejaVu Sans, sans-serif;
         }
+        .barisbaru {
+          display: block;
+          margin-top: 20px;
+          padding: 10px;
+          width: 100%;
+          page-break-before: always;   /* Pindah ke halaman baru */
+          break-before: page;     
+        }
         /* CSS tetap */
     </style>
 </head>
 <body>
 <div class="page">
     <table width="100%" border="0" class="baris">
-        <tr><td colspan="2"><br /></td></tr>
-
         <tr>
             <td colspan="2">
                 <div id="header">
@@ -166,99 +172,264 @@
           <td colspan="2" valign="top">
                 <table width="95%" border="0" class="baris" align="center">
                     <tr>
-                        <td width="17%">Hari / Tanggal</td>
-                        <td width="2%">:</td>
-                        <td width="81%">x</td>
+                        <td colspan="4"><b>I. IDENTITAS SEKOLAH</b></td>
                     </tr>
-                    <tr><td>Nama Petugas</td><td>:</td><td>&nbsp;</td></tr>
-                    <tr><td>Nama Guru Piket</td><td>:</td><td>&nbsp;</td></tr>
+                    <tr>
+                        <td width="3%">a.</td>
+                        <td width="17%">Nama Sekolah</td>
+                        <td width="2%">:</td>
+                        <td width="78%">{{$sekolah->nama}}</td>
+                    </tr>
+                    <tr>
+                        <td>b.</td>
+                        <td>NPSN</td>
+                        <td>:</td>
+                        <td>{{$sekolah->npsn}}</td>
+                    </tr>
+                    <tr>
+                        <td>c.</td>
+                        <td>Alamat Sekolah</td>
+                        <td>:</td>
+                        <td>{{$sekolah->alamat_jalan}}</td>
+                    </tr>
+                    <tr>
+                        <td>d.</td>
+                        <td>Kecamatan/Kabupaten</td>
+                        <td>:</td>
+                        <td>{{$kabupaten->nama_kabupaten}}</td>
+                    </tr>
+                    <tr>
+                        <td>e.</td>
+                        <td>Nama Kepala Sekolah</td>
+                        <td>:</td>
+                        <td>{{$sekolah->kepalasekolah}}</td>
+                    </tr>
+                    
+                    <tr>
+                        <td colspan="4">&nbsp;</td>
+                    </tr>
+                    
+                    <tr>
+                        <td colspan="4"><b>II. IDENTITAS PENGAWAS</b></td>
+                    </tr>
+                    <tr>
+                        <td>f.</td>
+                        <td>Nama Pengawas</td>
+                        <td>:</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>g.</td>
+                        <td>Wilayah Binaan</td>
+                        <td>:</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>h.</td>
+                        <td>Instansi</td>
+                        <td>:</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>i.</td>
+                        <td>Tanggal Supervisi</td>
+                        <td>:</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">&nbsp;</td>
+                    </tr>
+                    
+                    <tr>
+                        <td colspan="4"><b>III. PENILAIAN 12 AREA STRATEGIS KEBERSIHAN SEKOLAH</b></td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td colspan="3"><i>(Gunakan Skor 4 = Sangat Bersih, 3 =  Bersih, 2 = Cukup, 1 = Kurang)</i></td>
+                    </tr>
                 </table>
-                <p>&nbsp;</p>
-                <table width="95%" border="0" class="baris" align="center">
-                  <tr>
-                    <td width="17%">Hari / Tanggal</td>
-                    <td width="2%">:</td>
-                    <td width="81%">x</td>
-                  </tr>
-                  <tr>
-                    <td>Nama Petugas</td>
-                    <td>:</td>
-                    <td>&nbsp;</td>
-                  </tr>
-                  <tr>
-                    <td>Nama Guru Piket</td>
-                    <td>:</td>
-                    <td>&nbsp;</td>
-                  </tr>
-                </table>
-            <p>&nbsp;</p></td>
+            </td>
         </tr>
 
-        <tr><td colspan="2" align="center" style="letter-spacing: 2px"><div align="left"></div></td></tr>
-
         <tr>
-            <td colspan="2" align="center" style="letter-spacing: 2px">
-                <table width="95%" style="line-height: 11px" class="tabel" align="center">
+            <td colspan="2" align="center">
+                <table width="90%" style="line-height: 11px" class="tabel" align="center">
                     <tr>
                         <td width="5%"><b>No.</b></td>
-                        <td width="37%"><b>Komponen {{$ruang->nama}}</b></td>
+                        <td width="37%"><b>Area Strategis</b></td>
+                        <td width="8%"><b>Sangat Bersih</b></td>
                         <td width="8%"><b>Bersih</b></td>
-                        <td width="8%"><b>Cukup Bersih</b></td>
-                        <td width="8%"><b>Tidak Bersih</b></td>
-                        <td><strong>Keterangan / Tindakan </strong></td>
+                        <td width="8%"><b>Cukup</b></td>
+                        <td width="8%"><b>Kurang</b></td>
+                        <td><b>Catatan atau Temuan</b></td>
                     </tr>
 
                     @foreach ($hasilKuesioner as $i => $item): ?>
                         <tr>
                             <td>{{ $i + 1 }}</td>
-                            <td align="left" style="text-align: left; padding-left: 5px">{{$item->parameter}}</td>
+                            <td align="left" style="text-align: left; padding-left: 5px">{{$item->nama}}</td>
                             <td class="ikonchecklist">
-                                @if($item->jawaban==3)
-                                <span style="font-family: DejaVu Sans; font-size: 20px">&#9745;</span> {{-- ☑ --}}
+                                @if($item->kesimpulan_pengawas == 4)
+                                    <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
                                 @else
-                                <span style="font-family: DejaVu Sans; font-size: 20px"">&#9744;</span> {{-- ☐ --}}
+                                    <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
                                 @endif
                             </td>
                             <td class="ikonchecklist">
-                                @if($item->jawaban==2)
-                                <span style="font-family: DejaVu Sans; font-size: 20px"">&#9745;</span> {{-- ☑ --}}
+                                @if($item->kesimpulan_pengawas == 3)
+                                    <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
                                 @else
-                                <span style="font-family: DejaVu Sans; font-size: 20px"">&#9744;</span> {{-- ☐ --}}
+                                    <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
                                 @endif
                             </td>
                             <td class="ikonchecklist">
-                                @if($item->jawaban==1)
-                                <span style="font-family: DejaVu Sans; font-size: 20px"">&#9745;</span> {{-- ☑ --}}
+                                @if($item->kesimpulan_pengawas == 2)
+                                    <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
                                 @else
-                                <span style="font-family: DejaVu Sans; font-size: 20px"">&#9744;</span> {{-- ☐ --}}
+                                    <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
                                 @endif
                             </td>
-                            <td align="left" style="text-align: left; padding-left: 5px">{{$item->deskripsi_jawaban}}</td>
+                            <td class="ikonchecklist">
+                                @if($item->kesimpulan_pengawas == 1)
+                                    <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
+                                @else
+                                    <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
+                                @endif
+                            </td>
+                            <td align="left" style="text-align: left; padding-left: 5px">{{$item->catatan_pengawas}}</td>
                         </tr>
                    @endforeach
               </table>
             </td>
         </tr>
-
-        <tr><td colspan="2">&nbsp;</td></tr>
-
-        <tr>
-            <td colspan="2">
-                <table width="100%" border="0" class="baris" align="center">
-                    <tr>
-                        <td width="30%">Tanda Tangan Petugas</td>
-                        <td width="3%">:</td>
-                        <td width="67%">&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td>Tanda Tangan Guru Piket</td>
-                        <td>:</td>
-                        <td>&nbsp;</td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
     </table>
+    
+    <div class="barisbaru">
+        <table width="98%" border="0" class="baris" align="center">
+            <tr>
+                <td><b>IV. DOKUMENTASI (DIPERIKSA SECARA LANGSUNG)</b></td>
+            </tr>
+        </table>
+        <table width="90%" style="line-height: 11px" class="tabel" align="center">
+            <tr>
+                <td width="5%"><b>No.</b></td>
+                <td width="37%"><b>Area Strategis</b></td>
+                <td width="8%"><b>Ada</b></td>
+                <td width="8%"><b>Tidak Ada</b></td>
+                <td><b>Catatan</b></td>
+            </tr>
+
+            @foreach ($hasilKuesioner as $i => $item): ?>
+                <tr>
+                    <td>{{ $i + 1 }}</td>
+                    <td align="left" style="text-align: left; padding-left: 5px">{{$item->nama}}</td>
+                    <td class="ikonchecklist">
+                        @if($item->dokumentasi_pengawas === 1)
+                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
+                        @else
+                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
+                        @endif
+                    </td>
+                    <td class="ikonchecklist">
+                        @if($item->dokumentasi_pengawas === 0)
+                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
+                        @else
+                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
+                        @endif
+                    </td>
+                    <td align="left" style="text-align: left; padding-left: 5px">{{$item->catatan_dokumentasi_pengawas}}</td>
+                </tr>
+           @endforeach
+        </table>
+        <br/>
+        
+        <table width="98%" border="0" class="baris" align="center">
+            <tr>
+                <td colspan="5"><b>V. RANGKUMAN DAN REKOMENDASI PENGAWAS</b></td>
+            </tr>
+            <tr>
+                <td width='3%'>a.</td>
+                <td colspan="4">Tingkat Kepatuhan Pelaksanaan Gerakan Sekolah Bersih : </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    @if($evaluasipengawas->nilai_kepatuhan == 4)
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
+                    @else
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
+                    @endif
+                    Sangat Baik
+                </td>
+                <td>
+                    @if($evaluasipengawas->nilai_kepatuhan == 3)
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
+                    @else
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
+                    @endif
+                    Baik
+                </td>
+                <td>
+                    @if($evaluasipengawas->nilai_kepatuhan == 2)
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
+                    @else
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
+                    @endif
+                    Cukup
+                </td>
+                <td>
+                    @if($evaluasipengawas->nilai_kepatuhan == 1)
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
+                    @else
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
+                    @endif
+                    Kurang
+                </td>
+            </tr>
+            <br/>
+            <tr>
+                <td width='3%'>b.</td>
+                <td colspan="4">Sekolah ini direkomendasikan untuk : </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    @if($evaluasipengawas->hasil_rekomendasi == 4)
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
+                    @else
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
+                    @endif
+                    Pembinaan
+                </td>
+                <td>
+                    @if($evaluasipengawas->hasil_rekomendasi == 3)
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
+                    @else
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
+                    @endif
+                    Penguatan
+                </td>
+                <td>
+                    @if($evaluasipengawas->hasil_rekomendasi == 2)
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
+                    @else
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
+                    @endif
+                    Penghargaan
+                </td>
+                <td>
+                    @if($evaluasipengawas->hasil_rekomendasi == 1)
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
+                    @else
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
+                    @endif
+                    Monitoring Lanjutan
+                </td>
+            </tr>
+        </table>
+        
+        
+    </div>
 
     <div class="footer"><br /></div>
 </div>

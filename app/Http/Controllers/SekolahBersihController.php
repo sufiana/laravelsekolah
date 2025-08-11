@@ -289,7 +289,37 @@ class SekolahBersihController extends Controller
                 return !$a || !$data->sekolah ?  ' - ' : $a["nama"]  ;
 
             })
-            // ->editColumn('id_ruang',function ($data){
+            ->editColumn('tanggal_supervisi',function ($data){
+                return !$data->tanggal_supervisi ?  ' - ' : Date('d-M-Y', strtotime($data->tanggal_supervisi));
+            })
+            ->editColumn('catatan_pengawas', function ($data) {
+                $existing = DB::table('evaluasi_pengawas')
+                    ->where('sekolah', $data->sekolah)
+                    ->where('periode_awal_kuesioner', $data->periode_awal_kuesioner)
+                    ->where('periode_akhir_kuesioner', $data->periode_akhir_kuesioner)
+                    ->first();
+            
+                // Mapping tindak lanjut
+                $jenisTindakLanjut = [
+                    '1' => 'Pembinaan',
+                    '2' => 'Penguatan',
+                    '3' => 'Penghargaan',
+                    '4' => 'Monitoring Lanjutan',
+                ];
+            
+                if ($existing) {
+                    $statusKepatuhan = 'Status Kepatuhan = ' . $existing->status_kepatuhan;
+                    $statusKebersihan = 'Status Kebersihan = ' . $existing->status_kebersihan;
+                    $tindakLanjut = 'Tindak Lanjut = ' . ($jenisTindakLanjut[$existing->hasil_rekomendasi] ?? 'Tidak diketahui');
+            
+                    $hasil = $statusKepatuhan . '<br>' . $statusKebersihan . '<br>' . $tindakLanjut;
+                } else {
+                    $hasil = '-';
+                }
+            
+                return $hasil;
+            })
+                        // ->editColumn('id_ruang',function ($data){
             //     $a= IconGrid::find($data->id_ruang);
             //     return !$a || !$data->id_ruang ?  ' - ' : $a["nama"]  ;
             // })
@@ -340,16 +370,15 @@ class SekolahBersihController extends Controller
 
 
             ->addColumn('action', function ($model){
-                if($model->status_verifikasi_sekolah ==1) {
+                if($model->status_evaluasi_pengawas ==1) {
                     $button = "
                     <div class='btn-group-horizontal'>
                     <a class='table-link success' href='" . route("sekolahbersih.verifikasiPengawas", $model->id) . "' id='editbtn' >
                         <span class='fa-stack'><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-edit fa-stack-1x fa-inverse'></i></span>
                     </a>
-                    <a class='table-link sumut' href='" . route("sekolahbersih.print", $model->id) . "' id='printbtn' >
-                        <span class='fa-stack' ><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-file-pdf-o fa-stack-1x fa-inverse'></i></span>
+                    <a class='table-link sumut' href='" . route("sekolahbersih.printPengawas", $model->id) . "' id='printbtn' >
+                        <span class='fa-stack'><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-file-pdf-o fa-stack-1x fa-inverse'></i></span>
                     </a>
-
                 ";
                 }
                 else {
@@ -358,17 +387,13 @@ class SekolahBersihController extends Controller
                     <a class='table-link success' href='" . route("sekolahbersih.verifikasiPengawas", $model->id) . "' id='editbtn' >
                         <span class='fa-stack'><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-edit fa-stack-1x fa-inverse'></i></span>
                     </a>
-                    <a class='table-link sumut' href='" . route("sekolahbersih.verifikasi", $model->id) . "' id='verifikasibtn' >
-                        <span class='fa-stack' ><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-check-square fa-stack-1x fa-inverse'></i></span>
-                    </a>
-
                 ";
                 }
 
                 $button = $button . "</div>";
                 return $button;
             })
-            ->rawColumns(['id_ruang','action'])
+            ->rawColumns(['catatan_pengawas','id_ruang','action'])
             ->make(true);
     }
 
@@ -738,7 +763,7 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
     public function print($id)
     {
         $model=EvaluasiKuesioner::findOrFail($id);
-        $ruang=IconGrid::find($model->id_ruang);
+        $ruang=IconGrid::findOrFail($model->id_ruang);
         $sekolah=Sekolah::find($model->sekolah);
         $stringIds = $model->id_kuesioner;  // contoh: "{319,320,321}"
         $arrayIds = explode(',', trim($stringIds, '{}'));
@@ -750,10 +775,52 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             ->whereIn('hasil_kuesioner.id', $arrayIds)
             ->get();
 
-        $pdf= PDF::loadView('sekolahbersih.cetak',compact('model','hasilKuesioner','sekolah'))->setPaper('a4', 'portrait');
+        $pdf= PDF::loadView('sekolahbersih.cetak',compact('model','ruang','hasilKuesioner','sekolah'))->setPaper('a4', 'portrait');
         return $pdf->stream();
-       // return view('sekolahbersih.verifikasi',compact('model','ruang','hasilKuesioner','sekolah'));
     }
+
+    public function printPengawas($id)
+    {
+        $model=EvaluasiKuesioner::findOrFail($id);
+        $ruang=IconGrid::find($model->id_ruang);
+        $sekolah=Sekolah::find($model->sekolah);
+        $kabupaten=Kabupatenkota::where('kode_kabupaten',$sekolah->kabupaten_kota)->first();
+        $stringIds = $model->id_kuesioner;  // contoh: "{319,320,321}"
+        $arrayIds = explode(',', trim($stringIds, '{}'));
+        
+        $sekolahId= $model->sekolah;
+        $periodeAwal= $model->periode_awal_kuesioner;
+        $periodeAkhir= $model->periode_akhir_kuesioner;
+        $hasilKuesioner = DB::table('ruang_sekolah as rs')
+            ->leftJoin('evaluasi_kuesioner as ek', function($join) use ($sekolahId, $periodeAwal, $periodeAkhir) {
+                $join->on('ek.id_ruang', '=', 'rs.id')
+                    ->where('ek.sekolah', '=', $sekolahId)
+                    ->where('ek.periode_awal_kuesioner', '=', $periodeAwal)
+                    ->where('ek.periode_akhir_kuesioner', '=', $periodeAkhir);
+            })
+            ->select(
+                DB::raw('COALESCE(max(ek.id), 0) as idnya'),
+                'rs.nama',
+                DB::raw('COALESCE(SUM(ek.kesimpulan_pengawas), 0) as kesimpulan_pengawas'),
+                DB::raw('(SELECT COUNT(*) FROM parameter_kebersihan p WHERE p.id_ruang = rs.id) as jumlah_parameter'),
+                DB::raw('MAX(ek.catatan_pengawas) as catatan_pengawas'),
+                DB::raw('COALESCE(MAX(CASE WHEN ek.dokumentasi_pengawas THEN 1 ELSE 0 END), 0) as dokumentasi_pengawas'),
+                DB::raw('MAX(ek.catatan_dokumentasi_pengawas) as catatan_dokumentasi_pengawas')
+            )
+            ->groupBy('rs.id', 'rs.nama')
+            ->orderBy('rs.id')
+            ->get();
+            
+        $evaluasipengawas = DB::table('evaluasi_pengawas')
+                ->where('sekolah', $sekolahId)
+                ->where('periode_awal_kuesioner', $periodeAwal)
+                ->where('periode_akhir_kuesioner', $periodeAkhir)
+                ->first();
+
+        $pdf= PDF::loadView('sekolahbersih.cetakpengawas',compact('model','ruang','hasilKuesioner','sekolah','kabupaten','evaluasipengawas'))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -845,8 +912,6 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
 
     public function storeVerifikasi(Request $request)
     {
-        // Validasi dasar
-//        dd($request->all());
         $request->validate([
             'sekolah' => 'required|integer',
             'periode_awal_kuesioner' => 'required|date',
@@ -860,21 +925,21 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
         $periode_awal = $request->periode_awal_kuesioner;
         $periode_akhir = $request->periode_akhir_kuesioner;
         $tgl_supervisi = date('Y-m-d', strtotime($request->tanggal));
-        $id_evaluasi = $request->id_evaluasi;
+        $id_evaluasi = $request->id_evaluasi ?? null;
         $user = Auth::check() ? Auth::user()->username : 'system';
 
         $totalScore = $request->total_score ?? null;
         $totalRataRata = $request->total_ratarata ?? null;
         $totalAkhir = $request->total_akhir ?? null;
-        $nilai_kepatuhan = $request->nilai_kepatuhan ?? null;
-        $status_kepatuhan = $request->status_kepatuhan ?? null;
-        $nilai_kebersihan = $request->nilai_kebersihan ?? null;
-        $status_kebersihan = $request->status_kebersihan ?? null;
+        $nilai_kepatuhan = $request->optionsRadios; // dari radio
+        $nilai_kebersihan = $request->optionsKebersihan; // dari radio
+        $status_kepatuhan = $request->status_kepatuhan;
+        $status_kebersihan = $request->status_kebersihan;
         $hasil = $request->jenis_tindak_lanjut ?? null;
 
         $now = Carbon::now();
 
-        DB::beginTransaction(); // 🔒 Mulai transaction
+        DB::beginTransaction();
 
         try {
             // Cek apakah sudah ada data di evaluasi_pengawas
@@ -885,7 +950,6 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                 ->first();
 
             if ($existing) {
-                Log::info('Updating existing evaluasi_pengawas', ['id' => $existing->id]);
                 DB::table('evaluasi_pengawas')->where('id', $existing->id)->update([
                     'tgl_supervisi' => $tgl_supervisi,
                     'id_evaluasi' => $id_evaluasi,
@@ -902,7 +966,6 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                 ]);
                 $evaluasiPengawasId = $existing->id;
             } else {
-                Log::info('Inserting new evaluasi_pengawas');
                 $evaluasiPengawasId = DB::table('evaluasi_pengawas')->insertGetId([
                     'sekolah' => $sekolah,
                     'periode_awal_kuesioner' => $periode_awal,
@@ -922,83 +985,60 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                     'time_update' => $now,
                     'user_updated' => $user,
                 ]);
-                Log::info('New evaluasi_pengawas created', ['id' => $evaluasiPengawasId]);
             }
 
             // Ambil semua id dari input dinamis
             $idInputs = $request->input('id', []);
-            Log::info('Received id inputs:', $idInputs);
 
             foreach ($idInputs as $index => $idKuesioner) {
-                // Skip jika id tidak valid
                 if (!$idKuesioner || $idKuesioner == 0) {
-                    Log::warning("Skipped invalid id_kuesioner at index $index", ['value' => $idKuesioner]);
                     continue;
                 }
 
-                // Ambil data per baris
-                $scorePengawas = $request->input("score.$index");
+                $scorePengawas = $request->input("persenkepatuhan.$index");
                 $catatanPengawas = $request->input("txtcatatan.$index");
+                $catatanpemeriksaanPengawas = $request->input("txtpemeriksaan.$index");
                 $dokumentasi = $request->input("dokumentasi.$index") == '1';
                 $tingkatKepatuhan = $request->input("kepatuhan.$index");
                 $kesimpulanPengawas = $request->input("nilai.$index");
+                $tgl_supervisi = date('Y-m-d', strtotime($request->tanggal));
+                $user = Auth::check() ? Auth::user()->username : 'system';
 
-                Log::info("Processing evaluasi_kuesioner", [
-                    'index' => $index,
-                    'id_kuesioner' => $idKuesioner,
-                    'score_pengawas' => $scorePengawas,
-                    'catatan_pengawas' => $catatanPengawas,
-                    'dokumentasi_pengawas' => $dokumentasi,
-                    'tingkat_kepatuhan' => $tingkatKepatuhan,
-                    'kesimpulan_pengawas' => $kesimpulanPengawas,
-                ]);
-
-                // Update evaluasi_kuesioner
                 $affected = DB::table('evaluasi_kuesioner')
                     ->where('id', $idKuesioner)
                     ->update([
                         'score_pengawas' => $scorePengawas,
+                        'tanggal_supervisi' =>$tgl_supervisi,
                         'status_evaluasi_pengawas' => 1,
                         'catatan_pengawas' => $catatanPengawas,
                         'dokumentasi_pengawas' => $dokumentasi,
-                        'catatan_dokumentasi_pengawas' => $dokumentasi ? 'Dokumentasi terlampir' : 'Tidak ada dokumentasi',
+                        'catatan_dokumentasi_pengawas' => $catatanpemeriksaanPengawas,
                         'tingkat_kepatuhan' => $tingkatKepatuhan,
                         'kesimpulan_pengawas' => $kesimpulanPengawas,
-                        'updated_at' => $now,
+                        'time_update' => $now,
+                        'user_updated' => $user,
+                        'user_approval_pengawas'=>$user,
                     ]);
 
                 if ($affected === 0) {
-                    Log::warning("No rows updated for evaluasi_kuesioner.id = $idKuesioner. Check if ID exists.");
                     throw new \Exception("Gagal update evaluasi_kuesioner dengan ID: $idKuesioner. Mungkin ID tidak ditemukan.");
                 }
-
-                Log::info("Updated evaluasi_kuesioner", ['id' => $idKuesioner, 'rows' => $affected]);
             }
 
-            DB::commit(); // ✅ Commit transaction
+            DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Verifikasi berhasil disimpan.',
-                'id_evaluasi_pengawas' => $evaluasiPengawasId,
-            ], 200);
+            return redirect()
+                ->route('sekolahbersih.indexpengawas')
+                ->with('success', 'Verifikasi berhasil disimpan.')
+                ->with('evaluasi_id', $evaluasiPengawasId);
 
         } catch (\Exception $e) {
-            DB::rollback(); // ❌ Rollback semua perubahan
+            DB::rollback();
 
-            Log::error('Transaction failed in storeVerifikasi', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menyimpan verifikasi. Data dibatalkan.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return redirect()
+                ->route('sekolahbersih.indexpengawas')
+                ->with('error', 'Gagal menyimpan verifikasi. Data dibatalkan.')
+                ->with('exception', $e->getMessage());
         }
     }
-
 }

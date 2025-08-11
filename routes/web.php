@@ -47,6 +47,7 @@ Route::get('sekolahbersih/verifikasi/{id}', 'SekolahBersihController@verifikasi'
 Route::get('sekolahbersih/verifikasiPengawas/{id}', 'SekolahBersihController@verifikasiPengawas')->name('sekolahbersih.verifikasiPengawas');
 Route::get('sekolahbersih/show/{id}', 'SekolahBersihController@show')->name('sekolahbersih.show');
 Route::get('sekolahbersih/print/{id}', 'SekolahBersihController@print')->name('sekolahbersih.print');
+Route::get('sekolahbersih/printPengawas/{id}', 'SekolahBersihController@printPengawas')->name('sekolahbersih.printPengawas');
 
 
 

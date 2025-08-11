@@ -214,13 +214,13 @@
                                             <td>
                                                 <!--{{round($kepatuhan)}}-->
                                                 {!!$kesimpulankepatuhan!!}
-                                                <input type="hidden" id="kepatuhan[{{$no}}]" name="kepatuhan[{{$no}}]" value="{{$nilaikepatuhan}}">
-                                                <input type="hidden" id="persenkepatuhan[{{$no}}]" name="persenkepatuhan[{{$no}}]" value="{{$kepatuhan}}">
+                                                <input type="text" id="kepatuhan[{{$no}}]" name="kepatuhan[{{$no}}]" value="{{$nilaikepatuhan}}">
+                                                <input type="text" id="persenkepatuhan[{{$no}}]" name="persenkepatuhan[{{$no}}]" value="{{$kepatuhan}}">
                                                 <input type="text" name="id[{{$no}}]" id="id[{{$no}}]" value="{{ $i->idnya }}">
                                             </td>
                                             <td>
                                                 {!!$kesimpulan!!}
-                                                <input type="hidden" id="nilai[{{$no}}]" name="nilai[{{$no}}]" value="{{$nilai}}">
+                                                <input type="text" id="nilai[{{$no}}]" name="nilai[{{$no}}]" value="{{$nilai}}">
                                             </td>
                                             <td>
                                                 <a href="#"
@@ -232,7 +232,7 @@
                                                     {{ old("catatan[$no]") ?? '' }}
                                                 </a>
 
-                                                <input type="hidden" name="txtcatatan[{{ $no }}]" id="txtcatatan_{{ $no }}" value="{{old("catatan[$no]") }}">
+                                                <input type="text" name="txtcatatan[{{ $no }}]" id="txtcatatan_{{ $no }}" value="{{old("catatan[$no]") }}">
 
                                             </td>
                                             <td>
@@ -266,7 +266,7 @@
                                                    data-title="Masukkan catatan pemeriksaan">
                                                     {{ old("pemeriksaan[$no]") ?? '' }}
                                                 </a>
-                                                <input type="hidden" name="txtpemeriksaan[{{ $no }}]" id="txtpemeriksaan_{{ $no }}" value="{{old("pemeriksaan[$no]") }}">
+                                                <input type="text" name="txtpemeriksaan[{{ $no }}]" id="txtpemeriksaan_{{ $no }}" value="{{old("pemeriksaan[$no]") }}">
 
                                             </td>
                                         </tr>
@@ -399,7 +399,7 @@
                                                     <div class="form-group col-md-12">
                                                         <label for="popoverName">Hasil Rekomendasi</label>
                                                         <div class="form-group">
-                                                            <select class="form-control" id="jenis_tindak_lanjut">
+                                                            <select class="form-control" id="jenis_tindak_lanjut" name="jenis_tindak_lanjut">
                                                                 <option value="" disabled selected>Pilih jenis tindak lanjut</option>
                                                                 <option value="1">Pembinaan</option>
                                                                 <option value="2">Penguatan</option>

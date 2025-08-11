@@ -179,7 +179,7 @@
         <tr><td colspan="2" align="center" style="letter-spacing: 2px">&nbsp;</td></tr>
 
         <tr>
-            <td colspan="2" align="center" style="letter-spacing: 2px">
+            <td colspan="2" align="center">
                 <table width="100%" style="line-height: 11px" class="tabel" align="center">
                     <tr>
                         <td width="5%"><b>No.</b></td>
