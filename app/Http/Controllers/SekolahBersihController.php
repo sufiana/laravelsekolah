@@ -18,6 +18,7 @@ use App\Http\Controllers\AuthController;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Kabupatenkota;
 use App\Models\Cabdis;
+use Carbon\Carbon;
 
 class SekolahBersihController extends Controller
 {
@@ -671,8 +672,6 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             ->join('ruang_sekolah as r', 'r.id', '=', 'hasil_kuesioner.id_ruang')
             ->whereIn('hasil_kuesioner.id', $arrayIds)
             ->get();
-
-
         return view('sekolahbersih.verifikasi',compact('model','ruang','hasilKuesioner','sekolah'));
     }
 
@@ -686,23 +685,23 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             $cabdis = Cabdis::find($user->cabdis);
             if ($cabdis) {
                 $wilayah = DB::select("
-                    SELECT 
+                    SELECT
                         cab.id,
                         cab.nama,
                         cab.kabupatenkota,
                         string_agg(kab.nama_kabupaten, ', ' ORDER BY kab.nama_kabupaten) AS nama_kabupaten
-                    FROM 
+                    FROM
                         cabdis cab
-                    JOIN 
+                    JOIN
                         LATERAL unnest(string_to_array(cab.kabupatenkota, ', ')) AS kab_id ON TRUE
-                    JOIN 
+                    JOIN
                         kabupaten kab ON kab.kode_kabupaten::text = kab_id
-                    WHERE 
+                    WHERE
                         cab.id = ?
-                    GROUP BY 
+                    GROUP BY
                         cab.id, cab.nama, cab.kabupatenkota
                 ", [$user->cabdis]);
-                  
+
             } else {
                 $wilayah = [];
             }
@@ -843,10 +842,11 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             ], 404);
         }
     }
-    
+
     public function storeVerifikasi(Request $request)
     {
-        // Validasi input dasar
+        // Validasi dasar
+//        dd($request->all());
         $request->validate([
             'sekolah' => 'required|integer',
             'periode_awal_kuesioner' => 'required|date',
@@ -859,122 +859,146 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
         $sekolah = $request->sekolah;
         $periode_awal = $request->periode_awal_kuesioner;
         $periode_akhir = $request->periode_akhir_kuesioner;
-        $tgl_supervisi = $request->tanggal;
-        $user = Auth::check() ? Auth::user()->name : 'system';
+        $tgl_supervisi = date('Y-m-d', strtotime($request->tanggal));
+        $id_evaluasi = $request->id_evaluasi;
+        $user = Auth::check() ? Auth::user()->username : 'system';
 
-        // Mapping nilai kepatuhan
-        $mappingKepatuhan = [
-            4 => ['status' => 'Sangat Baik', 'min' => 90],
-            3 => ['status' => 'Baik', 'min' => 75],
-            2 => ['status' => 'Cukup', 'min' => 50],
-            1 => ['status' => 'Kurang', 'min' => 0],
-        ];
-
-        // Mapping nilai kebersihan
-        $mappingKebersihan = [
-            4 => ['status' => 'Sangat Baik', 'min' => 2.75],
-            3 => ['status' => 'Baik', 'min' => 2.00],
-            2 => ['status' => 'Cukup', 'min' => 1.00],
-            1 => ['status' => 'Kurang', 'min' => 0],
-        ];
-
-        $nilaiKepatuhan = $request->optionsRadios;
-        $statusKepatuhan = $mappingKepatuhan[$nilaiKepatuhan]['status'];
-
-        $nilaiKebersihan = $request->optionsKebersihan;
-        $statusKebersihan = $mappingKebersihan[$nilaiKebersihan]['status'];
-
-        // Ambil data total dari frontend (dari baris terakhir)
-        // Anda bisa kirim via hidden input, atau hitung di backend
-        // Di sini kita asumsikan dari request (tambahkan hidden field di form jika perlu)
-        $totalScore = $request->total_score ?? 18; // dari "total" di tabel
-        $totalRataRata = $request->total_ratarata ?? 1.5;
-        $totalAkhir = $request->total_akhir ?? 49.92; // Tingkat kepatuhan %
-
-        // Cek apakah sudah ada data di evaluasi_pengawas
-        $existing = DB::table('evaluasi_pengawas')
-            ->where('sekolah', $sekolah)
-            ->where('periode_awal_kuesioner', $periode_awal)
-            ->where('periode_akhir_kuesioner', $periode_akhir)
-            ->first();
+        $totalScore = $request->total_score ?? null;
+        $totalRataRata = $request->total_ratarata ?? null;
+        $totalAkhir = $request->total_akhir ?? null;
+        $nilai_kepatuhan = $request->nilai_kepatuhan ?? null;
+        $status_kepatuhan = $request->status_kepatuhan ?? null;
+        $nilai_kebersihan = $request->nilai_kebersihan ?? null;
+        $status_kebersihan = $request->status_kebersihan ?? null;
+        $hasil = $request->jenis_tindak_lanjut ?? null;
 
         $now = Carbon::now();
 
-        if ($existing) {
-            // Update existing record
-            DB::table('evaluasi_pengawas')->where('id', $existing->id)->update([
-                'tgl_supervisi' => $tgl_supervisi,
-                'total_score' => $totalScore,
-                'total_ratarata' => $totalRataRata,
-                'total_akhir' => $totalAkhir,
-                'nilai_kepatuhan' => $nilaiKepatuhan,
-                'status_kepatuhan' => $statusKepatuhan,
-                'nilai_kebersihan' => $nilaiKebersihan,
-                'status_kebersihan' => $statusKebersihan,
-                'time_update' => $now,
-                'user_updated' => $user,
-            ]);
+        DB::beginTransaction(); // 🔒 Mulai transaction
 
-            $evaluasiPengawasId = $existing->id;
-        } else {
-            // Insert new record
-            $evaluasiPengawasId = DB::table('evaluasi_pengawas')->insertGetId([
-                'sekolah' => $sekolah,
-                'periode_awal_kuesioner' => $periode_awal,
-                'periode_akhir_kuesioner' => $periode_akhir,
-                'tgl_supervisi' => $tgl_supervisi,
-                'total_score' => $totalScore,
-                'total_ratarata' => $totalRataRata,
-                'total_akhir' => $totalAkhir,
-                'nilai_kepatuhan' => $nilaiKepatuhan,
-                'status_kepatuhan' => $statusKepatuhan,
-                'nilai_kebersihan' => $nilaiKebersihan,
-                'status_kebersihan' => $statusKebersihan,
-                'time_created' => $now,
-                'user_created' => $user,
-                'time_update' => $now,
-                'user_updated' => $user,
-            ]);
-        }
+        try {
+            // Cek apakah sudah ada data di evaluasi_pengawas
+            $existing = DB::table('evaluasi_pengawas')
+                ->where('sekolah', $sekolah)
+                ->where('periode_awal_kuesioner', $periode_awal)
+                ->where('periode_akhir_kuesioner', $periode_akhir)
+                ->first();
 
-        // Loop untuk update evaluasi_kuesioner berdasarkan id[index]
-        // Asumsi: input name seperti id[1], dokumentasi[1], txtcatatan[1], dll.
-        $count = 12; // Total baris
-
-        for ($i = 1; $i <= $count; $i++) {
-            $idKuesioner = $request->input("id[$i]");
-
-            // Skip jika id tidak ada atau 0 (seperti Ruang Ibadah dst)
-            if (!$idKuesioner || $idKuesioner == 0) {
-                continue;
+            if ($existing) {
+                Log::info('Updating existing evaluasi_pengawas', ['id' => $existing->id]);
+                DB::table('evaluasi_pengawas')->where('id', $existing->id)->update([
+                    'tgl_supervisi' => $tgl_supervisi,
+                    'id_evaluasi' => $id_evaluasi,
+                    'total_score' => $totalScore,
+                    'total_ratarata' => $totalRataRata,
+                    'total_akhir' => $totalAkhir,
+                    'nilai_kepatuhan' => $nilai_kepatuhan,
+                    'status_kepatuhan' => $status_kepatuhan,
+                    'nilai_kebersihan' => $nilai_kebersihan,
+                    'status_kebersihan' => $status_kebersihan,
+                    'hasil_rekomendasi' => $hasil,
+                    'time_update' => $now,
+                    'user_updated' => $user,
+                ]);
+                $evaluasiPengawasId = $existing->id;
+            } else {
+                Log::info('Inserting new evaluasi_pengawas');
+                $evaluasiPengawasId = DB::table('evaluasi_pengawas')->insertGetId([
+                    'sekolah' => $sekolah,
+                    'periode_awal_kuesioner' => $periode_awal,
+                    'periode_akhir_kuesioner' => $periode_akhir,
+                    'tgl_supervisi' => $tgl_supervisi,
+                    'id_evaluasi' => $id_evaluasi,
+                    'total_score' => $totalScore,
+                    'total_ratarata' => $totalRataRata,
+                    'total_akhir' => $totalAkhir,
+                    'nilai_kepatuhan' => $nilai_kepatuhan,
+                    'status_kepatuhan' => $status_kepatuhan,
+                    'nilai_kebersihan' => $nilai_kebersihan,
+                    'status_kebersihan' => $status_kebersihan,
+                    'hasil_rekomendasi' => $hasil,
+                    'time_created' => $now,
+                    'user_created' => $user,
+                    'time_update' => $now,
+                    'user_updated' => $user,
+                ]);
+                Log::info('New evaluasi_pengawas created', ['id' => $evaluasiPengawasId]);
             }
 
-            $scorePengawas = $request->input("score[$i]") ?? null;
-            $catatanPengawas = $request->input("txtcatatan[$i]") ?? null;
-            $dokumentasi = $request->input("dokumentasi[$i]") == '1' ? true : false;
-            $tingkatKepatuhan = $request->input("kepatuhan[$i]") ?? null;
-            $kesimpulanPengawas = $request->input("nilai[$i]") ?? null;
+            // Ambil semua id dari input dinamis
+            $idInputs = $request->input('id', []);
+            Log::info('Received id inputs:', $idInputs);
 
-            // Update evaluasi_kuesioner
-            DB::table('evaluasi_kuesioner')
-                ->where('id', $idKuesioner)
-                ->update([
+            foreach ($idInputs as $index => $idKuesioner) {
+                // Skip jika id tidak valid
+                if (!$idKuesioner || $idKuesioner == 0) {
+                    Log::warning("Skipped invalid id_kuesioner at index $index", ['value' => $idKuesioner]);
+                    continue;
+                }
+
+                // Ambil data per baris
+                $scorePengawas = $request->input("score.$index");
+                $catatanPengawas = $request->input("txtcatatan.$index");
+                $dokumentasi = $request->input("dokumentasi.$index") == '1';
+                $tingkatKepatuhan = $request->input("kepatuhan.$index");
+                $kesimpulanPengawas = $request->input("nilai.$index");
+
+                Log::info("Processing evaluasi_kuesioner", [
+                    'index' => $index,
+                    'id_kuesioner' => $idKuesioner,
                     'score_pengawas' => $scorePengawas,
-                    'status_evaluasi_pengawas' => 1, // sudah dievaluasi
                     'catatan_pengawas' => $catatanPengawas,
                     'dokumentasi_pengawas' => $dokumentasi,
-                    'catatan_dokumentasi_pengawas' => $dokumentasi ? 'Dokumentasi terlampir' : 'Tidak ada dokumentasi',
                     'tingkat_kepatuhan' => $tingkatKepatuhan,
                     'kesimpulan_pengawas' => $kesimpulanPengawas,
-                    'updated_at' => $now,
                 ]);
-        }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Verifikasi berhasil disimpan.',
-            'id_evaluasi_pengawas' => $evaluasiPengawasId,
-        ], 200);
+                // Update evaluasi_kuesioner
+                $affected = DB::table('evaluasi_kuesioner')
+                    ->where('id', $idKuesioner)
+                    ->update([
+                        'score_pengawas' => $scorePengawas,
+                        'status_evaluasi_pengawas' => 1,
+                        'catatan_pengawas' => $catatanPengawas,
+                        'dokumentasi_pengawas' => $dokumentasi,
+                        'catatan_dokumentasi_pengawas' => $dokumentasi ? 'Dokumentasi terlampir' : 'Tidak ada dokumentasi',
+                        'tingkat_kepatuhan' => $tingkatKepatuhan,
+                        'kesimpulan_pengawas' => $kesimpulanPengawas,
+                        'updated_at' => $now,
+                    ]);
+
+                if ($affected === 0) {
+                    Log::warning("No rows updated for evaluasi_kuesioner.id = $idKuesioner. Check if ID exists.");
+                    throw new \Exception("Gagal update evaluasi_kuesioner dengan ID: $idKuesioner. Mungkin ID tidak ditemukan.");
+                }
+
+                Log::info("Updated evaluasi_kuesioner", ['id' => $idKuesioner, 'rows' => $affected]);
+            }
+
+            DB::commit(); // ✅ Commit transaction
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Verifikasi berhasil disimpan.',
+                'id_evaluasi_pengawas' => $evaluasiPengawasId,
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollback(); // ❌ Rollback semua perubahan
+
+            Log::error('Transaction failed in storeVerifikasi', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menyimpan verifikasi. Data dibatalkan.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
 }

@@ -13,12 +13,10 @@
         font-size: 12px;
         font-weight: 300;
     }
-
     .onoffswitch-sm {
         width: 60px;
         height: 24px;
     }
-
     .onoffswitch-sm .onoffswitch-label {
         display: block;
         overflow: hidden;
@@ -31,14 +29,12 @@
         background-color: #E74C3C;
         font-size: 6px; /* Tambahkan ini untuk kecilkan font */
     }
-
     .onoffswitch-sm .onoffswitch-inner {
         display: block;
         width: 200%;
         margin-left: -100%;
         transition: margin 0.3s ease-in 0s;
     }
-
     .onoffswitch-sm .onoffswitch-switch {
         width: 10px;
         height: 10px;
@@ -51,21 +47,15 @@
         transition: all 0.3s ease-in 0s;
         margin: 5px 18px 30px 40px;
     }
-
-
     .onoffswitch-sm .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
         margin-left: 0;
     }
-
     .onoffswitch-sm .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
         right: -10px;
     }
-
     .onoffswitch-inner:before {
         padding-left: 5px;
     }
-
-
 </style>
 
 <div class="row">
@@ -84,6 +74,7 @@
             <div class="col-12">
                 <div class="main-box clearfix profile-box-contact">
                     <div class="main-box-body clearfix">
+
                         <div class="profile-box-header gray-bg clearfix" style="background-color: #3e5879 !important;">
                             <div class="row">
                                 <div class="col-lg-6">
@@ -108,7 +99,7 @@
                                 <div class="col-lg-6">
                                     <h2>II. Identitas Pengawas </h2> <br/>
                                     <h2>{{$user->username}}</h2>
-                                    
+
                                     <ul class="contact-details">
                                         <li>
                                             <i class="fa fa-map-marker"></i> Wilayah Binaan : {{$user->binaan}}
@@ -121,306 +112,312 @@
                             </div>
                         </div>
 
-                        <div class="main-box-body clearfix">
-                            <div class="table-responsive">
-                                <input type="text" id="periode_awal_kuesioner" name="periode_awal_kuesioner" value="{{$model->periode_awal_kuesioner}}">
-                                <input type="text" id="periode_akhir_kuesioner" name="periode_akhir_kuesioner" value="{{$model->periode_akhir_kuesioner}}">
-                                <input type="text" id="sekolah" name="sekolah" value="{{$model->sekolah}}">
+                        <form method="POST" action="{{ route('sekolahbersih.storeVerifikasi') }}" id="form-penilaian">
+                            @csrf
+                            <div class="main-box-body clearfix">
+                                <div class="table-responsive">
+                                    <input type="hidden" id="periode_awal_kuesioner" name="periode_awal_kuesioner" value="{{$model->periode_awal_kuesioner}}">
+                                    <input type="hidden" id="periode_akhir_kuesioner" name="periode_akhir_kuesioner" value="{{$model->periode_akhir_kuesioner}}">
+                                    <input type="hidden" id="sekolah" name="sekolah" value="{{$model->sekolah}}">
 
-                                <table width="98%" class="table">
-                                    <thead>
-                                    <tr>
-                                        <td width="2%" style="text-align: center">No</td>
-                                        <td width="30%">Parameter</td>
-                                        <td width="5%">Score</td>
-                                        <td width="8%">Rata-rata</td>
-                                        <td width="8%">Kepatuhan</td>
-                                        <td width="8%">Keterangan <br/> Kebersihan </td>
-                                        <td width="14%">Catatan/Temuan</td>
-                                        <td width="5%">Dokumentasi</td>
-                                        <td width="15%">Catatan Pemeriksaan</td>
-                                    </tr>
-                                    </thead>
+                                    <table width="98%" class="table">
+                                        <thead>
+                                        <tr>
+                                            <td width="2%" style="text-align: center">No</td>
+                                            <td width="30%">Parameter</td>
+                                            <td width="5%">Score</td>
+                                            <td width="8%">Rata-rata</td>
+                                            <td width="8%">Kepatuhan</td>
+                                            <td width="8%">Keterangan <br/> Kebersihan </td>
+                                            <td width="14%">Catatan/Temuan</td>
+                                            <td width="5%">Dokumentasi</td>
+                                            <td width="15%">Catatan Pemeriksaan</td>
+                                        </tr>
+                                        </thead>
 
-                                    @php
-                                    $no=0;
-                                    $totalrerata = 0;
-                                    $totalkebersihan=0;
-                                    $amountkepatuhan=0;
-                                    $totalkepatuhan=0;
-                                    $total_score=0;
+                                        @php
+                                        $no=0;
+                                        $totalrerata = 0;
+                                        $totalkebersihan=0;
+                                        $amountkepatuhan=0;
+                                        $totalkepatuhan=0;
+                                        $total_score=0;
 
-                                    @endphp
-                                    @foreach($hasilKuesioner as $i)
-                                    @php
-                                    $no++;
-                                    $ratarata = $i->score / $i->jumlah_parameter;
-                                    $switchId = 'switch_' . $no;
-                                    $totalrerata += $ratarata;
-                                    $totalkebersihan = $totalrerata/12;
-                                    $max=$i->jumlah_parameter*3;
-                                    $kepatuhan = round(($i->score / $max) * 100);
-                                    $amountkepatuhan += $kepatuhan;
-                                    $totalkepatuhan = $amountkepatuhan /12;
-                                    
-                                    $total_score += $i->score;
+                                        @endphp
+                                        @foreach($hasilKuesioner as $i)
+                                        @php
+                                        $no++;
+                                        $ratarata = $i->score / $i->jumlah_parameter;
+                                        $switchId = 'switch_' . $no;
+                                        $totalrerata += $ratarata;
+                                        $totalkebersihan = $totalrerata/12;
+                                        $max=$i->jumlah_parameter*3;
+                                        $kepatuhan = round(($i->score / $max) * 100);
+                                        $amountkepatuhan += $kepatuhan;
+                                        $totalkepatuhan = $amountkepatuhan /12;
+
+                                        $total_score += $i->score;
 
 
-                                    if ($ratarata >= 2.75) {
-                                    $kesimpulan = '<span class="badge badge-primary">Sangat Bersih</span>';
-                                    $nilai = 4;
-                                    } elseif ($ratarata >= 2.00 && $ratarata < 2.75) {
-                                    $kesimpulan = '<span class="badge badge-success">Bersih</span>';
-                                    $nilai = 3;
-                                    } elseif ($ratarata >= 1.00 && $ratarata < 2.00) {
-                                    $kesimpulan = '<span class="badge badge-info">Cukup Bersih</span>';
-                                    $nilai = 2;
-                                    } elseif ($ratarata == 0) {
-                                    $kesimpulan = '<span class="badge badge-danger">Belum isi</span>';
-                                    $nilai = 0;
-                                    } else {
-                                    $kesimpulan = '<span class="badge badge-warning">Kurang Bersih</span>';
-                                    $nilai = 1;
+                                        if ($ratarata >= 2.75) {
+                                        $kesimpulan = '<span class="badge badge-primary">Sangat Bersih</span>';
+                                        $nilai = 4;
+                                        } elseif ($ratarata >= 2.00 && $ratarata < 2.75) {
+                                        $kesimpulan = '<span class="badge badge-success">Bersih</span>';
+                                        $nilai = 3;
+                                        } elseif ($ratarata >= 1.00 && $ratarata < 2.00) {
+                                        $kesimpulan = '<span class="badge badge-info">Cukup Bersih</span>';
+                                        $nilai = 2;
+                                        } elseif ($ratarata == 0) {
+                                        $kesimpulan = '<span class="badge badge-danger">Belum isi</span>';
+                                        $nilai = 0;
+                                        } else {
+                                        $kesimpulan = '<span class="badge badge-warning">Kurang Bersih</span>';
+                                        $nilai = 1;
+                                        }
+
+                                        if ($kepatuhan >= 85)
+                                        {
+                                        $nilaikepatuhan = 4;
+                                        $kesimpulankepatuhan = '<span class="badge badge-primary">Sangat Baik </span>';
+                                        }
+                                        elseif ($kepatuhan >= 70)
+                                        {
+                                        $nilaikepatuhan = 3;
+                                        $kesimpulankepatuhan = '<span class="badge badge-success">Baik  </span>';
+                                        }
+                                        elseif ($kepatuhan >= 50)
+                                        {
+                                        $nilaikepatuhan = 2;
+                                        $kesimpulankepatuhan = '<span class="badge badge-info"> Cukup </span>';
+                                        }
+                                        elseif ($kepatuhan ==0)
+                                        {
+                                        $nilaikepatuhan = 0;
+                                        $kesimpulankepatuhan = '<span class="badge badge-danger"> Belum isi </span>';
+                                        }
+                                        else {
+                                        $nilaikepatuhan = 1;
+                                        $kesimpulankepatuhan = '<span class="badge badge-warning"> Kurang </span>';
+                                        }
+
+                                        //untuk akhir
+
+
+                                        @endphp
+
+                                        <tr>
+                                            <td style="text-align: center">{{$no}}</td>
+                                            <td>{{$i->nama.' ('.$i->jumlah_parameter.')'}}</td>
+                                            <td>{{$i->score}}</td>
+                                            <td>{{round($ratarata, 2)}}</td>
+                                            <td>
+                                                <!--{{round($kepatuhan)}}-->
+                                                {!!$kesimpulankepatuhan!!}
+                                                <input type="hidden" id="kepatuhan[{{$no}}]" name="kepatuhan[{{$no}}]" value="{{$nilaikepatuhan}}">
+                                                <input type="hidden" id="persenkepatuhan[{{$no}}]" name="persenkepatuhan[{{$no}}]" value="{{$kepatuhan}}">
+                                                <input type="text" name="id[{{$no}}]" id="id[{{$no}}]" value="{{ $i->idnya }}">
+                                            </td>
+                                            <td>
+                                                {!!$kesimpulan!!}
+                                                <input type="hidden" id="nilai[{{$no}}]" name="nilai[{{$no}}]" value="{{$nilai}}">
+                                            </td>
+                                            <td>
+                                                <a href="#"
+                                                   class="editable-catatan"
+                                                   data-type="text"
+                                                   data-pk="{{ $no }}"
+                                                   data-name="catatan[{{ $no }}]"
+                                                   data-title="Masukkan catatan">
+                                                    {{ old("catatan[$no]") ?? '' }}
+                                                </a>
+
+                                                <input type="hidden" name="txtcatatan[{{ $no }}]" id="txtcatatan_{{ $no }}" value="{{old("catatan[$no]") }}">
+
+                                            </td>
+                                            <td>
+                                                <div class="float-left">
+                                                    <!--<div class="onoffswitch onoffswitch-danger onoffswitch-sm">-->
+                                                    <!--   <input type="checkbox" name="kategori[{{$no}}]" class="onoffswitch-checkbox" id="switch_{{$no}}" checked>-->
+                                                    <!--   <label class="onoffswitch-label" for="switch_{{$no}}">-->
+                                                    <!--     <div class="onoffswitch-inner"></div>-->
+                                                    <!--     <div class="onoffswitch-switch"></div>-->
+                                                    <!--   </label>-->
+                                                    <!-- </div>-->
+
+                                                    <div class="form-check form-check-inline checkbox-nice">
+                                                        <input
+                                                            class="form-check-input"
+                                                            type="checkbox"
+                                                            id="dokumentasi_{{ $no }}"
+                                                            onchange="updateCheckboxValue({{ $no }})"
+                                                        >
+                                                        <label class="form-check-label" for="dokumentasi_{{ $no }}">Ada</label>
+                                                    </div>
+                                                    <br/>
+                                                    <input type="hidden" id="dokumentasi_hidden_{{ $no }}" name="dokumentasi[{{ $no }}]" value="0">
+                                            </td>
+                                            <td width="10%">
+                                                <a href="#"
+                                                   class="editable-pemeriksaan"
+                                                   data-type="text"
+                                                   data-pk="{{ $no }}"
+                                                   data-name="pemeriksaan[{{ $no }}]"
+                                                   data-title="Masukkan catatan pemeriksaan">
+                                                    {{ old("pemeriksaan[$no]") ?? '' }}
+                                                </a>
+                                                <input type="hidden" name="txtpemeriksaan[{{ $no }}]" id="txtpemeriksaan_{{ $no }}" value="{{old("pemeriksaan[$no]") }}">
+
+                                            </td>
+                                        </tr>
+
+                                        @endforeach
+                                        <tr class="green-bg" style="color: white">
+                                            <td colspan="2" style="text-align: center">total</td>
+                                            <td colspan="4">{{round($totalrerata, 2)}} Rata-Rata setelah di bagi 12 Komponen = {{round($totalkebersihan,2)}}</td>
+                                            <td colspan="3" style="text-align: center">Tingkat Kepatuhan : {{round($totalkepatuhan,2). ' %'}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                                @php
+                                    if($totalkepatuhan >= 85 ) {
+                                        $nilaiakhirkepatuhan = 4;
+                                        $statuskepatuhan='Sangat Baik';
                                     }
-
-                                    if ($kepatuhan >= 85)
-                                    {
-                                    $nilaikepatuhan = 4;
-                                    $kesimpulankepatuhan = '<span class="badge badge-primary">Sangat Baik </span>';
+                                    elseif ($totalkepatuhan >= 70) {
+                                        $nilaiakhirkepatuhan = 3;
+                                        $statuskepatuhan='Baik';
                                     }
-                                    elseif ($kepatuhan >= 70)
-                                    {
-                                    $nilaikepatuhan = 3;
-                                    $kesimpulankepatuhan = '<span class="badge badge-success">Baik  </span>';
-                                    }
-                                    elseif ($kepatuhan >= 50)
-                                    {
-                                    $nilaikepatuhan = 2;
-                                    $kesimpulankepatuhan = '<span class="badge badge-info"> Cukup </span>';
-                                    }
-                                    elseif ($kepatuhan ==0)
-                                    {
-                                    $nilaikepatuhan = 0;
-                                    $kesimpulankepatuhan = '<span class="badge badge-danger"> Belum isi </span>';
+                                    elseif ($totalkepatuhan >= 50) {
+                                        $nilaiakhirkepatuhan = 2;
+                                        $statuskepatuhan='Cukup';
                                     }
                                     else {
-                                    $nilaikepatuhan = 1;
-                                    $kesimpulankepatuhan = '<span class="badge badge-warning"> Kurang </span>';
+                                        $nilaiakhirkepatuhan = 1;
+                                        $statuskepatuhan='Kurang';
                                     }
-                                    
-                                    //untuk akhir
-                                    
 
-                                    @endphp
+                                    if($totalkebersihan  >= 2.75) {
+                                        $nilaiakhirkebersihan=4;
+                                        $statuskebersihan='Sangat';
+                                    }
+                                    else if($totalkebersihan  >= 2.00 && $totalkebersihan < 2.75) {
+                                        $nilaiakhirkebersihan=3;
+                                        $statuskebersihan='Baik';
+                                    }
+                                    else if($totalkebersihan  >= 1.00 && $totalkebersihan < 2.00) {
+                                        $nilaiakhirkebersihan=2;
+                                        $statuskebersihan='Cukup';
+                                    }
+                                    else {
+                                        $nilaiakhirkebersihan=1;
+                                        $statuskebersihan='Kurang';
+                                    }
 
-                                    <tr>
-                                        <td style="text-align: center">{{$no}}</td>
-                                        <td>{{$i->nama.' ('.$i->jumlah_parameter.')'}}</td>
-                                        <td>{{$i->score}}</td>
-                                        <td>{{round($ratarata, 2)}}</td>
-                                        <td>
-                                            <!--{{round($kepatuhan)}}-->
-                                            {!!$kesimpulankepatuhan!!}
-                                            <input type="text" id="kepatuhan[{{$no}}]" name="kepatuhan[{{$no}}]" value="{{$nilaikepatuhan}}">
-                                            <input type="text" id="persenkepatuhan[{{$no}}]" name="persenkepatuhan[{{$no}}]" value="{{$kepatuhan}}">
-                                            <input type="text" name="id" value="{{ $i->idnya }}">
-                                        </td>
-                                        <td>
-                                            {!!$kesimpulan!!}
-                                            <input type="text" id="nilai[{{$no}}]" name="nilai[{{$no}}]" value="{{$nilai}}">
-                                        </td>
-                                        <td>
-                                            <a href="#"
-                                               class="editable-catatan"
-                                               data-type="text"
-                                               data-pk="{{ $no }}"
-                                               data-name="catatan[{{ $no }}]"
-                                               data-title="Masukkan catatan">
-                                                {{ old("catatan[$no]") ?? '' }}
-                                            </a>
+                                @endphp
 
-                                            <input type="text" name="txtcatatan[{{ $no }}]" id="txtcatatan_{{ $no }}" value="{{old("catatan[$no]") }}">
+                                <!-- Hidden Inputs untuk total -->
+                                <input type="text" id="total_score" name="total_score" value="{{$total_score}}">
+                                <input type="text" id="total_ratarata" name="total_ratarata" value="{{round($totalrerata,2)}}">
+                                <input type="text" id="total_akhir" name="total_akhir" value="{{round($totalkebersihan,2)}}">
+                                <input type="text" id="nilai_kepatuhan" name="nilai_kepatuhan" value="{{$nilaiakhirkepatuhan}}">
+                                <input type="text" id="status_kepatuhan" name="status_kepatuhan" value="{{$statuskepatuhan}}">
+                                <input type="text" id="nilai_kebersihan" name="nilai_kebersihan" value="{{$nilaiakhirkebersihan}}">
+                                <input type="text" id="status_kebersihan" name="status_kebersihan" value="{{$statuskebersihan}}">
+                                <input type="text" id="idcollected" name="idcollected">
 
-                                        </td>
-                                        <td>
-                                            <div class="float-left">
-                                                <!--<div class="onoffswitch onoffswitch-danger onoffswitch-sm">-->
-                                                <!--   <input type="checkbox" name="kategori[{{$no}}]" class="onoffswitch-checkbox" id="switch_{{$no}}" checked>-->
-                                                <!--   <label class="onoffswitch-label" for="switch_{{$no}}">-->
-                                                <!--     <div class="onoffswitch-inner"></div>-->
-                                                <!--     <div class="onoffswitch-switch"></div>-->
-                                                <!--   </label>-->
-                                                <!-- </div>-->
-
-                                                <div class="form-check form-check-inline checkbox-nice">
-                                                    <input
-                                                        class="form-check-input"
-                                                        type="checkbox"
-                                                        id="dokumentasi_{{ $no }}"
-                                                        onchange="updateCheckboxValue({{ $no }})"
-                                                    >
-                                                    <label class="form-check-label" for="dokumentasi_{{ $no }}">Ada</label>
+                                <div class="main-box-body clearfix" style="padding: 20px">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="row" id="popoverPwd-container">
+                                                    <div class="form-group col-md-12">
+                                                        <label for="popoverName">Tingkat Kepatuhan </label>
+                                                        <div class="form-group">
+                                                            <div class="radio">
+                                                                <input type="radio" name="optionsRadios" id="optionsRadios1" value=4 <?php echo ($nilaiakhirkepatuhan == 4) ? 'checked' : ''; ?> >
+                                                                <label for="optionsRadios1">Sangat Baik (≥ 90%)</label>
+                                                            </div>
+                                                            <div class="radio">
+                                                                <input type="radio" name="optionsRadios" id="optionsRadios2" value=3 <?php echo ($nilaiakhirkepatuhan == 3) ? 'checked' : ''; ?>>
+                                                                <label for="optionsRadios2">Baik (75% – < 90%)</label>
+                                                            </div>
+                                                            <div class="radio">
+                                                                <input type="radio" name="optionsRadios" id="optionsRadios3" value=2 <?php echo ($nilaiakhirkepatuhan == 2) ? 'checked' : ''; ?>>
+                                                                <label for="optionsRadios3">Cukup (50% – < 75%)</label>
+                                                            </div>
+                                                            <div class="radio">
+                                                                <input type="radio" name="optionsRadios" id="optionsRadios4" value=1 <?php echo ($nilaiakhirkepatuhan == 1) ? 'checked' : ''; ?>>
+                                                                <label for="optionsRadios4">Kurang (< 50%)</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <br/>
-                                                <input type="text" id="dokumentasi_hidden_{{ $no }}" name="dokumentasi[{{ $no }}]" value="0">
-                                        </td>
-                                        <td width="10%">
-                                            <a href="#"
-                                               class="editable-pemeriksaan"
-                                               data-type="text"
-                                               data-pk="{{ $no }}"
-                                               data-name="pemeriksaan[{{ $no }}]"
-                                               data-title="Masukkan catatan pemeriksaan">
-                                                {{ old("pemeriksaan[$no]") ?? '' }}
-                                            </a>
-                                            <input type="text" name="txtpemeriksaan[{{ $no }}]" id="txtpemeriksaan_{{ $no }}" value="{{old("pemeriksaan[$no]") }}">
+                                            </div>
 
-                                        </td>
-                                    </tr>
+                                            <div class="col-lg-6">
+                                                <div class="row">
+                                                    <div class="form-group col-md-12">
+                                                        <label for="popoverName">Tingkat Kebersihan</label>
+                                                        <div class="form-group">
+                                                            <div class="radio">
+                                                                <input type="radio" name="optionsKebersihan" id="optionsKebersihan1" value=4 <?php echo ($nilaiakhirkebersihan == 4) ? 'checked' : ''; ?> >
+                                                                <label for="optionsRadios1">Sangat Baik (≥ 2.75) </label>
+                                                            </div>
+                                                            <div class="radio">
+                                                                <input type="radio" name="optionsKebersihan" id="optionsKebersihan2" value=3 <?php echo ($nilaiakhirkebersihan == 3) ? 'checked' : ''; ?>>
+                                                                <label for="optionsRadios2">Baik (> 2.00 – < 2.75)</label>
+                                                            </div>
+                                                            <div class="radio">
+                                                                <input type="radio" name="optionsKebersihan" id="optionsKebersihan3" value=2 <?php echo ($nilaiakhirkebersihan == 2) ? 'checked' : ''; ?>>
+                                                                <label for="optionsRadios2">Cukup (1.00 – < 2.00)</label>
+                                                            </div>
+                                                            <div class="radio">
+                                                                <input type="radio" name="optionsKebersihan" id="optionsKebersihans4" value=1 <?php echo ($nilaiakhirkebersihan == 4) ? 'checked' : ''; ?> >
+                                                                <label for="optionsRadios2">Kurang (< 1)</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
-                                    @endforeach
-                                    <tr class="green-bg" style="color: white">
-                                        <td colspan="2" style="text-align: center">total</td>
-                                        <td colspan="4">{{round($totalrerata, 2)}} Rata-Rata setelah di bagi 12 Komponen = {{round($totalkebersihan,2)}}</td>
-                                        <td colspan="3" style="text-align: center">Tingkat Kepatuhan : {{round($totalkepatuhan,2). ' %'}}</td>
-                                    </tr>
-                                </table>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="row" id="popoverPwd-container">
+                                                    <div class="form-group col-md-12">
+                                                        <label for="popoverName">Tanggal Supervisi </label>
+                                                        <div class="form-group">
+                                                            <input type="text" class="form-control" id="tanggal" name="tanggal" required data-provide="datepicker">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-6">
+                                                <div class="row">
+                                                    <div class="form-group col-md-12">
+                                                        <label for="popoverName">Hasil Rekomendasi</label>
+                                                        <div class="form-group">
+                                                            <select class="form-control" id="jenis_tindak_lanjut">
+                                                                <option value="" disabled selected>Pilih jenis tindak lanjut</option>
+                                                                <option value="1">Pembinaan</option>
+                                                                <option value="2">Penguatan</option>
+                                                                <option value="3">Penghargaan</option>
+                                                                <option value="4">Monitoring Lanjutan</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group text-center">
+                                            <button class="btn btn-primary tambah" type="submit">Verifikasi</button>
+                                        </div>
+                                </div>
                             </div>
-
-                            @php
-                                if($totalkepatuhan >= 85 ) {
-                                    $nilaiakhirkepatuhan = 4;
-                                }
-                                elseif ($totalkepatuhan >= 70) {
-                                    $nilaiakhirkepatuhan = 3;
-                                }
-                                elseif ($totalkepatuhan >= 50) {
-                                    $nilaiakhirkepatuhan = 2;
-                                }
-                                else {
-                                    $nilaiakhirkepatuhan = 1;
-                                }
-
-                                if($totalkebersihan  >= 2.75) {
-                                    $nilaiakhirkebersihan=4;
-                                }
-                                else if($totalkebersihan  >= 2.00 && $totalkebersihan < 2.75) {
-                                    $nilaiakhirkebersihan=3;
-                                }
-                                else if($totalkebersihan  >= 1.00 && $totalkebersihan < 2.00) {
-                                    $nilaiakhirkebersihan=2;
-                                }
-                                else {
-                                    $nilaiakhirkebersihan=1;
-                                }
-
-                            @endphp
-                            
-                            <!-- Hidden Inputs untuk total -->
-                            <input type="number" id="total_score" name="total_score" value="{{$total_score}}">
-                            <input type="number" id="total_ratarata" name="total_ratarata" value="{{round($totalrerata,2)}}">
-                            <input type="number" id="total_akhir" name="total_akhir" value="">
-                            <input type="number" id="nilai_kepatuhan" name="nilai_kepatuhan" value="{{$nilaiakhirkepatuhan}}">
-                            <input type="number" id="nilai_kebersihan" name="nilai_kebersihan" value="">
-                            <input type="number" id="status_kebersihan" name="status_kebersihan" value="">
-                            
-                            
-	status_kepatuhan
-
-
-                            <div class="main-box-body clearfix" style="padding: 20px">
-                                <form method="POST" action="{{ route('sekolahbersih.storeVerifikasi') }}" id="form-penilaian">
-                                    @csrf
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="row" id="popoverPwd-container">
-                                                <div class="form-group col-md-12">
-                                                    <label for="popoverName">Tingkat Kepatuhan </label>
-                                                    <div class="form-group">
-                                                        <div class="radio">
-                                                            <input type="radio" name="optionsRadios" id="optionsRadios1" value=4 <?php echo ($nilaiakhirkepatuhan == 4) ? 'checked' : ''; ?> >
-                                                            <label for="optionsRadios1">Sangat Baik (≥ 90%)</label>
-                                                        </div>
-                                                        <div class="radio">
-                                                            <input type="radio" name="optionsRadios" id="optionsRadios2" value=3 <?php echo ($nilaiakhirkepatuhan == 3) ? 'checked' : ''; ?>>
-                                                            <label for="optionsRadios2">Baik (75% – < 90%)</label>
-                                                        </div>
-                                                        <div class="radio">
-                                                            <input type="radio" name="optionsRadios" id="optionsRadios3" value=2 <?php echo ($nilaiakhirkepatuhan == 2) ? 'checked' : ''; ?>>
-                                                            <label for="optionsRadios3">Cukup (50% – < 75%)</label>
-                                                        </div>
-                                                        <div class="radio">
-                                                            <input type="radio" name="optionsRadios" id="optionsRadios4" value=1 <?php echo ($nilaiakhirkepatuhan == 1) ? 'checked' : ''; ?>>
-                                                            <label for="optionsRadios4">Kurang (< 50%)</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-6">
-                                            <div class="row">
-                                                <div class="form-group col-md-12">
-                                                    <label for="popoverName">Tingkat Kebersihan</label>
-                                                    <div class="form-group">
-                                                        <div class="radio">
-                                                            <input type="radio" name="optionsKebersihan" id="optionsKebersihan1" value=4 <?php echo ($nilaiakhirkebersihan == 4) ? 'checked' : ''; ?> >
-                                                            <label for="optionsRadios1">Sangat Baik (≥ 2.75) </label>
-                                                        </div>
-                                                        <div class="radio">
-                                                            <input type="radio" name="optionsKebersihan" id="optionsKebersihan2" value=3 <?php echo ($nilaiakhirkebersihan == 3) ? 'checked' : ''; ?>>
-                                                            <label for="optionsRadios2">Baik (> 2.00 – < 2.75)</label>
-                                                        </div>
-                                                        <div class="radio">
-                                                            <input type="radio" name="optionsKebersihan" id="optionsKebersihan3" value=2 <?php echo ($nilaiakhirkebersihan == 2) ? 'checked' : ''; ?>>
-                                                            <label for="optionsRadios2">Cukup (1.00 – < 2.00)</label>
-                                                        </div>
-                                                        <div class="radio">
-                                                            <input type="radio" name="optionsKebersihan" id="optionsKebersihans4" value=1 <?php echo ($nilaiakhirkebersihan == 4) ? 'checked' : ''; ?> >
-                                                            <label for="optionsRadios2">Kurang (< 1)</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="row" id="popoverPwd-container">
-                                                <div class="form-group col-md-12">
-                                                    <label for="popoverName">Tanggal Supervisi </label>
-                                                    <div class="form-group">
-                                                        <input type="text" class="form-control" id="tanggal" name="tanggal" required data-provide="datepicker">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    
-                                        <div class="col-lg-6">
-                                            <div class="row">
-                                                <div class="form-group col-md-12">
-                                                    <label for="popoverName">Hasil Rekomendasi</label>
-                                                    <div class="form-group">
-                                                        <select class="form-control" id="jenis_tindak_lanjut">
-                                                            <option value="" disabled selected>Pilih jenis tindak lanjut</option>
-                                                            <option value="1">Pembinaan</option>
-                                                            <option value="2">Penguatan</option>
-                                                            <option value="3">Penghargaan</option>
-                                                            <option value="4">Monitoring Lanjutan</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group text-center">
-                                        <button class="btn btn-primary tambah" type="submit">Verifikasi</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -486,5 +483,22 @@
 
         hiddenInput.value = checkbox.checked ? 1 : 0;
     }
+
+    //colected id
+    $(document).ready(function() {
+        function updateCollectedIds() {
+            let values = [];
+            $('input[name^="id["]').each(function() {
+                const value = $(this).val().trim();
+                if (value !== '' && value !== '0') {
+                    values.push(value);
+                }
+            });
+            $('#idcollected').val(values.join(', '));
+        }
+        updateCollectedIds();
+        $(document).on('input', 'input[name^="id["]', updateCollectedIds);
+    });
+
 </script>
 @endsection
