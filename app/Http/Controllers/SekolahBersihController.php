@@ -18,7 +18,10 @@ use App\Http\Controllers\AuthController;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Kabupatenkota;
 use App\Models\Cabdis;
+use App\Models\EvaluasiPengawas;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+
 
 class SekolahBersihController extends Controller
 {
@@ -52,6 +55,94 @@ class SekolahBersihController extends Controller
     {
         $model=EvaluasiKuesioner::all()->sortBy("id");
         return view('sekolahbersih/indexdinas', [
+            'model'    => $model
+        ]);
+    }
+    
+    //rekap
+    public function rekappengawas()
+    {
+        $model=EvaluasiPengawas::all()->sortBy("id");
+        return view('sekolahbersih/rekappengawas', [
+            'model'    => $model
+        ]);
+    }
+    
+    public function getDataRekapPengawas()
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+    
+        $user = Auth::user();
+        if (!in_array($user->role, [1, 6])) {
+            abort(403, 'Unauthorized'); // atau return response()->json(['error' => 'Unauthorized'], 403);
+        }
+    
+        $query = DB::table('evaluasi_pengawas as ep')
+            ->select(
+                'ep.*',
+                's.nama',
+                's.alamat_jalan',
+                's.npsn',
+                's.kabupaten_kota',
+                's.kepalasekolah'
+            )
+            ->join('sekolah as s', 's.id', '=', 'ep.sekolah');
+    
+        // Filter khusus role 6
+        if ($user->role == 6) {
+            $query->where('s.kabupaten_kota', $user->binaan_kabkota);
+        }
+    
+        $model = $query->get();
+    
+        return Datatables::of($model)
+            ->editColumn('periode_awal_kuesioner', function ($data) {
+                if ($data->periode_awal_kuesioner && $data->periode_akhir_kuesioner) {
+                    return date('d-M-Y', strtotime($data->periode_awal_kuesioner)) .
+                        ' s/d ' .
+                        date('d-M-Y', strtotime($data->periode_akhir_kuesioner));
+                }
+                return $data->periode_awal_kuesioner
+                    ? date('d-M-Y', strtotime($data->periode_awal_kuesioner))
+                    : '-';
+            })
+            ->editColumn('tgl_supervisi', function ($data) {
+                return $data->tgl_supervisi
+                    ? date('d-M-Y', strtotime($data->tgl_supervisi))
+                    : ' - ';
+            })
+            ->editColumn('catatan_pengawas', function ($data) {
+                $jenisTindakLanjut = [
+                    '1' => 'Pembinaan',
+                    '2' => 'Penguatan',
+                    '3' => 'Penghargaan',
+                    '4' => 'Monitoring Lanjutan',
+                ];
+                $tindakLanjut = $jenisTindakLanjut[$data->hasil_rekomendasi] ?? 'Tidak diketahui';
+    
+                return $tindakLanjut;
+            })
+            ->addColumn('action', function ($model){
+                    $button = "
+                    <div class='btn-group-horizontal'>
+                    <a class='table-link sumut' href='" . route("sekolahbersih.print", $model->id) . "' id='printbtn' >
+                        <span class='fa-stack' ><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-file-pdf-o fa-stack-1x fa-inverse'></i></span>
+                    </a>
+                    ";
+                
+                $button = $button . "</div>";
+                return $button;
+            })
+            ->rawColumns(['catatan_pengawas', 'action'])
+            ->make(true);
+    }
+    
+    public function rekapsekolah()
+    {
+        $model=EvaluasiPengawas::all()->sortBy("id");
+        return view('sekolahbersih/rekapsekolah', [
             'model'    => $model
         ]);
     }
@@ -816,8 +907,40 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                 ->where('periode_awal_kuesioner', $periodeAwal)
                 ->where('periode_akhir_kuesioner', $periodeAkhir)
                 ->first();
+                
+        if (Auth::check()) {
+            $user = Auth::user();
+            $cabdis = Cabdis::find($user->cabdis);
+            if ($cabdis) {
+                $wilayah = DB::select("
+                    SELECT
+                        cab.id,
+                        cab.nama,
+                        cab.kabupatenkota,
+                        string_agg(kab.nama_kabupaten, ', ' ORDER BY kab.nama_kabupaten) AS nama_kabupaten
+                    FROM
+                        cabdis cab
+                    JOIN
+                        LATERAL unnest(string_to_array(cab.kabupatenkota, ', ')) AS kab_id ON TRUE
+                    JOIN
+                        kabupaten kab ON kab.kode_kabupaten::text = kab_id
+                    WHERE
+                        cab.id = ?
+                    GROUP BY
+                        cab.id, cab.nama, cab.kabupatenkota
+                ", [$user->cabdis]);
 
-        $pdf= PDF::loadView('sekolahbersih.cetakpengawas',compact('model','ruang','hasilKuesioner','sekolah','kabupaten','evaluasipengawas'))->setPaper('a4', 'portrait');
+            } else {
+                $wilayah = [];
+            }
+
+        } else {
+            $user = null;
+            $cabdis = null;
+            $wilayah = [];
+        }
+
+        $pdf= PDF::loadView('sekolahbersih.cetakpengawas',compact('model','ruang','hasilKuesioner','sekolah','kabupaten','evaluasipengawas','user','cabdis','wilayah'))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 
@@ -1041,4 +1164,113 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                 ->with('exception', $e->getMessage());
         }
     }
+    
+    //download PDF
+    public function CetakRekapPengawas(Request $request)
+    {
+     
+        try {
+            Log::info('📥 Request diterima', [
+                'startDate_raw' => $request->input('startDate'),
+                'endDate_raw' => $request->input('endDate')
+            ]);
+    
+            $startDate = Carbon::parse($request->input('startDate'))->startOfDay();
+            $endDate   = Carbon::parse($request->input('endDate'))->endOfDay();
+    
+            Log::info('📅 Parsed tanggal', [
+                'startDate' => $startDate->toDateTimeString(),
+                'endDate' => $endDate->toDateTimeString()
+            ]);
+    
+            if ($endDate->lt($startDate)) {
+                Log::warning('⚠️ Tanggal akhir lebih kecil dari tanggal awal');
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Tanggal akhir tidak boleh lebih kecil dari awal.'
+                ], 400);
+            }
+    
+            // ✅ Cari data yang periode awal DAN akhirnya SAMA PERSIS
+            $data = EvaluasiPengawas::whereDate('periode_awal_kuesioner', $startDate->toDateString())
+                ->whereDate('periode_akhir_kuesioner', $endDate->toDateString())
+                ->get();
+            $sekolahMap = \App\Models\Sekolah::all()->keyBy('id');
+
+                
+            if (Auth::check()) {
+                $user = Auth::user();
+                if($user->role ==6) {
+                    $wilayah = DB::select("
+                    SELECT
+                        cab.id,
+                        cab.nama,
+                        cab.kabupatenkota,
+                        string_agg(kab.nama_kabupaten, ', ' ORDER BY kab.nama_kabupaten) AS nama_kabupaten
+                    FROM
+                        cabdis cab
+                    JOIN
+                        LATERAL unnest(string_to_array(cab.kabupatenkota, ', ')) AS kab_id ON TRUE
+                    JOIN
+                        kabupaten kab ON kab.kode_kabupaten::text = kab_id
+                    WHERE
+                        cab.id = ?
+                    GROUP BY
+                        cab.id, cab.nama, cab.kabupatenkota
+                ", [$user->cabdis]);
+                }
+                else {
+                    $wilayah='';
+                }
+            }
+            
+            
+            Log::info('📊 Jumlah data ditemukan:', ['count' => $data->count()]);
+    
+            if ($data->isEmpty()) {
+                Log::warning('📭 Tidak ada data untuk periode', [
+                    'startDate' => $startDate->toDateString(),
+                    'endDate' => $endDate->toDateString()
+                ]);
+                return response()->json([
+                    'status' => 'nodata',
+                    'message' => 'Data tidak ditemukan untuk periode tersebut.'
+                ], 404);
+            }
+    
+            $fileName = "Laporan Supervisi {$startDate->format('d-m-Y')} s.d {$endDate->format('d-m-Y')}.pdf";
+    
+            Log::info('🖨 Membuat PDF', ['fileName' => $fileName]);
+    
+            $pdf = PDF::loadView('sekolahbersih.cetakan_rekappengawas', [
+                'data' => $data,
+                'startDate' => $startDate->toDateString(),
+                'endDate' => $endDate->toDateString(),
+                'wilayah' =>$wilayah,
+                'user'=>$user,
+                'sekolahMap' =>$sekolahMap
+            ]);
+    
+            Log::info('📤 PDF berhasil dibuat, mengirim file ke browser...');
+            return $pdf->download($fileName);
+            //return $pdf->stream();
+    
+        } catch (\Exception $e) {
+            Log::error('❌ CetakRekapPengawas gagal', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+    
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal membuat PDF.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+        
+    }
+        
+
+    
+    
 }

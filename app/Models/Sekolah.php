@@ -8,6 +8,7 @@ class Sekolah extends Model
 {
     //
     protected $table = 'sekolah';
+    const UPDATED_AT = 'last_update';
     protected $fillable = [
         'nama',
         'npsn',
@@ -37,6 +38,7 @@ class Sekolah extends Model
         'create_date',
         'last_update',
         'kepalasekolah',
+        'binaan_kabkota',
     ];
 
 }

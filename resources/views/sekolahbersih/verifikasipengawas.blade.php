@@ -214,13 +214,13 @@
                                             <td>
                                                 <!--{{round($kepatuhan)}}-->
                                                 {!!$kesimpulankepatuhan!!}
-                                                <input type="text" id="kepatuhan[{{$no}}]" name="kepatuhan[{{$no}}]" value="{{$nilaikepatuhan}}">
-                                                <input type="text" id="persenkepatuhan[{{$no}}]" name="persenkepatuhan[{{$no}}]" value="{{$kepatuhan}}">
-                                                <input type="text" name="id[{{$no}}]" id="id[{{$no}}]" value="{{ $i->idnya }}">
+                                                <input type="hidden" id="kepatuhan[{{$no}}]" name="kepatuhan[{{$no}}]" value="{{$nilaikepatuhan}}">
+                                                <input type="hidden" id="persenkepatuhan[{{$no}}]" name="persenkepatuhan[{{$no}}]" value="{{$kepatuhan}}">
+                                                <input type="hidden" name="id[{{$no}}]" id="id[{{$no}}]" value="{{ $i->idnya }}">
                                             </td>
                                             <td>
                                                 {!!$kesimpulan!!}
-                                                <input type="text" id="nilai[{{$no}}]" name="nilai[{{$no}}]" value="{{$nilai}}">
+                                                <input type="hidden" id="nilai[{{$no}}]" name="nilai[{{$no}}]" value="{{$nilai}}">
                                             </td>
                                             <td>
                                                 <a href="#"
@@ -232,7 +232,7 @@
                                                     {{ old("catatan[$no]") ?? '' }}
                                                 </a>
 
-                                                <input type="text" name="txtcatatan[{{ $no }}]" id="txtcatatan_{{ $no }}" value="{{old("catatan[$no]") }}">
+                                                <input type="hidden" name="txtcatatan[{{ $no }}]" id="txtcatatan_{{ $no }}" value="{{old("catatan[$no]") }}">
 
                                             </td>
                                             <td>
@@ -266,7 +266,7 @@
                                                    data-title="Masukkan catatan pemeriksaan">
                                                     {{ old("pemeriksaan[$no]") ?? '' }}
                                                 </a>
-                                                <input type="text" name="txtpemeriksaan[{{ $no }}]" id="txtpemeriksaan_{{ $no }}" value="{{old("pemeriksaan[$no]") }}">
+                                                <input type="hidden" name="txtpemeriksaan[{{ $no }}]" id="txtpemeriksaan_{{ $no }}" value="{{old("pemeriksaan[$no]") }}">
 
                                             </td>
                                         </tr>
@@ -318,14 +318,14 @@
                                 @endphp
 
                                 <!-- Hidden Inputs untuk total -->
-                                <input type="text" id="total_score" name="total_score" value="{{$total_score}}">
-                                <input type="text" id="total_ratarata" name="total_ratarata" value="{{round($totalrerata,2)}}">
-                                <input type="text" id="total_akhir" name="total_akhir" value="{{round($totalkebersihan,2)}}">
-                                <input type="text" id="nilai_kepatuhan" name="nilai_kepatuhan" value="{{$nilaiakhirkepatuhan}}">
-                                <input type="text" id="status_kepatuhan" name="status_kepatuhan" value="{{$statuskepatuhan}}">
-                                <input type="text" id="nilai_kebersihan" name="nilai_kebersihan" value="{{$nilaiakhirkebersihan}}">
-                                <input type="text" id="status_kebersihan" name="status_kebersihan" value="{{$statuskebersihan}}">
-                                <input type="text" id="idcollected" name="idcollected">
+                                <input type="hidden" id="total_score" name="total_score" value="{{$total_score}}">
+                                <input type="hidden" id="total_ratarata" name="total_ratarata" value="{{round($totalrerata,2)}}">
+                                <input type="hidden" id="total_akhir" name="total_akhir" value="{{round($totalkebersihan,2)}}">
+                                <input type="hidden" id="nilai_kepatuhan" name="nilai_kepatuhan" value="{{$nilaiakhirkepatuhan}}">
+                                <input type="hidden" id="status_kepatuhan" name="status_kepatuhan" value="{{$statuskepatuhan}}">
+                                <input type="hidden" id="nilai_kebersihan" name="nilai_kebersihan" value="{{$nilaiakhirkebersihan}}">
+                                <input type="hidden" id="status_kebersihan" name="status_kebersihan" value="{{$statuskebersihan}}">
+                                <input type="hidden" id="idcollected" name="idcollected">
 
                                 <div class="main-box-body clearfix" style="padding: 20px">
                                         <div class="row">
@@ -358,23 +358,23 @@
                                             <div class="col-lg-6">
                                                 <div class="row">
                                                     <div class="form-group col-md-12">
-                                                        <label for="popoverName">Tingkat Kebersihan</label>
+                                                        <label for="popoverName">Tingkat Kebersihan {{$nilaiakhirkebersihan}}</label>
                                                         <div class="form-group">
                                                             <div class="radio">
                                                                 <input type="radio" name="optionsKebersihan" id="optionsKebersihan1" value=4 <?php echo ($nilaiakhirkebersihan == 4) ? 'checked' : ''; ?> >
-                                                                <label for="optionsRadios1">Sangat Baik (≥ 2.75) </label>
+                                                                <label for="optionsKebersihan1">Sangat Baik (≥ 2.75) </label>
                                                             </div>
                                                             <div class="radio">
                                                                 <input type="radio" name="optionsKebersihan" id="optionsKebersihan2" value=3 <?php echo ($nilaiakhirkebersihan == 3) ? 'checked' : ''; ?>>
-                                                                <label for="optionsRadios2">Baik (> 2.00 – < 2.75)</label>
+                                                                <label for="optionsKebersihan2">Baik (> 2.00 – < 2.75)</label>
                                                             </div>
                                                             <div class="radio">
                                                                 <input type="radio" name="optionsKebersihan" id="optionsKebersihan3" value=2 <?php echo ($nilaiakhirkebersihan == 2) ? 'checked' : ''; ?>>
-                                                                <label for="optionsRadios2">Cukup (1.00 – < 2.00)</label>
+                                                                <label for="optionsKebersihan3">Cukup (1.00 – < 2.00)</label>
                                                             </div>
                                                             <div class="radio">
                                                                 <input type="radio" name="optionsKebersihan" id="optionsKebersihans4" value=1 <?php echo ($nilaiakhirkebersihan == 4) ? 'checked' : ''; ?> >
-                                                                <label for="optionsRadios2">Kurang (< 1)</label>
+                                                                <label for="optionsKebersihans4">Kurang (< 1)</label>
                                                             </div>
                                                         </div>
                                                     </div>

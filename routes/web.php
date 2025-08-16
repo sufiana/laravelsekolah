@@ -27,6 +27,15 @@ Route::get('/HomeKadis', 'HomeController@indexKadis')->name('site.kadis');
 Route::get('/HomePengawas', 'HomeController@indexPengawas')->name('site.pengawas');
 Route::get('/HomeDeveloper', 'HomeController@indexDeveloper')->name('site.developer');
 
+//datamaster
+Route::get('page/ListParameter', 'HomeController@ListParameter')->name('ListParameter');
+Route::get('page/ListSekolah', 'HomeController@ListSekolah')->name('ListSekolah');
+Route::get('page/GetDataSekolah', 'HomeController@GetDataSekolah')->name('GetDataSekolah');
+Route::get('page/EditSekolah/{id}', 'HomeController@EditSekolah')->name('EditSekolah');
+Route::post('page/UpdateSekolah', 'HomeController@UpdateSekolah')->name('UpdateSekolah');
+
+
+//sekolahbersih
 Route::get('sekolahbersih/index', 'SekolahBersihController@index')->name('sekolahbersih.index');
 Route::get('sekolahbersih/indexsekolah', 'SekolahBersihController@indexsekolah')->name('sekolahbersih.indexsekolah');
 Route::get('sekolahbersih/indexpengawas', 'SekolahBersihController@indexpengawas')->name('sekolahbersih.indexpengawas');
@@ -38,6 +47,15 @@ Route::get('sekolahbersih/getDataDinas', 'SekolahBersihController@getDataDinas')
 Route::get('sekolahbersih/create/{id}', 'SekolahBersihController@create')->name('sekolahbersih.create');
 Route::post('sekolahbersih/store', 'SekolahBersihController@store')->name('sekolahbersih.store');
 Route::post('sekolahbersih/storeVerifikasi', 'SekolahBersihController@storeVerifikasi')->name('sekolahbersih.storeVerifikasi');
+
+//rekap
+Route::get('sekolahbersih/rekappengawas', 'SekolahBersihController@rekappengawas')->name('sekolahbersih.rekappengawas');
+Route::get('sekolahbersih/rekapsekolah', 'SekolahBersihController@rekapsekolah')->name('sekolahbersih.rekapsekolah');
+Route::get('sekolahbersih/getDataRekapPengawas', 'SekolahBersihController@getDataRekapPengawas')->name('sekolahbersih.getDataRekapPengawas');
+Route::get('sekolahbersih/CetakRekapPengawas', 'SekolahBersihController@CetakRekapPengawas')->name('sekolahbersih.CetakRekapPengawas');
+// Route::get('sekolahbersih/DownloadRekapPengawas', 'SekolahBersihController@DownloadRekapPengawas')->name('report.DownloadRekapPengawas');
+
+
 //Route::get('sekolahbersih/create/{singkatan}', 'SekolahBersihController@create')
 //    ->where('singkatan', '[A-Za-z0-9]+')  // ini sebenarnya opsional jika tanpa karakter khusus
 //    ->name('sekolahbersih.create');

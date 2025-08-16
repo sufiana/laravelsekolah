@@ -55,9 +55,6 @@
     </div>
 </div>
 
-
-@include('manajemenbiaya.delete-modal')
-
 @endsection
 
 @section('css')
@@ -104,36 +101,6 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
-        });
-
-        $('#delModal').on('show.bs.modal', function (e) {
-            let Id = $(e.relatedTarget).data('id');
-            var nama = $(e.relatedTarget).data('nama');
-            $('#deleteid').val(Id.toString());
-            $('#labelid').html(Id.toString());
-            $('#labelnama').html(nama.toString());
-        });
-        $('#delete-form').submit(function (e) {
-            e.preventDefault();
-            var formData = new FormData(this);
-            let Id = formData.get('id');
-            var url = '{{ route("sekolahbersih.delete", ":id") }}';
-            $.ajax({
-                url  : url.replace(':id', Id),
-                data: {_token: '{{csrf_token()}}'},
-                type: 'DELETE',
-                dataType: 'HTML',
-                success: function (resp) {
-                    $('#save_msgList').html("");
-                    $('#success_message').addClass('alert alert-danger alert-dismissible fade show');
-                    $('#success_message').text('Data berhasil di hapus');
-                    $("#delModal").modal("hide");
-                    oTable.ajax.reload();
-                },
-                error: function (data) {
-                    console.log(data);
-                }
-            });
         });
 
 

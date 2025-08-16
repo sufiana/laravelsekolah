@@ -216,25 +216,25 @@
                         <td>f.</td>
                         <td>Nama Pengawas</td>
                         <td>:</td>
-                        <td></td>
+                        <td>{{$user->username}}</td>
                     </tr>
                     <tr>
                         <td>g.</td>
                         <td>Wilayah Binaan</td>
                         <td>:</td>
-                        <td></td>
+                        <td>{{$user->binaan}}</td>
                     </tr>
                     <tr>
                         <td>h.</td>
                         <td>Instansi</td>
                         <td>:</td>
-                        <td></td>
+                        <td>{{ $wilayah[0]->nama_kabupaten }}</td>
                     </tr>
                     <tr>
                         <td>i.</td>
                         <td>Tanggal Supervisi</td>
                         <td>:</td>
-                        <td></td>
+                        <td>{{date('Y-M-d', strtotime($evaluasipengawas->tgl_supervisi))}}</td>
                     </tr>
                     <tr>
                         <td colspan="4">&nbsp;</td>

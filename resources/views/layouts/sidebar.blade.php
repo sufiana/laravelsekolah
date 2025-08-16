@@ -67,7 +67,7 @@
                             </a>
                             <ul class="submenu">
                                 <li><a href="{{ route('sekolahbersih.indexpengawas') }}">Verifikasi</a></li>
-                                <li><a href="">Rekap</a></li>
+                                <li><a href="{{ route('sekolahbersih.rekappengawas') }}">Rekap</a></li>
                                 <li><a href="">Laporan</a></li>
                             </ul>
                         </li>
@@ -79,8 +79,6 @@
                             </a>
                             <ul class="submenu">
                                 <li><a href="{{ route('sekolahbersih.indexsekolah') }}">Lihat Data</a></li>
-                                <!--<li><a href="">Rekap</a></li>-->
-                                <!--<li><a href="">Laporan</a></li>-->
                             </ul>
                         </li>
                         @endif

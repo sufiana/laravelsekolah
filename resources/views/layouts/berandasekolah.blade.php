@@ -19,25 +19,11 @@
                         </ol>
                         <h1>Dashboard</h1>
                     </div>
-<!--                    <div class="float-right d-none d-sm-block">-->
-<!--                        <div class="xs-graph float-left">-->
-<!--                            <div class="graph-label">-->
-<!--                                <b><i class="fa fa-shopping-cart"></i> 838</b> SPPD Realisasi-->
-<!--                            </div>-->
-<!--                            <div class="graph-content spark-orders"></div>-->
-<!--                        </div>-->
-<!--                        <div class="xs-graph float-left mrg-l-lg mrg-r-sm">-->
-<!--                            <div class="graph-label">-->
-<!--                                <b>&dollar;12.338</b> SPPD-->
-<!--                            </div>-->
-<!--                            <div class="graph-content spark-revenues"></div>-->
-<!--                        </div>-->
-<!--                    </div>-->
                 </div>
             </div>
         </div>
 
-       <div class="row">
+        <div class="row">
             <div class="col-lg-3 col-sm-6 col-12">
                 <div class="main-box infographic-box colored emerald-bg">
                     <i class="fa fa-user"></i>
@@ -95,6 +81,9 @@
                             <li>
                                 <i class="fa fa-map-marker"></i> {{$sekolah->alamat_jalan ? $sekolah->alamat_jalan : '-'}}
                             </li>
+                            <li>
+                                <i class="fa fa-user"></i> Kepala Sekolah : {{$sekolah->kepalasekolah ? $sekolah->kepalasekolah : '-'}}
+                            </li>
                         </ul>
                     </div>
                     <div class="profile-box-footer clearfix">
@@ -132,11 +121,8 @@
             @endforeach
         </div>
 
-
     </div>
-
-
-
+</div>
 @endsection
 
 @section('js')
