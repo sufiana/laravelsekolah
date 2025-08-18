@@ -132,7 +132,7 @@
           padding: 10px;
           width: 100%;
           page-break-before: always;   /* Pindah ke halaman baru */
-          break-before: page;     
+          break-before: page;
         }
         /* CSS tetap */
     </style>
@@ -196,7 +196,7 @@
                         <td>d.</td>
                         <td>Kecamatan/Kabupaten</td>
                         <td>:</td>
-                        <td>{{$kabupaten->nama_kabupaten}}</td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td>e.</td>
@@ -204,11 +204,11 @@
                         <td>:</td>
                         <td>{{$sekolah->kepalasekolah}}</td>
                     </tr>
-                    
+
                     <tr>
                         <td colspan="4">&nbsp;</td>
                     </tr>
-                    
+
                     <tr>
                         <td colspan="4"><b>II. IDENTITAS PENGAWAS</b></td>
                     </tr>
@@ -239,7 +239,7 @@
                     <tr>
                         <td colspan="4">&nbsp;</td>
                     </tr>
-                    
+
                     <tr>
                         <td colspan="4"><b>III. PENILAIAN 12 AREA STRATEGIS KEBERSIHAN SEKOLAH</b></td>
                     </tr>
@@ -303,7 +303,7 @@
             </td>
         </tr>
     </table>
-    
+
     <div class="barisbaru">
         <table width="98%" border="0" class="baris" align="center">
             <tr>
@@ -342,7 +342,7 @@
            @endforeach
         </table>
         <br/>
-        
+
         <table width="98%" border="0" class="baris" align="center">
             <tr>
                 <td colspan="5"><b>V. RANGKUMAN DAN REKOMENDASI PENGAWAS</b></td>
@@ -427,8 +427,8 @@
                 </td>
             </tr>
         </table>
-        
-        
+
+
     </div>
 
     <div class="footer"><br /></div>

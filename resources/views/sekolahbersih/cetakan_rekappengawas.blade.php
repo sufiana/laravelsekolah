@@ -132,7 +132,7 @@
           padding: 10px;
           width: 100%;
           page-break-before: always;   /* Pindah ke halaman baru */
-          break-before: page;     
+          break-before: page;
         }
         .barisbarunext {
           display: block;
@@ -140,9 +140,9 @@
           padding: 10px;
           width: 100%;
           page-break-after: always;   /* Pindah ke halaman baru */
-          break-before: page;     
+          break-before: page;
         }
-        
+
         /* CSS tetap */
     </style>
 </head>
@@ -179,10 +179,10 @@
                     </div>
                 </td>
             </tr>
-    
+
             <tr><td colspan="2"></td></tr>
             <tr><td colspan="2" valign="top">&nbsp;</td></tr>
-    
+
             <tr>
               <td colspan="2" valign="top">
                     <table width="95%" border="0" class="baris" align="center">
@@ -219,11 +219,11 @@
                             <td>:</td>
                             <td>{{-- $sekolah->kepalasekolah --}}</td>
                         </tr>
-                        
+
                         <tr>
                             <td colspan="4">&nbsp;</td>
                         </tr>
-                        
+
                         <tr>
                             <td colspan="4"><b>II. IDENTITAS PENGAWAS</b></td>
                         </tr>
@@ -231,30 +231,30 @@
                             <td>f.</td>
                             <td>Nama Pengawas</td>
                             <td>:</td>
-                            <td>{{-- $user->username --}}</td>
+                            <td>{{ $user->username }}</td>
                         </tr>
                         <tr>
                             <td>g.</td>
                             <td>Wilayah Binaan</td>
                             <td>:</td>
-                            <td>{{-- $user->binaan --}}</td>
+                            <td>{{ $user->binaan }}</td>
                         </tr>
                         <tr>
                             <td>h.</td>
                             <td>Instansi</td>
                             <td>:</td>
-                            <td>{{-- $wilayah[0]->nama_kabupaten --}}</td>
+                            <td>{{ $wilayah[0]->nama_kabupaten }}</td>
                         </tr>
                         <tr>
                             <td>i.</td>
                             <td>Tanggal Supervisi</td>
                             <td>:</td>
-                            <td>{{-- date('Y-M-d', strtotime($evaluasipengawas->tgl_supervisi)) --}}</td>
+                            <td>{{ date('d-M-Y', strtotime($x->tgl_supervisi)) }}</td>
                         </tr>
                         <tr>
                             <td colspan="4">&nbsp;</td>
                         </tr>
-                        
+
                         <tr>
                             <td colspan="4"><b>III. PENILAIAN 12 AREA STRATEGIS KEBERSIHAN SEKOLAH</b></td>
                         </tr>
@@ -265,7 +265,7 @@
                     </table>
                 </td>
             </tr>
-    
+
             <tr>
                 <td colspan="2" align="center">
                     <table width="90%" style="line-height: 11px" class="tabel" align="center">
@@ -278,10 +278,9 @@
                             <td width="8%"><b>Kurang</b></td>
                             <td><b>Catatan atau Temuan</b></td>
                         </tr>
-                        {{--
-    
+                        {{
                         @foreach ($hasilKuesioner as $i => $item)
-                        --}}
+                        }}
                             <tr>
                                 <td>{{-- $i + 1 --}}</td>
                                 <td align="left" style="text-align: left; padding-left: 5px">{{-- $item->nama --}}</td>
@@ -328,7 +327,7 @@
                 </td>
             </tr>
         </table>
-    
+
         <div class="barisbaru">
             <table width="98%" border="0" class="baris" align="center">
                 <tr>
@@ -343,8 +342,8 @@
                     <td width="8%"><b>Tidak Ada</b></td>
                     <td><b>Catatan</b></td>
                 </tr>
-                
-                
+
+
                 {{--
                 @foreach ($hasilKuesioner as $i => $item)
                 --}}
@@ -374,7 +373,7 @@
                {{-- @endforeach --}}
             </table>
             <br/>
-            
+
             <table width="98%" border="0" class="baris" align="center">
                 <tr>
                     <td colspan="5"><b>V. RANGKUMAN DAN REKOMENDASI PENGAWAS</b></td>
