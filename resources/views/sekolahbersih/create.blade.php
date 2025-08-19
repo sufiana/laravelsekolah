@@ -1,5 +1,6 @@
 @extends('layouts/master')
 @section('title','Penilaian Kebersihan Sekolah')
+
 @section('content')
 
 <div class="row">
@@ -17,7 +18,7 @@
     <div class="col-lg-12">
         <div class="main-box clearfix">
             <header class="main-box-header clearfix" style="color: white; background-color: #3e5879">
-                <h2 class="float-left">Parameter Kebersihan - {{$model->nama}}</h2>
+                <h2 class="float-left">Parameter Kebersihan - {{ $model->nama }}</h2>
             </header>
 
             <div class="main-box-body clearfix">
@@ -41,7 +42,7 @@
                                 <input type="text" name="periode" class="form-control" id="daterange" />
                             </div>
 
-                            <!-- Tempat menampilkan total -->
+                            <!-- Tampilkan total nilai -->
                             <div class="text-center my-3" style="display:none;">
                                 <h4>Total Nilai: <span id="totalDisplay">0</span></h4>
                             </div>
@@ -75,14 +76,12 @@
                                 @endforeach
                             </div>
 
-                            <div class="d-flex  my-4">
+                            <div class="d-flex my-4">
                                 <button type="button" class="btn btn-sumut" id="prevBtn" disabled>Previous</button>
                                 <button type="button" class="btn btn-sumut" id="nextBtn" style="margin-left: 10px">Next</button>
-<!--                                <button type="submit" class="btn btn-success">Simpan Kuesioner</button>-->
-
                             </div>
 
-                            <!-- Input hidden untuk total nilai -->
+                            <!-- Hidden input untuk total -->
                             <input type="hidden" name="total" id="total">
                         </div>
 
@@ -99,15 +98,22 @@
 @endsection
 
 @section('js')
+<!-- ✅ Pastikan jQuery dimuat -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Date Range Picker -->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     $(function() {
         $('#daterange').daterangepicker({
-            startDate: moment().startOf('month'),   // 1 bulan ini
-            endDate: moment().endOf('month'),       // Akhir bulan ini
+            startDate: moment().startOf('month'),
+            endDate: moment().endOf('month'),
             opens: 'left',
             locale: {
                 format: 'YYYY-MM-DD'
@@ -132,12 +138,12 @@
         prevBtn.disabled = (index === 0);
 
         if (index === items.length - 1) {
-            nextBtn.textContent = 'Simpan';
+            nextBtn.textContent = 'Simpan & Lanjutkan';
             nextBtn.classList.remove('btn-sumut');
-            nextBtn.classList.add('btn-sumut');
+            nextBtn.classList.add('btn-success');
         } else {
             nextBtn.textContent = 'Next';
-            nextBtn.classList.remove('btn-sumut');
+            nextBtn.classList.remove('btn-success');
             nextBtn.classList.add('btn-sumut');
         }
 
@@ -150,7 +156,7 @@
         const parameterId = radios[0].name.match(/\d+/)[0];
 
         if (!jawabanState[parameterId]) {
-            jawabanState[parameterId] = "3"; // Default jawaban "Bersih"
+            jawabanState[parameterId] = "3";
         }
 
         radios.forEach(radio => {
@@ -170,7 +176,7 @@
             }
         }
 
-        hitungTotal(); // Hitung ulang total setiap halaman ditampilkan
+        hitungTotal();
     }
 
     function handleJawabanChange(id, value) {
@@ -186,9 +192,7 @@
             });
         } else {
             alasanBox.style.display = 'none';
-            if (!alasanState[id]) {
-                alasanTextarea.value = '';
-            }
+            delete alasanState[id];
         }
 
         hitungTotal();
@@ -199,7 +203,6 @@
         for (const id in jawabanState) {
             total += parseInt(jawabanState[id]) || 0;
         }
-
         document.getElementById('total').value = total;
         document.getElementById('totalDisplay').innerText = total;
     }
@@ -210,22 +213,153 @@
         const parameterId = radios[0].name.match(/\d+/)[0];
 
         const jawaban = jawabanState[parameterId];
-        const alasan = document.getElementById('alasan_' + parameterId).value.trim();
+        const alasan = document.getElementById('alasan_' + parameterId)?.value.trim() || '';
 
         if ((jawaban == 1 || jawaban == 2) && alasan === '') {
-            alert('Harap isi alasan untuk parameter ini.');
+            Swal.fire('Peringatan!', 'Harap isi alasan untuk parameter ini.', 'warning');
             return false;
         }
 
         return true;
     }
 
+  function handleSubmit() {
+    const formData = new FormData();
+    const idRuangInput = document.querySelector('input[name="id_ruang"]');
+    const periodeInput = document.querySelector('input[name="periode"]');
+    const totalInput = document.getElementById('total');
+
+    // Pastikan elemen ada
+    if (!idRuangInput || !periodeInput || !totalInput) {
+        Swal.fire('Error!', 'Form tidak lengkap.', 'error');
+        return;
+    }
+
+    formData.append('id_ruang', idRuangInput.value);
+    formData.append('periode', periodeInput.value);
+    formData.append('total', totalInput.value);
+
+    // Tambahkan semua jawaban dan alasan
+    for (const id in jawabanState) {
+        formData.append(`jawaban[${id}]`, jawabanState[id]);
+        const alasan = alasanState[id] || '';
+        formData.append(`alasan[${id}]`, alasan);
+    }
+
+    // Debug: cek data yang dikirim
+    console.log('Mengirim data:', Object.fromEntries(formData.entries()));
+
+    fetch("{{ route('sekolahbersih.store') }}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'X-Requested-With': 'XMLHttpRequest',   // 🔑 Wajib untuk $request->ajax()
+            'Accept': 'application/json'             // Agar Laravel tahu kita mau JSON
+        }
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+
+        if (!response.ok) {
+            // Jika error (422, 500, dll), baca sebagai text dulu
+            return response.text().then(text => {
+                console.error('Server response (error):', text);
+
+                // Coba parse jika JSON
+                try {
+                    const json = JSON.parse(text);
+                    throw json;
+                } catch (e) {
+                    // Jika bukan JSON (HTML), lempar error khusus
+                    throw { message: 'Server returned invalid response. Check console.', details: text.substring(0, 500) };
+                }
+            });
+        }
+
+        // Jika OK, coba parse sebagai JSON
+        return response.json();
+    })
+    .then(data => {
+        // Jika sampai sini, artinya respons JSON valid
+        if (data.success) {
+            showRemainingRoomsAlert(data.ruang_belum_isi, data.next_url, data.index_url);
+        } else {
+            Swal.fire('Gagal!', data.message || 'Simpan gagal.', 'error');
+        }
+    })
+    .catch(err => {
+        console.error('Fetch error:', err);
+
+        // Tampilkan pesan error yang lebih jelas
+        let message = err.message || 'Terjadi kesalahan.';
+        if (err.details) {
+            message += '<br><br><strong>Detail (Console):</strong><br>' + err.details;
+        }
+
+        Swal.fire({
+            title: 'Error!',
+            html: message,
+            icon: 'error',
+            confirmButtonText: 'Tutup',
+            allowOutsideClick: false
+        });
+    });
+}
+
+   function showRemainingRoomsAlert(ruangBelumIsi, nextUrl, indexUrl) {
+    // ✅ Pastikan ruangBelumIsi adalah array
+    if (!Array.isArray(ruangBelumIsi)) {
+        console.error('ruangBelumIsi bukan array:', ruangBelumIsi);
+        ruangBelumIsi = [];
+    }
+
+    if (ruangBelumIsi.length === 0) {
+        Swal.fire({
+            title: 'Selesai!',
+            text: 'Semua ruang telah diisi. Terima kasih!',
+            icon: 'success',
+            confirmButtonText: 'Kembali ke Daftar'
+        }).then(() => {
+            window.location.href = indexUrl;
+        });
+    } else {
+        let roomList = '<ul style="text-align: left; margin: 10px 0;">';
+        ruangBelumIsi.forEach(r => {
+            roomList += `<li><a href="#" onclick="goToRoom('${r.url}'); return false;" style="color:#007bff;">${r.nama}</a></li>`;
+        });
+        roomList += '</ul>';
+
+        Swal.fire({
+            title: '<strong>Ruang Belum Diisi</strong>',
+            html: `
+                <p>Anda belum mengisi kuesioner untuk ruang berikut:</p>
+                ${roomList}
+                <p><strong>Klik untuk melanjutkan.</strong></p>
+            `,
+            icon: 'info',
+            showCancelButton: true,
+            cancelButtonText: 'Kembali ke Daftar',
+            confirmButtonText: 'Lanjut ke Berikutnya',
+            allowOutsideClick: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = nextUrl;
+            } else {
+                window.location.href = indexUrl;
+            }
+        });
+    }
+}
+    function goToRoom(url) {
+        window.location.href = url;
+    }
+
     nextBtn.addEventListener('click', () => {
         if (!validasiAlasan()) return;
 
         if (currentIndex === items.length - 1) {
-            console.log('Submitting form...');
-            document.getElementById('form-penilaian').submit();
+            handleSubmit();
         } else {
             currentIndex++;
             showItem(currentIndex);
