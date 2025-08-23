@@ -70,7 +70,7 @@
                             </div>
 
                             <div class="main-box-body clearfix" style="padding: 20px">
-                                <form method="POST" action="{{ route('sekolahbersih.storeverifikasi') }}" id="form-penilaian">
+                                <form method="POST" action="{{ route('sekolahbersih.saveVerifikasi') }}" id="form-penilaian">
                                     @csrf
                                     <input type="hidden" name="id" value="{{ $model->id }}">
                                     <div class="form-group row">

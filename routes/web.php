@@ -46,6 +46,7 @@ Route::get('sekolahbersih/getDataPengawas', 'SekolahBersihController@getDataPeng
 Route::get('sekolahbersih/getDataDinas', 'SekolahBersihController@getDataDinas')->name('sekolahbersih.getDataDinas');
 Route::get('sekolahbersih/create/{id}', 'SekolahBersihController@create')->name('sekolahbersih.create');
 Route::post('sekolahbersih/store', 'SekolahBersihController@store')->name('sekolahbersih.store');
+Route::post('sekolahbersih/saveVerifikasi', 'SekolahBersihController@saveVerifikasi')->name('sekolahbersih.saveVerifikasi');
 Route::post('sekolahbersih/storeVerifikasi', 'SekolahBersihController@storeVerifikasi')->name('sekolahbersih.storeVerifikasi');
 
 //rekap
@@ -67,6 +68,11 @@ Route::get('sekolahbersih/show/{id}', 'SekolahBersihController@show')->name('sek
 Route::get('sekolahbersih/print/{id}', 'SekolahBersihController@print')->name('sekolahbersih.print');
 Route::get('sekolahbersih/printPengawas/{id}', 'SekolahBersihController@printPengawas')->name('sekolahbersih.printPengawas');
 
+//verifikator
+Route::get('verifikator/create', 'VerifikatorSekolahController@create')->name('verifikator.create');
+Route::get('verifikator/index', 'VerifikatorSekolahController@index')->name('verifikator.index');
+Route::get('verifikator/getData', 'VerifikatorSekolahController@getData')->name('verifikator.getData');
+Route::post('verifikator/store', 'VerifikatorSekolahController@store')->name('verifikator.store');
 
 
 // Authentication Routes

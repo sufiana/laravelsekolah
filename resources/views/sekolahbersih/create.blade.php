@@ -98,7 +98,6 @@
 @endsection
 
 @section('js')
-<!-- ✅ Pastikan jQuery dimuat -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- Date Range Picker -->
@@ -308,7 +307,23 @@
 }
 
    function showRemainingRoomsAlert(ruangBelumIsi, nextUrl, indexUrl) {
-    // ✅ Pastikan ruangBelumIsi adalah array
+    const idurl = window.location.pathname.split("/").pop();
+    const daftarRuang = [
+      "Ruang Kelas",
+      "Ruang Guru",
+      "Ruang Kepala Sekolah, Wakil dan Tata Usaha",
+      "Toilet",
+      "Laboratorium, Perpustakaan dan Ruang Praktek",
+      "Ruang Gudang Sekolah",
+      "Kantin",
+      "Ruang Ibadah",
+      "Ruang UKS",
+      "Taman dan Halaman Sekolah",
+      "Parkir",
+      "Ruang Sekuriti dan Piket Guru"
+    ];
+    const ruangCurrent = daftarRuang[idurl - 1] || "Tidak ditemukan";
+       
     if (!Array.isArray(ruangBelumIsi)) {
         console.error('ruangBelumIsi bukan array:', ruangBelumIsi);
         ruangBelumIsi = [];
@@ -331,7 +346,7 @@
         roomList += '</ul>';
 
         Swal.fire({
-            title: '<strong>Ruang Belum Diisi</strong>',
+            title: `<strong>Berhasil</strong><br/>Data ${ruangCurrent} berhasil disimpan<br/><strong>Ruang Belum Diisi</strong>`,
             html: `
                 <p>Anda belum mengisi kuesioner untuk ruang berikut:</p>
                 ${roomList}

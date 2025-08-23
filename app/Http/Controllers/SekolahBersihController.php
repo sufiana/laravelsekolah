@@ -631,188 +631,189 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-   public function store(Request $request)
-{
-    // Validasi input dasar
-    $validator = Validator::make($request->all(), [
-        'id_ruang' => 'required|integer|exists:ruang_sekolah,id', // Pastikan tabel sesuai
-        'periode'  => 'required|string',
-        'jawaban'  => 'required|array',
-    ]);
-
-    if ($validator->fails()) {
-        if ($request->ajax() || $request->wantsJson()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-                'errors'  => $validator->errors()
-            ], 422);
-        }
-        return redirect()->back()->withErrors($validator)->withInput();
-    }
-
-    // Ambil data user dan sekolah
-    $id_user = Auth::check() ? Auth::id() : 3;
-    $user = Auth::user();
-
-    $id_sekolah = null;
-    if ($user) {
-        $id_sekolah = $user->id_sekolah ?? null;
-    }
-
-    // Fallback untuk Dinas Pendidikan
-    if (!$id_sekolah) {
-        $id_sekolah = 103; // ID sekolah default untuk dinas
-    }
-
-    if (!$id_sekolah) {
-        return $request->ajax()
-            ? response()->json(['success' => false, 'message' => 'Tidak dapat menentukan sekolah.'], 422)
-            : redirect()->back()->withErrors(['Sekolah tidak ditemukan.']);
-    }
-
-    // Parse periode
-    $parts = explode(' - ', $request->periode);
-    $periode_awal = $parts[0] ?? now()->format('Y-m-d');
-    $periode_akhir = $parts[1] ?? now()->format('Y-m-d');
-
-    // Cek duplikasi: tidak boleh isi ulang untuk ruang + periode + sekolah yang sama
-    $existing = EvaluasiKuesioner::where('id_ruang', $request->id_ruang)
-        ->where('sekolah', $id_sekolah)
-        ->whereDate('periode_awal_kuesioner', $periode_awal)
-        ->whereDate('periode_akhir_kuesioner', $periode_akhir)
-        ->exists();
-
-    if ($existing) {
-        $msg = 'Data untuk ruang dan periode ini sudah pernah diisi.';
-        return $request->ajax()
-            ? response()->json(['success' => false, 'message' => $msg], 422)
-            : redirect()->back()->withErrors([$msg]);
-    }
-
-    DB::beginTransaction();
-    try {
-        $totalScore = 0;
-        $hasilKuesionerIds = [];
-
-        // Simpan setiap jawaban ke HasilKuesioner
-        foreach ($request->jawaban as $id_parameter => $jawaban) {
-            $hasil = HasilKuesioner::create([
-                'id_sekolah'              => $id_sekolah,
-                'id_user'                 => $id_user,
-                'id_parameter'            => $id_parameter,
-                'id_ruang'                => $request->id_ruang,
-                'jawaban'                 => $jawaban,
-                'deskripsi_jawaban'       => $request->alasan[$id_parameter] ?? null,
-                'tahun_ajaran'            => env('TAHUN_AJARAN', 1),
-                'periode'                 => 1,
-                'periode_awal_kuesioner'  => $periode_awal,
-                'periode_akhir_kuesioner' => $periode_akhir,
-            ]);
-            $hasilKuesionerIds[] = $hasil->id;
-            $totalScore += (int)$jawaban;
-        }
-
-        // Simpan ke EvaluasiKuesioner
-        EvaluasiKuesioner::create([
-            'id_kuesioner'               => '{' . implode(',', $hasilKuesionerIds) . '}',
-            'sekolah'                    => $id_sekolah,
-            'periode_awal_kuesioner'     => $periode_awal,
-            'periode_akhir_kuesioner'    => $periode_akhir,
-            'status_verifikasi_sekolah'  => 0,
-            'status_evaluasi_pengawas'   => 0,
-            'status_evaluasi_cabdis'     => 0,
-            'id_ruang'                   => $request->id_ruang,
-            'score'                      => $totalScore,
-            'hasil_score'                => count($request->jawaban) > 0 ? $totalScore / count($request->jawaban) : 0,
+    public function store(Request $request)
+    {
+        // Validasi input dasar
+        $validator = Validator::make($request->all(), [
+            'id_ruang' => 'required|integer|exists:ruang_sekolah,id', // Pastikan tabel sesuai
+            'periode'  => 'required|string',
+            'jawaban'  => 'required|array',
         ]);
-
-        // Ambil semua ruang dari IconGrid
-        $allRuang = IconGrid::select('id', 'nama')->orderBy('id')->get();
-
-        // Ruang yang sudah diisi untuk periode ini
-        $ruangTerisi = EvaluasiKuesioner::where('sekolah', $id_sekolah)
+    
+        if ($validator->fails()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validator->errors()->first(),
+                    'errors'  => $validator->errors()
+                ], 422);
+            }
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+    
+        // Ambil data user dan sekolah
+        $id_user = Auth::check() ? Auth::id() : 3;
+        $user = Auth::user();
+    
+        $id_sekolah = null;
+        if ($user) {
+            $id_sekolah = $user->id_sekolah ?? null;
+        }
+    
+        // Fallback untuk Dinas Pendidikan
+        if (!$id_sekolah) {
+            $id_sekolah = 103; // ID sekolah default untuk dinas
+        }
+    
+        if (!$id_sekolah) {
+            return $request->ajax()
+                ? response()->json(['success' => false, 'message' => 'Tidak dapat menentukan sekolah.'], 422)
+                : redirect()->back()->withErrors(['Sekolah tidak ditemukan.']);
+        }
+    
+        // Parse periode
+        $parts = explode(' - ', $request->periode);
+        $periode_awal = $parts[0] ?? now()->format('Y-m-d');
+        $periode_akhir = $parts[1] ?? now()->format('Y-m-d');
+    
+        // Cek duplikasi: tidak boleh isi ulang untuk ruang + periode + sekolah yang sama
+        $existing = EvaluasiKuesioner::where('id_ruang', $request->id_ruang)
+            ->where('sekolah', $id_sekolah)
             ->whereDate('periode_awal_kuesioner', $periode_awal)
             ->whereDate('periode_akhir_kuesioner', $periode_akhir)
-            ->pluck('id_ruang')
-            ->toArray();
-
-        // Ruang yang belum diisi
-        $ruangBelumIsi = $allRuang->whereNotIn('id', $ruangTerisi);
-
-        // Format data untuk frontend (pastikan array)
-        $dataRuangBelumIsi = $ruangBelumIsi->map(function ($r) {
-            return [
-                'id'   => $r->id,
-                'nama' => $r->nama,
-                'url'  => route('sekolahbersih.create', $r->id)
-            ];
-        })->values()->toArray(); // 👉 toArray() wajib!
-
-        $nextRuang = $ruangBelumIsi->first();
-        $nextUrl = $nextRuang ? route('sekolahbersih.create', $nextRuang->id) : route('sekolahbersih.index');
-        $indexUrl = route('sekolahbersih.index');
-
-        DB::commit();
-
-        // 🔥 Hanya kirim JSON jika AJAX
-        if ($request->ajax() || $request->wantsJson()) {
-            return response()->json([
-                'success'         => true,
-                'message'         => 'Kuesioner berhasil disimpan.',
-                'ruang_belum_isi' => $dataRuangBelumIsi,
-                'next_url'        => $nextUrl,
-                'index_url'       => $indexUrl,
+            ->exists();
+    
+        if ($existing) {
+            $msg = 'Data untuk ruang dan periode ini sudah pernah diisi.';
+            return $request->ajax()
+                ? response()->json(['success' => false, 'message' => $msg], 422)
+                : redirect()->back()->withErrors([$msg]);
+        }
+    
+        DB::beginTransaction();
+        try {
+            $totalScore = 0;
+            $hasilKuesionerIds = [];
+    
+            // Simpan setiap jawaban ke HasilKuesioner
+            foreach ($request->jawaban as $id_parameter => $jawaban) {
+                $hasil = HasilKuesioner::create([
+                    'id_sekolah'              => $id_sekolah,
+                    'id_user'                 => $id_user,
+                    'id_parameter'            => $id_parameter,
+                    'id_ruang'                => $request->id_ruang,
+                    'jawaban'                 => $jawaban,
+                    'deskripsi_jawaban'       => $request->alasan[$id_parameter] ?? null,
+                    'tahun_ajaran'            => env('TAHUN_AJARAN', 1),
+                    'periode'                 => 1,
+                    'periode_awal_kuesioner'  => $periode_awal,
+                    'periode_akhir_kuesioner' => $periode_akhir,
+                ]);
+                $hasilKuesionerIds[] = $hasil->id;
+                $totalScore += (int)$jawaban;
+            }
+    
+            // Simpan ke EvaluasiKuesioner
+            EvaluasiKuesioner::create([
+                'id_kuesioner'               => '{' . implode(',', $hasilKuesionerIds) . '}',
+                'sekolah'                    => $id_sekolah,
+                'periode_awal_kuesioner'     => $periode_awal,
+                'periode_akhir_kuesioner'    => $periode_akhir,
+                'status_verifikasi_sekolah'  => 0,
+                'status_evaluasi_pengawas'   => 0,
+                'status_evaluasi_cabdis'     => 0,
+                'id_ruang'                   => $request->id_ruang,
+                'score'                      => $totalScore,
+                'hasil_score'                => count($request->jawaban) > 0 ? $totalScore / count($request->jawaban) : 0,
             ]);
+    
+            // Ambil semua ruang dari IconGrid
+            $allRuang = IconGrid::select('id', 'nama')->orderBy('id')->get();
+    
+            // Ruang yang sudah diisi untuk periode ini
+            $ruangTerisi = EvaluasiKuesioner::where('sekolah', $id_sekolah)
+                ->whereDate('periode_awal_kuesioner', $periode_awal)
+                ->whereDate('periode_akhir_kuesioner', $periode_akhir)
+                ->pluck('id_ruang')
+                ->toArray();
+    
+            // Ruang yang belum diisi
+            $ruangBelumIsi = $allRuang->whereNotIn('id', $ruangTerisi);
+    
+            // Format data untuk frontend (pastikan array)
+            $dataRuangBelumIsi = $ruangBelumIsi->map(function ($r) {
+                return [
+                    'id'   => $r->id,
+                    'nama' => $r->nama,
+                    'url'  => route('sekolahbersih.create', $r->id)
+                ];
+            })->values()->toArray(); // 👉 toArray() wajib!
+    
+            $nextRuang = $ruangBelumIsi->first();
+            $nextUrl = $nextRuang ? route('sekolahbersih.create', $nextRuang->id) : route('sekolahbersih.index');
+            $indexUrl = route('sekolahbersih.index');
+    
+            DB::commit();
+    
+            // 🔥 Hanya kirim JSON jika AJAX
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success'         => true,
+                    'message'         => 'Kuesioner berhasil disimpan.',
+                    'ruang_belum_isi' => $dataRuangBelumIsi,
+                    'next_url'        => $nextUrl,
+                    'index_url'       => $indexUrl,
+                ]);
+            }
+    
+            // Jika bukan AJAX (form biasa), redirect
+            return redirect()->to($nextUrl)->with('berhasil', 'Berhasil disimpan.');
+    
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error saving kuesioner: ' . $e->getMessage() . ' | Trace: ' . $e->getTraceAsString());
+    
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menyimpan data: ' . $e->getMessage(),
+                ], 500);
+            }
+    
+            return redirect()->back()->withErrors(['Gagal menyimpan: ' . $e->getMessage()]);
         }
-
-        // Jika bukan AJAX (form biasa), redirect
-        return redirect()->to($nextUrl)->with('berhasil', 'Berhasil disimpan.');
-
-    } catch (\Exception $e) {
-        DB::rollBack();
-        \Log::error('Error saving kuesioner: ' . $e->getMessage() . ' | Trace: ' . $e->getTraceAsString());
-
-        if ($request->ajax() || $request->wantsJson()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menyimpan data: ' . $e->getMessage(),
-            ], 500);
-        }
-
-        return redirect()->back()->withErrors(['Gagal menyimpan: ' . $e->getMessage()]);
     }
-}
 
-    // public function storeverifikasi(Request $request)
-    // {
-    //     $messages = [
-    //         'required'                  => 'Kolom :attribute Wajib diisi',
-    //     ];
-    //     $validator = Validator::make($request->all(), [
-    //         'jabatan_verifikasi'                =>'required',
-    //         'user_verifikasi'                   =>'required',
-    //     ],$messages);
+    
+    public function saveVerifikasi(Request $request)
+    {
+        $messages = [
+            'required'                  => 'Kolom :attribute Wajib diisi',
+        ];
+        $validator = Validator::make($request->all(), [
+            'jabatan_verifikasi'                =>'required',
+            'user_verifikasi'                   =>'required',
+        ],$messages);
 
-    //     if($validator->fails())
-    //     {
-    //         return redirect()->back()->withInput()->withErrors($validator->errors());
-    //     }
-    //     else {
-    //         $post                           = EvaluasiKuesioner::where('id', $request->id)->first();
-    //         $post->jabatan_verifikasi       = $request->jabatan_verifikasi;
-    //         $post->user_verifikasi          = $request->user_verifikasi;
-    //         $post->tanggal_verifikasi       = date('Y-m-d');
-    //         $post->status_verifikasi_sekolah= 1;
-    //         $simpan = $post->save();
-    //         if ($simpan) {
-    //             Session::flash('berhasil', 'Verifikasi Berhasil');
-    //             return redirect()->route('sekolahbersih.index');
-    //         } else
-    //             return back()->withErrors(['Gagal' => ['Verifikasi Gagal']]);
-    //     }
+        if($validator->fails())
+        {
+            return redirect()->back()->withInput()->withErrors($validator->errors());
+        }
+        else {
+            $post                           = EvaluasiKuesioner::where('id', $request->id)->first();
+            $post->jabatan_verifikasi       = $request->jabatan_verifikasi;
+            $post->user_verifikasi          = $request->user_verifikasi;
+            $post->tanggal_verifikasi       = date('Y-m-d');
+            $post->status_verifikasi_sekolah= 1;
+            $simpan = $post->save();
+            if ($simpan) {
+                Session::flash('berhasil', 'Verifikasi Berhasil');
+                return redirect()->route('sekolahbersih.index');
+            } else
+                return back()->withErrors(['Gagal' => ['Verifikasi Gagal']]);
+        }
 
-    // }
+    }
 
     /**
      * Display the specified resource.
