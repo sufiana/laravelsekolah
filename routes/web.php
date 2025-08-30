@@ -62,6 +62,7 @@ Route::get('sekolahbersih/CetakRekapPengawas', 'SekolahBersihController@CetakRek
 //    ->name('sekolahbersih.create');
 Route::delete('sekolahbersih/destroy/{id}', 'SekolahBersihController@destroy')->name('sekolahbersih.delete');
 Route::get('sekolahbersih/edit/{id}', 'SekolahBersihController@edit')->name('sekolahbersih.edit');
+Route::post('sekolahbersih/update', 'SekolahBersihController@update')->name('sekolahbersih.update');
 Route::get('sekolahbersih/verifikasi/{id}', 'SekolahBersihController@verifikasi')->name('sekolahbersih.verifikasi');
 Route::get('sekolahbersih/verifikasiPengawas/{id}', 'SekolahBersihController@verifikasiPengawas')->name('sekolahbersih.verifikasiPengawas');
 Route::get('sekolahbersih/show/{id}', 'SekolahBersihController@show')->name('sekolahbersih.show');
