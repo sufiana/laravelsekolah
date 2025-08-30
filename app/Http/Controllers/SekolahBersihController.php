@@ -41,9 +41,18 @@ class SekolahBersihController extends Controller
 
     public function indexsekolah()
     {
+        if (Auth::check()) {
+            $user = Auth::user();
+            $sekolah= Sekolah::where('id',$user->id_sekolah)->first();
+        }
+        else {
+            $sekolah = '';
+        }
+        
         $model=EvaluasiKuesioner::all()->sortBy("id");
         return view('sekolahbersih/indexsekolah', [
-            'model'    => $model
+            'model'    => $model,
+            'sekolah'  => $sekolah
         ]);
     }
 
@@ -259,7 +268,14 @@ class SekolahBersihController extends Controller
 
 
     public function getDataSekolah(){
-        $model=EvaluasiKuesioner::orderBy('id', 'ASC')->get();
+        if (Auth::check()) {
+            $user = Auth::user();
+            $model=EvaluasiKuesioner::where('sekolah',$user->id_sekolah)->orderBy('id', 'ASC')->get();
+        }
+        else {
+            $model='';
+        }
+        //$model=EvaluasiKuesioner::orderBy('id', 'ASC')->get();
         return Datatables::of($model)
             ->editColumn('periode_awal_kuesioner',function ($data){
                 if($data->periode_awal_kuesioner <> null && $data->periode_akhir_kuesioner) {
@@ -714,7 +730,7 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             }
     
             // Simpan ke EvaluasiKuesioner
-            EvaluasiKuesioner::create([
+            $evaluasi = EvaluasiKuesioner::create([
                 'id_kuesioner'               => '{' . implode(',', $hasilKuesionerIds) . '}',
                 'sekolah'                    => $id_sekolah,
                 'periode_awal_kuesioner'     => $periode_awal,
@@ -726,6 +742,9 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                 'score'                      => $totalScore,
                 'hasil_score'                => count($request->jawaban) > 0 ? $totalScore / count($request->jawaban) : 0,
             ]);
+            
+            //update kolom Hasil_kuesioner isi id dari evaluasi_kuesioner nya
+            HasilKuesioner::whereIn('id', $hasilKuesionerIds)->update(['id_evaluasi_kuesioner' => $evaluasi->id]);
     
             // Ambil semua ruang dari IconGrid
             $allRuang = IconGrid::select('id', 'nama')->orderBy('id')->get();
@@ -1017,16 +1036,34 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
      */
     public function edit($id)
     {
-        $model                  = ManajemenBiaya::find($id);
-        $golongan               = RefGolongan::all();
-        $jenisbiaya             = RefJenisBiaya::all();
-        $statusbiaya            = RefStatusWilayahBiaya::all();
+        $model                  = EvaluasiKuesioner::find($id);
+        //$rincian                = HasilKuesioner::where('id',$model->id_evaluasi_kuesioner)->get();
+        $rincian = DB::table('parameter_kebersihan as p')
+            ->leftJoin('hasil_kuesioner as h', function($join) {
+                $join->on('p.id', '=', 'h.id_parameter')
+                     ->on('p.id_ruang', '=', 'h.id_ruang');
+            })
+            ->where('p.id_ruang', $model->id_ruang)
+            ->where(function($q) use ($model) {
+                $q->where('h.id_evaluasi_kuesioner', $model->id)
+                  ->orWhereNull('h.id_evaluasi_kuesioner');
+            })
+            ->select(
+                'p.id as id_parameter',
+                'p.parameter',
+                'h.jawaban',
+                'h.deskripsi_jawaban'
+            )
+            ->orderBy('p.id')
+            ->get();
+        $ruang                  = IconGrid::findOrFail($model->id_ruang);
+        $parameter              = Parameter::where('id_ruang',$model->id_ruang)->get();
 
-        return view('manajemenbiaya.edit', compact(
+        return view('sekolahbersih.edit', compact(
             'model',
-            'golongan',
-            'jenisbiaya',
-            'statusbiaya'
+            'rincian',
+            'ruang',
+            'parameter'
         ));
     }
 

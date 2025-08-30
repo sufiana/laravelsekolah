@@ -35,7 +35,8 @@ class HasilKuesioner extends Model
         'user_approval_disdik',
         'tanggal_approval_disdik',
         'periode_awal_kuesioner',
-        'periode_akhir_kuesioner'
+        'periode_akhir_kuesioner',
+        'id_evaluasi_kuesioner'
     ];
 
     public function ruanglist(){

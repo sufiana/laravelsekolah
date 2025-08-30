@@ -10,7 +10,7 @@
                     <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i> Home</a></li>
                     <li class="active"><span>@yield('title')</span></li>
                 </ol>
-                <h1>Data @yield('title')</h1>
+                <h1>Data @yield('title') pada {{$sekolah->nama}}</h1>
             </div>
         </div>
         <div class="row">
