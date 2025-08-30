@@ -73,6 +73,9 @@ Route::get('verifikator/create', 'VerifikatorSekolahController@create')->name('v
 Route::get('verifikator/index', 'VerifikatorSekolahController@index')->name('verifikator.index');
 Route::get('verifikator/getData', 'VerifikatorSekolahController@getData')->name('verifikator.getData');
 Route::post('verifikator/store', 'VerifikatorSekolahController@store')->name('verifikator.store');
+Route::delete('verifikator/destroy/{id}', 'VerifikatorSekolahController@destroy')->name('verifikator.delete');
+Route::get('verifikator/edit/{id}', 'VerifikatorSekolahController@edit')->name('verifikator.edit');
+Route::post('verifikator/update', 'VerifikatorSekolahController@update')->name('verifikator.update');
 
 
 // Authentication Routes

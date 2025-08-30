@@ -38,17 +38,17 @@ class VerifikatorSekolahController extends Controller
             })
             ->editColumn('id_sekolah',function ($data){
                 return !$data->sekolahlist || !$data->id_sekolah ?  ' - ' : $data->sekolahlist["nama"];
-            })    
+            })
             ->addColumn('tandatangan_url', function ($data) {
                 if ($data->tandatangan) {
-                    $url = asset($data->tandatangan); 
+                    $url = asset($data->tandatangan);
                     return '<a href="'.$url.'" target="_blank" class="btn btn-sm btn-info" data-toggle="modal" data-target="#ttdModal" data-img="'.$url.'">
                                 Lihat TTD
                             </a>';
                 }
                 return '-';
             })
-       
+
 
             // ->addColumn('action', function ($model){
             //     $button = "
@@ -72,7 +72,7 @@ class VerifikatorSekolahController extends Controller
     {
         if (!Auth::check()) {
             return redirect()->route('login');
-        }        
+        }
         $user = Auth::user();
         // Cek role: hanya role 2, 3, 6 yang dibatasi per sekolah
         if ($user->role == 2 || $user->role == 3 || $user->role == 8 ) {
@@ -80,9 +80,9 @@ class VerifikatorSekolahController extends Controller
         } else {
             $sekolah = Sekolah::all(); // Semua sekolah untuk role lain
         }
-    
+
         $jabatan = RefJabatanVerifikator::all();
-    
+
         return view('verifikator.create', compact('sekolah', 'user', 'jabatan'));
     }
 
@@ -165,7 +165,7 @@ public function store(Request $request)
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
- 
+
 
     /**
      * Show the form for editing the specified resource.
@@ -176,24 +176,33 @@ public function store(Request $request)
     public function edit($id)
     {
         $model                  = VerifikatorSekolah::find($id);
-        if (!Auth::check()) {
-            return redirect()->route('login');
-        }        
-        $user = Auth::user();
-        // Cek role: hanya role 2, 3, 6 yang dibatasi per sekolah
-        if ($user->role == 2 || $user->role == 3 || $user->role == 8 ) {
-            $sekolah = Sekolah::where('id', $user->id_sekolah)->get();
-        } else {
-            $sekolah = Sekolah::all(); // Semua sekolah untuk role lain
+        if($model)
+        {
+             if (!Auth::check()) {
+                return redirect()->route('login');
+             }
+             $user = Auth::user();
+             // Cek role: hanya role 2, 3, 6 yang dibatasi per sekolah
+            if ($user->role == 2 || $user->role == 3 || $user->role == 8 ) {
+                $sekolah = Sekolah::where('id', $user->id_sekolah)->get();
+            } else {
+                $sekolah = Sekolah::all(); // Semua sekolah untuk role lain
+            }
+            $jabatan = RefJabatanVerifikator::all();
+            return view('verifikator.edit', compact(
+                'model',
+                'user',
+                'sekolah',
+                'jabatan'
+            ));
         }
-    
-        $jabatan = RefJabatanVerifikator::all();
-        return view('VerifikatorSekolah.edit', compact(
-            'model',
-            'user',
-            'sekolah',
-            'jabatan'
-        ));
+        else
+        {
+            return response()->json([
+                'status'=>404,
+                'message'=>'Data Tidak Ditemukan...'
+            ]);
+        }
     }
 
     /**
@@ -232,8 +241,8 @@ public function store(Request $request)
             $post->user_created = NULL;
             $simpan = $post->save();
             if ($simpan) {
-                Session::flash('berhasil', 'Data Manajemen Biaya Berhasil di tambah');
-                return redirect()->route('biaya.index');
+                Session::flash('berhasil', 'Data Verifikator Sekolah Berhasil di tambah');
+                return redirect()->route('verifikator.index');
             } else
                 return back()->withErrors(['Gagal' => ['Data Manajemen Biaya Gagal di tambah']]);
         }
