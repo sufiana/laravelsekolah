@@ -20,7 +20,7 @@ use App\Models\Kabupatenkota;
 use App\Models\Cabdis;
 use App\Models\EvaluasiPengawas;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log; 
+use Illuminate\Support\Facades\Log;
 
 use Symfony\Component\Process\Process; //untuk Ghostscript
 use Symfony\Component\Process\InputStream; //untuk Ghostscript
@@ -48,7 +48,7 @@ class SekolahBersihController extends Controller
         else {
             $sekolah = '';
         }
-        
+
         $model=EvaluasiKuesioner::all()->sortBy("id");
         return view('sekolahbersih/indexsekolah', [
             'model'    => $model,
@@ -71,7 +71,7 @@ class SekolahBersihController extends Controller
             'model'    => $model
         ]);
     }
-    
+
     //rekap
     public function rekappengawas()
     {
@@ -80,18 +80,18 @@ class SekolahBersihController extends Controller
             'model'    => $model
         ]);
     }
-    
+
     public function getDataRekapPengawas()
     {
         if (!Auth::check()) {
             return redirect()->route('login');
         }
-    
+
         $user = Auth::user();
         if (!in_array($user->role, [1, 6])) {
             abort(403, 'Unauthorized'); // atau return response()->json(['error' => 'Unauthorized'], 403);
         }
-    
+
         $query = DB::table('evaluasi_pengawas as ep')
             ->select(
                 'ep.*',
@@ -102,14 +102,14 @@ class SekolahBersihController extends Controller
                 's.kepalasekolah'
             )
             ->join('sekolah as s', 's.id', '=', 'ep.sekolah');
-    
+
         // Filter khusus role 6
         if ($user->role == 6) {
             $query->where('s.kabupaten_kota', $user->binaan_kabkota);
         }
-    
+
         $model = $query->get();
-    
+
         return Datatables::of($model)
             ->editColumn('periode_awal_kuesioner', function ($data) {
                 if ($data->periode_awal_kuesioner && $data->periode_akhir_kuesioner) {
@@ -134,7 +134,7 @@ class SekolahBersihController extends Controller
                     '4' => 'Monitoring Lanjutan',
                 ];
                 $tindakLanjut = $jenisTindakLanjut[$data->hasil_rekomendasi] ?? 'Tidak diketahui';
-    
+
                 return $tindakLanjut;
             })
             ->addColumn('action', function ($model){
@@ -144,14 +144,14 @@ class SekolahBersihController extends Controller
                         <span class='fa-stack' ><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-file-pdf-o fa-stack-1x fa-inverse'></i></span>
                     </a>
                     ";
-                
+
                 $button = $button . "</div>";
                 return $button;
             })
             ->rawColumns(['catatan_pengawas', 'action'])
             ->make(true);
     }
-    
+
     public function rekapsekolah()
     {
         $model=EvaluasiPengawas::all()->sortBy("id");
@@ -299,6 +299,7 @@ class SekolahBersihController extends Controller
                     ->join('parameter_kebersihan as p', 'p.id', '=', 'hasil_kuesioner.id_parameter')
                     ->join('ruang_sekolah as r', 'r.id', '=', 'hasil_kuesioner.id_ruang')
                     ->whereIn('hasil_kuesioner.id', $arrayIds)
+                    ->orderBy('p.id')
                     ->get();
 
                 $html = '<div style="font-size: 10px; line-height: 12px">';
@@ -409,7 +410,7 @@ class SekolahBersihController extends Controller
                     ->where('periode_awal_kuesioner', $data->periode_awal_kuesioner)
                     ->where('periode_akhir_kuesioner', $data->periode_akhir_kuesioner)
                     ->first();
-            
+
                 // Mapping tindak lanjut
                 $jenisTindakLanjut = [
                     '1' => 'Pembinaan',
@@ -417,17 +418,17 @@ class SekolahBersihController extends Controller
                     '3' => 'Penghargaan',
                     '4' => 'Monitoring Lanjutan',
                 ];
-            
+
                 if ($existing) {
                     $statusKepatuhan = 'Status Kepatuhan = ' . $existing->status_kepatuhan;
                     $statusKebersihan = 'Status Kebersihan = ' . $existing->status_kebersihan;
                     $tindakLanjut = 'Tindak Lanjut = ' . ($jenisTindakLanjut[$existing->hasil_rekomendasi] ?? 'Tidak diketahui');
-            
+
                     $hasil = $statusKepatuhan . '<br>' . $statusKebersihan . '<br>' . $tindakLanjut;
                 } else {
                     $hasil = '-';
                 }
-            
+
                 return $hasil;
             })
                         // ->editColumn('id_ruang',function ($data){
@@ -655,7 +656,7 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             'periode'  => 'required|string',
             'jawaban'  => 'required|array',
         ]);
-    
+
         if ($validator->fails()) {
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
@@ -666,51 +667,51 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             }
             return redirect()->back()->withErrors($validator)->withInput();
         }
-    
+
         // Ambil data user dan sekolah
         $id_user = Auth::check() ? Auth::id() : 3;
         $user = Auth::user();
-    
+
         $id_sekolah = null;
         if ($user) {
             $id_sekolah = $user->id_sekolah ?? null;
         }
-    
+
         // Fallback untuk Dinas Pendidikan
         if (!$id_sekolah) {
             $id_sekolah = 103; // ID sekolah default untuk dinas
         }
-    
+
         if (!$id_sekolah) {
             return $request->ajax()
                 ? response()->json(['success' => false, 'message' => 'Tidak dapat menentukan sekolah.'], 422)
                 : redirect()->back()->withErrors(['Sekolah tidak ditemukan.']);
         }
-    
+
         // Parse periode
         $parts = explode(' - ', $request->periode);
         $periode_awal = $parts[0] ?? now()->format('Y-m-d');
         $periode_akhir = $parts[1] ?? now()->format('Y-m-d');
-    
+
         // Cek duplikasi: tidak boleh isi ulang untuk ruang + periode + sekolah yang sama
         $existing = EvaluasiKuesioner::where('id_ruang', $request->id_ruang)
             ->where('sekolah', $id_sekolah)
             ->whereDate('periode_awal_kuesioner', $periode_awal)
             ->whereDate('periode_akhir_kuesioner', $periode_akhir)
             ->exists();
-    
+
         if ($existing) {
             $msg = 'Data untuk ruang dan periode ini sudah pernah diisi.';
             return $request->ajax()
                 ? response()->json(['success' => false, 'message' => $msg], 422)
                 : redirect()->back()->withErrors([$msg]);
         }
-    
+
         DB::beginTransaction();
         try {
             $totalScore = 0;
             $hasilKuesionerIds = [];
-    
+
             // Simpan setiap jawaban ke HasilKuesioner
             foreach ($request->jawaban as $id_parameter => $jawaban) {
                 $hasil = HasilKuesioner::create([
@@ -728,7 +729,7 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                 $hasilKuesionerIds[] = $hasil->id;
                 $totalScore += (int)$jawaban;
             }
-    
+
             // Simpan ke EvaluasiKuesioner
             $evaluasi = EvaluasiKuesioner::create([
                 'id_kuesioner'               => '{' . implode(',', $hasilKuesionerIds) . '}',
@@ -742,23 +743,23 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                 'score'                      => $totalScore,
                 'hasil_score'                => count($request->jawaban) > 0 ? $totalScore / count($request->jawaban) : 0,
             ]);
-            
+
             //update kolom Hasil_kuesioner isi id dari evaluasi_kuesioner nya
             HasilKuesioner::whereIn('id', $hasilKuesionerIds)->update(['id_evaluasi_kuesioner' => $evaluasi->id]);
-    
+
             // Ambil semua ruang dari IconGrid
             $allRuang = IconGrid::select('id', 'nama')->orderBy('id')->get();
-    
+
             // Ruang yang sudah diisi untuk periode ini
             $ruangTerisi = EvaluasiKuesioner::where('sekolah', $id_sekolah)
                 ->whereDate('periode_awal_kuesioner', $periode_awal)
                 ->whereDate('periode_akhir_kuesioner', $periode_akhir)
                 ->pluck('id_ruang')
                 ->toArray();
-    
+
             // Ruang yang belum diisi
             $ruangBelumIsi = $allRuang->whereNotIn('id', $ruangTerisi);
-    
+
             // Format data untuk frontend (pastikan array)
             $dataRuangBelumIsi = $ruangBelumIsi->map(function ($r) {
                 return [
@@ -767,13 +768,13 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                     'url'  => route('sekolahbersih.create', $r->id)
                 ];
             })->values()->toArray(); // 👉 toArray() wajib!
-    
+
             $nextRuang = $ruangBelumIsi->first();
             $nextUrl = $nextRuang ? route('sekolahbersih.create', $nextRuang->id) : route('sekolahbersih.index');
             $indexUrl = route('sekolahbersih.index');
-    
+
             DB::commit();
-    
+
             // 🔥 Hanya kirim JSON jika AJAX
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
@@ -784,26 +785,26 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                     'index_url'       => $indexUrl,
                 ]);
             }
-    
+
             // Jika bukan AJAX (form biasa), redirect
             return redirect()->to($nextUrl)->with('berhasil', 'Berhasil disimpan.');
-    
+
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Error saving kuesioner: ' . $e->getMessage() . ' | Trace: ' . $e->getTraceAsString());
-    
+
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Gagal menyimpan data: ' . $e->getMessage(),
                 ], 500);
             }
-    
+
             return redirect()->back()->withErrors(['Gagal menyimpan: ' . $e->getMessage()]);
         }
     }
 
-    
+
     public function saveVerifikasi(Request $request)
     {
         $messages = [
@@ -961,7 +962,7 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
         $kabupaten=Kabupatenkota::where('kode_kabupaten',$sekolah->kabupaten_kota)->first();
         $stringIds = $model->id_kuesioner;  // contoh: "{319,320,321}"
         $arrayIds = explode(',', trim($stringIds, '{}'));
-        
+
         $sekolahId= $model->sekolah;
         $periodeAwal= $model->periode_awal_kuesioner;
         $periodeAkhir= $model->periode_akhir_kuesioner;
@@ -984,13 +985,13 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             ->groupBy('rs.id', 'rs.nama')
             ->orderBy('rs.id')
             ->get();
-            
+
         $evaluasipengawas = DB::table('evaluasi_pengawas')
                 ->where('sekolah', $sekolahId)
                 ->where('periode_awal_kuesioner', $periodeAwal)
                 ->where('periode_akhir_kuesioner', $periodeAkhir)
                 ->first();
-                
+
         if (Auth::check()) {
             $user = Auth::user();
             $cabdis = Cabdis::find($user->cabdis);
@@ -1037,6 +1038,7 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
     public function edit($id)
     {
         $model                  = EvaluasiKuesioner::find($id);
+        $daterange              = date('d-m-Y', strtotime($model->periode_awal_kuesioner)) .' - '. date('d-m-Y', strtotime($model->periode_akhir_kuesioner));
         //$rincian                = HasilKuesioner::where('id',$model->id_evaluasi_kuesioner)->get();
         $rincian = DB::table('parameter_kebersihan as p')
             ->leftJoin('hasil_kuesioner as h', function($join) {
@@ -1044,18 +1046,21 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                      ->on('p.id_ruang', '=', 'h.id_ruang');
             })
             ->where('p.id_ruang', $model->id_ruang)
-            ->where(function($q) use ($model) {
-                $q->where('h.id_evaluasi_kuesioner', $model->id)
-                  ->orWhereNull('h.id_evaluasi_kuesioner');
-            })
+            ->where('h.id_evaluasi_kuesioner', $id)
+//            ->where(function($q) use ($model) {
+//                $q->where('h.id_evaluasi_kuesioner', $model->id)
+//                  ->orWhereNull('h.id_evaluasi_kuesioner');
+//            })
             ->select(
                 'p.id as id_parameter',
                 'p.parameter',
                 'h.jawaban',
-                'h.deskripsi_jawaban'
+                'h.deskripsi_jawaban',
+                'h.id'
             )
             ->orderBy('p.id')
             ->get();
+        //dd($rincian);
         $ruang                  = IconGrid::findOrFail($model->id_ruang);
         $parameter              = Parameter::where('id_ruang',$model->id_ruang)->get();
 
@@ -1063,7 +1068,8 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             'model',
             'rincian',
             'ruang',
-            'parameter'
+            'parameter',
+            'daterange'
         ));
     }
 
@@ -1265,7 +1271,7 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                 ->with('exception', $e->getMessage());
         }
     }
-    
+
     //download PDF
     public function CetakRekapPengawas(Request $request)
     {
@@ -1274,15 +1280,15 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                 'startDate_raw' => $request->input('startDate'),
                 'endDate_raw' => $request->input('endDate')
             ]);
-    
+
             $startDate = Carbon::parse($request->input('startDate'))->startOfDay();
             $endDate   = Carbon::parse($request->input('endDate'))->endOfDay();
-    
+
             Log::info('📅 Parsed tanggal', [
                 'startDate' => $startDate->toDateTimeString(),
                 'endDate' => $endDate->toDateTimeString()
             ]);
-    
+
             if ($endDate->lt($startDate)) {
                 Log::warning('⚠️ Tanggal akhir lebih kecil dari tanggal awal');
                 return response()->json([
@@ -1290,16 +1296,16 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                     'message' => 'Tanggal akhir tidak boleh lebih kecil dari awal.'
                 ], 400);
             }
-    
+
             $data = EvaluasiPengawas::whereDate('periode_awal_kuesioner', $startDate->toDateString())
                 ->whereDate('periode_akhir_kuesioner', $endDate->toDateString())
                 ->get();
-    
+
             $sekolahMap = \App\Models\Sekolah::all()->keyBy('id');
-    
+
             $user = Auth::check() ? Auth::user() : null;
             $wilayah = [];
-    
+
             if ($user && $user->role == 6) {
                 $wilayah = DB::select("
                     SELECT
@@ -1315,9 +1321,9 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                     GROUP BY cab.id, cab.nama, cab.kabupatenkota
                 ", [$user->cabdis]);
             }
-    
+
             Log::info('📊 Jumlah data ditemukan:', ['count' => $data->count()]);
-    
+
             if ($data->isEmpty()) {
                 Log::warning('📭 Tidak ada data untuk periode', [
                     'startDate' => $startDate->toDateString(),
@@ -1328,9 +1334,9 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                     'message' => 'Data tidak ditemukan untuk periode tersebut.'
                 ], 404);
             }
-    
+
             $fileName = "Laporan Supervisi {$startDate->format('d-m-Y')} s.d {$endDate->format('d-m-Y')}.pdf";
-    
+
             // ✅ 1. Generate PDF dari view
             $pdfContent = PDF::loadView('sekolahbersih.cetakan_rekappengawas', [
                 'data' => $data,
@@ -1340,9 +1346,9 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                 'user' => $user,
                 'sekolahMap' => $sekolahMap
             ])->output(); // <-- output() mengembalikan binary PDF, tidak disimpan
-    
+
             Log::info('🖨 PDF berhasil dibuat, ukuran asli: ' . number_format(strlen($pdfContent) / 1024, 2) . ' KB');
-    
+
             // ✅ 2. Jalankan Ghostscript untuk kompresi (tanpa simpan file)
             $process = new Process([
                 'gs',
@@ -1355,18 +1361,18 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                 '-sOutputFile=-',              // Output ke stdout
                 '-'                            // Input dari stdin
             ]);
-    
+
             $input = new InputStream();
             $process->setInput($input);
             $process->start();
-    
+
             // Kirim PDF ke Ghostscript
             $input->write($pdfContent);
             $input->close();
-    
+
             // Tunggu proses selesai
             $process->wait();
-    
+
             if (!$process->isSuccessful()) {
                 Log::error('❌ Ghostscript gagal: ' . $process->getErrorOutput());
                 // Jika gagal, kembalikan PDF asli
@@ -1374,22 +1380,22 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
                     ->header('Content-Type', 'application/pdf')
                     ->header('Content-Disposition', "attachment; filename=\"$fileName\"");
             }
-    
+
             $compressedPdf = $process->getOutput();
-    
+
             Log::info('✅ PDF berhasil dikompresi, ukuran baru: ' . number_format(strlen($compressedPdf) / 1024, 2) . ' KB');
-    
+
             // ✅ 3. Langsung kirim ke user sebagai download
             return response($compressedPdf)
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', "attachment; filename=\"$fileName\"");
-    
+
         } catch (\Exception $e) {
             Log::error('❌ CetakRekapPengawas gagal', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-    
+
             return response()->json([
                 'status' => 'error',
                 'message' => 'Gagal membuat PDF.',
@@ -1397,6 +1403,6 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             ], 500);
         }
     }
-    
-    
+
+
 }
