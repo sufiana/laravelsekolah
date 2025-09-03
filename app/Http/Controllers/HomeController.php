@@ -59,26 +59,12 @@ class HomeController extends Controller
         $icon = IconGrid::all()->sortBy("id");
         $role = Role::where('id', $user->role)->first();
         $sekolah = Sekolah::where('id', $user->id_sekolah)->first();
-
-        $results = DB::table('ruang_sekolah as r')
-            ->select('r.id', 'r.nama','r.singkatan')
-            ->whereNotExists(function ($query) use ($user) {
-                $query->select(DB::raw(1))
-                    ->from('hasil_kuesioner as h')
-                    ->where('h.id_sekolah', $user->id_sekolah)
-                    ->whereRaw('h.id_ruang = r.id')
-                    ->whereRaw("h.periode_awal_kuesioner = date_trunc('month', CURRENT_DATE)::date")
-                    ->whereRaw("h.periode_akhir_kuesioner = (date_trunc('month', CURRENT_DATE) + interval '1 month - 1 day')::date");
-            })
-            ->orderBy('r.id', 'asc')
-            ->get();
-
+        
         return view('layouts/berandasekolah', [
             'icon'      => $icon,
             'user'      => $user,
             'role'      => $role,
             'sekolah'   => $sekolah,
-            'results'   => $results
         ]);
     }
 
@@ -91,26 +77,12 @@ class HomeController extends Controller
         $icon = IconGrid::all()->sortBy("id");
         $role = Role::where('id',$user->role)->first();
         $sekolah = Sekolah::where('id',$user->id_sekolah)->first();
-        if (in_array($user->role, [2, 8])) {
-            $results = DB::table('ruang_sekolah as r')
-                ->select('r.id', 'r.nama','r.singkatan')
-                ->whereNotExists(function ($query) use ($user) {
-                    $query->select(DB::raw(1))
-                        ->from('hasil_kuesioner as h')
-                        ->where('h.id_sekolah', $user->id_sekolah)
-                        ->whereRaw('h.id_ruang = r.id')
-                        ->whereRaw("h.periode_awal_kuesioner = date_trunc('month', CURRENT_DATE)::date")
-                        ->whereRaw("h.periode_akhir_kuesioner = (date_trunc('month', CURRENT_DATE) + interval '1 month - 1 day')::date");
-                })
-                ->orderBy('r.id', 'asc')
-                ->get();
-        }
+        
         return view('layouts/berandakadis', [
             'icon'      => $icon,
             'user'      => $user,
             'role'      => $role,
             'sekolah'      => $sekolah,
-            'results'   => $results
         ]);
     }
 
@@ -123,26 +95,12 @@ class HomeController extends Controller
         $icon = IconGrid::all()->sortBy("id");
         $role = Role::where('id',$user->role)->first();
         $sekolah = Sekolah::where('id',$user->id_sekolah)->first();
-        if (in_array($user->role, [2, 8])) {
-            $results = DB::table('ruang_sekolah as r')
-                ->select('r.id', 'r.nama','r.singkatan')
-                ->whereNotExists(function ($query) use ($user) {
-                    $query->select(DB::raw(1))
-                        ->from('hasil_kuesioner as h')
-                        ->where('h.id_sekolah', $user->id_sekolah)
-                        ->whereRaw('h.id_ruang = r.id')
-                        ->whereRaw("h.periode_awal_kuesioner = date_trunc('month', CURRENT_DATE)::date")
-                        ->whereRaw("h.periode_akhir_kuesioner = (date_trunc('month', CURRENT_DATE) + interval '1 month - 1 day')::date");
-                })
-                ->orderBy('r.id', 'asc')
-                ->get();
-        }
+        
         return view('layouts/berandacabdis', [
             'icon'      => $icon,
             'user'      => $user,
             'role'      => $role,
             'sekolah'      => $sekolah,
-            'results'   => $results
         ]);
     }
 
@@ -155,26 +113,12 @@ class HomeController extends Controller
         $icon = IconGrid::all()->sortBy("id");
         $role = Role::where('id',$user->role)->first();
         $sekolah = Sekolah::where('id',$user->id_sekolah)->first();
-        if (in_array($user->role, [2, 8])) {
-            $results = DB::table('ruang_sekolah as r')
-                ->select('r.id', 'r.nama','r.singkatan')
-                ->whereNotExists(function ($query) use ($user) {
-                    $query->select(DB::raw(1))
-                        ->from('hasil_kuesioner as h')
-                        ->where('h.id_sekolah', $user->id_sekolah)
-                        ->whereRaw('h.id_ruang = r.id')
-                        ->whereRaw("h.periode_awal_kuesioner = date_trunc('month', CURRENT_DATE)::date")
-                        ->whereRaw("h.periode_akhir_kuesioner = (date_trunc('month', CURRENT_DATE) + interval '1 month - 1 day')::date");
-                })
-                ->orderBy('r.id', 'asc')
-                ->get();
-        }
+        
         return view('layouts/berandapengawas', [
             'icon'      => $icon,
             'user'      => $user,
             'role'      => $role,
             'sekolah'      => $sekolah,
-            'results'   => $results
         ]);
     }
 
@@ -187,26 +131,11 @@ class HomeController extends Controller
         $icon = IconGrid::all()->sortBy("id");
         $role = Role::where('id',$user->role)->first();
         $sekolah = Sekolah::where('id',$user->id_sekolah)->first();
-        if (in_array($user->role, [2, 8])) {
-            $results = DB::table('ruang_sekolah as r')
-                ->select('r.id', 'r.nama','r.singkatan')
-                ->whereNotExists(function ($query) use ($user) {
-                    $query->select(DB::raw(1))
-                        ->from('hasil_kuesioner as h')
-                        ->where('h.id_sekolah', $user->id_sekolah)
-                        ->whereRaw('h.id_ruang = r.id')
-                        ->whereRaw("h.periode_awal_kuesioner = date_trunc('month', CURRENT_DATE)::date")
-                        ->whereRaw("h.periode_akhir_kuesioner = (date_trunc('month', CURRENT_DATE) + interval '1 month - 1 day')::date");
-                })
-                ->orderBy('r.id', 'asc')
-                ->get();
-        }
         return view('layouts/berandadeveloper', [
             'icon'      => $icon,
             'user'      => $user,
             'role'      => $role,
             'sekolah'      => $sekolah,
-            'results'   => $results
         ]);
     }
 
