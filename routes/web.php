@@ -55,6 +55,7 @@ Route::get('sekolahbersih/rekapsekolah', 'SekolahBersihController@rekapsekolah')
 Route::get('sekolahbersih/getDataRekapPengawas', 'SekolahBersihController@getDataRekapPengawas')->name('sekolahbersih.getDataRekapPengawas');
 Route::get('sekolahbersih/CetakRekapPengawas', 'SekolahBersihController@CetakRekapPengawas')->name('sekolahbersih.CetakRekapPengawas');
 // Route::get('sekolahbersih/DownloadRekapPengawas', 'SekolahBersihController@DownloadRekapPengawas')->name('report.DownloadRekapPengawas');
+Route::get('sekolahbersih/getDataRekapSekolah', 'SekolahBersihController@getDataRekapSekolah')->name('sekolahbersih.getDataRekapSekolah');
 
 
 //Route::get('sekolahbersih/create/{singkatan}', 'SekolahBersihController@create')
@@ -100,3 +101,4 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
+

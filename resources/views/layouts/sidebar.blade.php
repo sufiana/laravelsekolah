@@ -10,6 +10,8 @@
                 <h5 style="font-size: 12px; color: #3e5879">DISDIK</h5>
                 <h5 style="font-size: 12px; color: #3e5879; font-weight: bold; line-height: 10px">SEKOLAH BERSIH</h5>
             </div>
+            @php $user = Auth::user(); @endphp
+
 
             <div class="navbar navbar-expand-lg navbar-light">
                 <div class="collapse navbar-collapse navbar-ex1-collapse" id="sidebar-nav">
@@ -28,24 +30,12 @@
                                 <span>Data Master</span>
                                 <i class="fa fa-angle-right drop-icon"></i>
                             </a>
-                            <!--<ul class="submenu">-->
-                            <!--    <li>-->
-                            <!--        <a href="#" class="dropdown-toggle dropdown-nocaret">-->
-                            <!--            Lokasi-->
-                            <!--            <i class="fa fa-angle-right drop-icon"></i>-->
-                            <!--        </a>-->
-                            <!--        <ul class="submenu">-->
-                            <!--            <li><a href="">Povinsi</a></li>-->
-                            <!--            <li><a href="">Kabupaten / Kota</a></li>-->
-                            <!--            <li><a href="">Sekolah</a></li>-->
-                            <!--            <li><a href="">Cabdis</a></li>-->
-                            <!--            <li><a href="">Parameter</a></li>-->
-
-                            <!--        </ul>-->
-                            <!--    </li>-->
-                            <!--</ul>-->
+                            <ul class="submenu">
+                                <li><a href="{{ route('ListParameter') }}">List Parameter</a></li>
+                                <li><a href="{{ route('ListSekolah') }}">Data Sekolah</a></li>
+                                <li><a href="{{ route('verifikator.index') }}">User Verifikator</a></li>
+                            </ul>                            
                         </li>
-                        @php $user = Auth::user(); @endphp
                         @if($user)
                         @if($user->role==4)
                         <li>

@@ -31,7 +31,17 @@ class VerifikatorSekolahController extends Controller
      */
 
     public function getData(){
-        $model=VerifikatorSekolah::orderBy('id', 'ASC')->get();
+          if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        $user = Auth::user();
+        $query=VerifikatorSekolah::orderBy('id', 'ASC');
+        if (in_array($user->role, [2, 8])){
+            $query=$query->where('verifikator_sekolah.id_sekolah', $user->id_sekolah);
+        }
+        
+        $model= $query->get();
         return Datatables::of($model)
             ->editColumn('jabatan_verifikator',function ($data){
                 return !$data->Jabatanlist || !$data->jabatan_verifikator ?  ' - ' : $data->Jabatanlist["nama"];
@@ -50,21 +60,21 @@ class VerifikatorSekolahController extends Controller
             })
 
 
-            // ->addColumn('action', function ($model){
-            //     $button = "
-            //         <div class='btn-group-horizontal'>
-            //         <a href='" . route("biaya.edit", $model->id) . "' id='editbtn' >
-            //             <span class='fa-stack'><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-edit fa-stack-1x fa-inverse'></i></span>
-            //         </a>
-            //         <a href='#' class='table-link danger' data-id='" . $model->id . "' data-nama='" . $model->nama . "' id='deletebtn' data-toggle='modal' data-target='#delModal'>
-            //             <span class='fa-stack'><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-trash-o fa-stack-1x fa-inverse'></i></span>
-            //         </a>
-            //     ";
+            ->addColumn('action', function ($model){
+                $button = "
+                    <div class='btn-group-horizontal'>
+                    <a href='" . route("verifikator.edit", $model->id) . "' id='editbtn' >
+                        <span class='fa-stack'><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-edit fa-stack-1x fa-inverse'></i></span>
+                    </a>
+                    <a href='#' class='table-link danger' data-id='" . $model->id . "' data-nama='" . $model->verifikator . "' id='deletebtn' data-toggle='modal' data-target='#delModal'>
+                        <span class='fa-stack'><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-trash-o fa-stack-1x fa-inverse'></i></span>
+                    </a>
+                ";
 
-            //     $button = $button . "</div>";
-            //     return $button;
-            // })
-            ->rawColumns(['tandatangan_url']) // biar html link ga di-escape
+                $button = $button . "</div>";
+                return $button;
+            })
+            ->rawColumns(['tandatangan_url','action']) // biar html link ga di-escape
             ->make(true);
     }
 

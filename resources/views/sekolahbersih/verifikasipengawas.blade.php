@@ -388,7 +388,7 @@
                                                     <div class="form-group col-md-12">
                                                         <label for="popoverName">Tanggal Supervisi </label>
                                                         <div class="form-group">
-                                                            <input type="text" class="form-control" id="tanggal" name="tanggal" required data-provide="datepicker">
+                                                            <input type="text" class="form-control" id="tanggal" name="tanggal" required">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -441,11 +441,13 @@
 <script>
     $(document).ready(function () {
         // Inisialisasi datepicker
-        $('#tanggal').datepicker({
-            format: 'dd-mm-yyyy',
-            autoclose: true,
-            todayHighlight: true,
-            container: 'body'
+        $(document).ready(function () {
+            $('#tanggal').datepicker({
+                format: 'dd-mm-yyyy',
+                autoclose: true,
+                todayHighlight: true,
+                container: 'body'
+            }).datepicker('setDate', new Date()); // ✅ Gunakan new Date()
         });
 
 

@@ -48,12 +48,12 @@
 
                         <form role="form" method="POST" action="{{ route('sekolahbersih.update') }}" enctype="multipart/form-data">
                             @csrf
-                            <input type="text" id="id" name="id" value="{{$model->id}}">
+                            <input type="hidden" id="id" name="id" value="{{$model->id}}">
                             <div class="row" style="margin-top: 20px">
                                 <div class="col-lg-8 col-sm-6 col-12">
                                     <div class="form-group">
                                         <h2 for="periode">Periode Kuesioner</h2>
-                                        <input type="text" name="periode" class="form-control" id="daterange" value="{{$daterange}}" readonly/>
+                                        <input type="text" name="periode" class="form-control" id="daterange" value="{{$daterange}}" disabled/>
                                     </div>
 
                                     <div id="parameterContainer">
@@ -91,7 +91,9 @@
                                                                        onchange="handleJawabanChange({{ $p->id }}, this.value)" {{ $p->jawaban == 1 ? 'checked' : '' }}> Tidak Bersih
                                                             </label>
                                                                 <!-- Hidden score -->
-                                                            <input type="text" name="score[{{ $p->id }}]" id="score_{{ $p->id }}" value="{{$p->jawaban}}">
+                                                            <input type="hidden" name="score[{{ $p->id }}]" id="score_{{ $p->id }}" value="{{$p->jawaban}}">
+                                                            <input type="hidden" name="id_kuesioner[{{ $p->id }}]" id="score_{{ $p->id }}" value="{{$p->id}}">
+
                                                         </div>
                                                     </div>
                                                 </div>
@@ -136,7 +138,7 @@
 
 
                             <div class="form-group text-center">
-                                <input type="text" name="sum" id="sum">
+                                <input type="hidden" name="sum" id="sum">
                                 <button class="btn btn-primary tambah" type="submit">Simpan</button>
                             </div>
 
@@ -158,23 +160,27 @@
 
 <script>
 
-function handleJawabanChange(paramId, value) {
-    let alasanField = document.getElementById("alasan_" + paramId);
-    let scoreField  = document.getElementById("score_" + paramId);
+    function handleJawabanChange(id, value) {
+        // Update nilai hidden input score
+        let scoreInput = document.getElementById('score_' + id);
+        if (scoreInput) {
+            scoreInput.value = value;
+        }
 
-    // set hidden score
-    scoreField.value = value;
+        // 🔁 Langsung hitung total
+        hitungTotal();
 
-    // kalau cukup bersih (2) atau tidak bersih (1) → wajib alasan
-    if (value == "2" || value == "1") {
-        alasanField.style.display = "block";
-        alasanField.setAttribute("required", "required");
-    } else {
-        alasanField.style.display = "none";
-        alasanField.removeAttribute("required");
-        alasanField.value = ""; // reset
+        // Tampilkan/sembunyikan alasan
+        let alasanDiv = document.getElementById('alasan_' + id);
+        if (alasanDiv) {
+            if (value == '1' || value == '2') {
+                alasanDiv.style.display = 'block';
+            } else {
+                alasanDiv.style.display = 'none';
+            }
+        }
     }
-}
+
 
     function hitungTotal() {
         let total = 0;

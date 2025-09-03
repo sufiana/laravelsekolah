@@ -1,3 +1,7 @@
+@php
+    $user = Auth::user();
+@endphp
+
 <header class="navbar navbar-expand-lg navbar-light container d-block d-lg-flex" id="header-navbar">
     <a class="navbar-brand float-left float-lg-none" href="index.html" id="logo">
 <!--        <img alt="" class="normal-logo logo-white" src="{{ asset('assets/themes') }}/img/logo.png" />-->
@@ -13,62 +17,38 @@
                 <i class="fa fa-bars"></i>
             </a>
         </li>
-        <li class="dropdown d-none d-md-block">
-            <a class="btn dropdown-toggle dropdown-nocaret" data-toggle="dropdown">
-                <i class="fa fa-bell"></i>
-                <span class="count">8</span>
-            </a>
-            <ul class="dropdown-menu notifications-list">
-                <li class="pointer">
-                    <div class="pointer-inner">
-                        <div class="arrow"></div>
-                    </div>
-                </li>
-                <li class="item-header">
-                    You have 6 new notifications
-                </li>
-                <li class="item">
-                    <a href="#">
-                        <i class="fa fa-comment"></i>
-                        <span class="content">New comment on ‘Awesome P...</span>
-                        <span class="time"><i class="fa fa-clock-o"></i>13 min.</span>
-                    </a>
-                </li>
-                <li class="item">
-                    <a href="#">
-                        <i class="fa fa-plus"></i>
-                        <span class="content">New user registration</span>
-                        <span class="time"><i class="fa fa-clock-o"></i>13 min.</span>
-                    </a>
-                </li>
-                <li class="item">
-                    <a href="#">
-                        <i class="fa fa-envelope"></i>
-                        <span class="content">New Message from George</span>
-                        <span class="time"><i class="fa fa-clock-o"></i>13 min.</span>
-                    </a>
-                </li>
-                <li class="item">
-                    <a href="#">
-                        <i class="fa fa-shopping-cart"></i>
-                        <span class="content">New purchase</span>
-                        <span class="time"><i class="fa fa-clock-o"></i>13 min.</span>
-                    </a>
-                </li>
-                <li class="item">
-                    <a href="#">
-                        <i class="fa fa-eye"></i>
-                        <span class="content">New order</span>
-                        <span class="time"><i class="fa fa-clock-o"></i>13 min.</span>
-                    </a>
-                </li>
-                <li class="item-footer">
-                    <a href="#">
-                        View all notifications
-                    </a>
-                </li>
-            </ul>
-        </li>
+        @if($user && in_array($user->role, [2, 8]))
+            @isset($results)
+                @if($results->isNotEmpty())
+                    <li class="dropdown d-none d-md-block">
+                        <a class="btn dropdown-toggle dropdown-nocaret" data-toggle="dropdown">
+                            <i class="fa fa-bell"></i>
+                            <span class="count">{{ sizeof($results) }}</span>
+                        </a>
+
+                        <ul class="dropdown-menu notifications-list">
+                            <li class="pointer">
+                                <div class="pointer-inner">
+                                    <div class="arrow"></div>
+                                </div>
+                            </li>
+                            <li class="item-header">                   
+                                <p>Jumlah Komponen belum diisi: {{ sizeof($results) }}</p>
+                            </li>
+                            @foreach($results as $x)
+                                <li class="item">
+                                    <a href="{{ url('sekolahbersih/create/' . $x->id) }}">
+                                        <span class="content-headline">{{ $x->singkatan }} </span>
+                                    </a>
+                                </li>
+                            @endforeach
+
+                            <li class="item-footer"></li>
+                        </ul>           
+                    </li>
+                @endif
+            @endisset
+        @endif
         <li class="dropdown d-none d-md-block">
             <a class="btn dropdown-toggle dropdown-nocaret" data-toggle="dropdown">
                 <i class="fa fa-envelope-o"></i>
@@ -127,39 +107,7 @@
                 </li>
             </ul>
         </li>
-<!--        <li class="dropdown d-none d-md-block">-->
-<!--            <a class="btn dropdown-toggle" data-toggle="dropdown">New Item</a>-->
-<!--            <ul class="dropdown-menu">-->
-<!--                <li class="item">-->
-<!--                    <a href="#"><i class="fa fa-archive"></i>New Product</a>-->
-<!--                </li>-->
-<!--                <li class="item">-->
-<!--                    <a href="#"><i class="fa fa-shopping-cart"></i>New Order</a>-->
-<!--                </li>-->
-<!--                <li class="item">-->
-<!--                    <a href="#"><i class="fa fa-sitemap"></i>New Category</a>-->
-<!--                </li>-->
-<!--                <li class="item">-->
-<!--                    <a href="#"><i class="fa fa-file-text"></i>New Page</a>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--        </li>-->
-<!--        <li class="nav-item dropdown d-none d-md-block">-->
-<!--            <a aria-expanded="false" aria-haspopup="true" class="btn dropdown-toggle" data-toggle="dropdown" id="" role="button">-->
-<!--                English-->
-<!--            </a>-->
-<!--            <ul class="dropdown-menu">-->
-<!--                <li class="dropdown-item">-->
-<!--                    <a href="#">Spanish</a>-->
-<!--                </li>-->
-<!--                <li class="dropdown-item">-->
-<!--                    <a href="#">German</a>-->
-<!--                </li>-->
-<!--                <li class="dropdown-item">-->
-<!--                    <a href="#">Italian</a>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--        </li>-->
+
     </ul>
     <ul class="nav navbar-nav ml-auto float-right float-lg-none" id="header-nav">
         <li class="mobile-search">
@@ -177,23 +125,46 @@
         <li class="dropdown profile-dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                 <img alt="" src="{{ asset('assets/themes') }}/img/samples/scarlet-159.png" />
-                <span class="d-none d-md-block">Dinas Pendidikan Provsu </span><b class="caret"></b>
+
+                @auth
+                    <span class="d-none d-md-block">
+                        {{ Auth::user()->username }}
+                    </span>
+                @endauth
+
+                @guest
+                    <span class="d-none d-md-block">
+                        Guest
+                    </span>
+                @endguest
+
+                <b class="caret"></b>
             </a>
+
             <ul class="dropdown-menu dropdown-menu-right">
-                <li>
-                    <a href="user-profile.html"><i class="fa fa-user"></i>Profile</a>
-                </li>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                    @csrf
-                </form>
-                <li>
-                    <a href="{{ route('logout') }}"
-                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        <i class="fa fa-power-off"></i>{{ __('Logout') }}
-                    </a>
-                </li>
+                @auth
+                    
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                    <li>
+                        <a href="{{ route('logout') }}"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <i class="fa fa-power-off"></i> {{ __('Logout') }}
+                        </a>
+                    </li>
+                @endauth
+
+                @guest
+                    <li>
+                        <a href="{{ route('login') }}">
+                            <i class="fa fa-sign-in"></i> {{ __('Login') }}
+                        </a>
+                    </li>
+                @endguest
             </ul>
         </li>
+
         <li class="d-none d-sm-block">
             <a class="btn"><i class="fa fa-power-off"></i></a>
         </li>

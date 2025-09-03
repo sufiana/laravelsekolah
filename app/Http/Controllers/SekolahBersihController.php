@@ -160,6 +160,140 @@ class SekolahBersihController extends Controller
         ]);
     }
 
+
+    public function getDataRekapSekolah()
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        $user = Auth::user();
+        if (!in_array($user->role, [2, 8])) {
+            abort(403, 'Unauthorized'); // atau return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $model = DB::select("
+                    SELECT *
+                    FROM (
+                        SELECT *,
+                            ROW_NUMBER() OVER (
+                                PARTITION BY sekolah, periode_awal_kuesioner, periode_akhir_kuesioner
+                                ORDER BY time_created DESC
+                            ) AS rn
+                        FROM evaluasi_kuesioner
+                    ) t
+                    WHERE rn = 1 and sekolah = $user->id_sekolah
+        ");
+
+
+
+
+        return Datatables::of($model)
+           ->editColumn('periode_awal_kuesioner',function ($data){
+                if($data->periode_awal_kuesioner <> null && $data->periode_akhir_kuesioner) {
+                    $periode=date('d-M-Y', strtotime($data->periode_awal_kuesioner)).' s/d '.date('d-M-Y', strtotime($data->periode_akhir_kuesioner));
+                }
+                else {
+                    $periode=date('d-M-Y', strtotime($data->periode_awal_kuesioner));
+                }
+                return $periode;
+            })
+            ->editColumn('sekolah',function ($data){
+                $a= Sekolah::find($data->sekolah);
+                return !$a || !$data->sekolah ?  ' - ' : $a["nama"]  ;
+
+            })
+            ->editColumn('tanggal_supervisi',function ($data){
+                return !$data->tanggal_supervisi ?  ' - ' : Date('d-M-Y', strtotime($data->tanggal_supervisi));
+            })
+            ->editColumn('catatan_pengawas', function ($data) {
+                $existing = DB::table('evaluasi_pengawas')
+                    ->where('sekolah', $data->sekolah)
+                    ->where('periode_awal_kuesioner', $data->periode_awal_kuesioner)
+                    ->where('periode_akhir_kuesioner', $data->periode_akhir_kuesioner)
+                    ->first();
+
+                // Mapping tindak lanjut
+                $jenisTindakLanjut = [
+                    '1' => 'Pembinaan',
+                    '2' => 'Penguatan',
+                    '3' => 'Penghargaan',
+                    '4' => 'Monitoring Lanjutan',
+                ];
+
+                if ($existing) {
+                    $statusKepatuhan = 'Status Kepatuhan = ' . $existing->status_kepatuhan;
+                    $statusKebersihan = 'Status Kebersihan = ' . $existing->status_kebersihan;
+                    $tindakLanjut = 'Tindak Lanjut = ' . ($jenisTindakLanjut[$existing->hasil_rekomendasi] ?? 'Tidak diketahui');
+
+                    $hasil = $statusKepatuhan . '<br>' . $statusKebersihan . '<br>' . $tindakLanjut;
+                } else {
+                    $hasil = '-';
+                }
+
+                return $hasil;
+            })                        
+
+             ->editColumn('id_ruang', function ($data) {
+                 $sekolahId= $data->sekolah;
+                 $periodeAwal= $data->periode_awal_kuesioner;
+                 $periodeAkhir= $data->periode_akhir_kuesioner;
+
+            $hasilKuesioner = DB::table('ruang_sekolah as rs')
+                ->leftJoin('evaluasi_kuesioner as ek', function($join) use ($sekolahId, $periodeAwal, $periodeAkhir) {
+                    $join->on('ek.id_ruang', '=', 'rs.id')
+                        ->where('ek.sekolah', '=', $sekolahId)
+                        ->where('ek.periode_awal_kuesioner', '=', $periodeAwal)
+                        ->where('ek.periode_akhir_kuesioner', '=', $periodeAkhir);
+                })
+                ->select(
+                    'rs.nama',
+                    DB::raw('COALESCE(SUM(ek.score), 0) as score'),
+                    DB::raw('(SELECT COUNT(*) FROM parameter_kebersihan p WHERE p.id_ruang = rs.id) as jumlah_parameter')
+
+                )
+                ->groupBy('rs.id', 'rs.nama')
+                ->orderBy('rs.id')
+                ->get();
+
+                $html = '<div style="font-size: 10px; line-height: 12px">';
+                $html .= '<div style="display: flex; font-weight:bold; border-bottom: 1px solid #ddd;">
+                    <div style="flex: 1;">Parameter</div>
+                    <div style="width: 80px; text-align:center;">Score</div>
+                    <div style="width: 80px; text-align:center;">Penilaian</div>
+
+                    </div>';
+
+                foreach ($hasilKuesioner as $row) {
+                    $hasil=$row->score/$row->jumlah_parameter;
+                    $html .= '<div style="display: flex; border-bottom: 1px solid #eee; padding: 2px 0;">
+                        <div style="flex: 1;">' . $row->nama .' ('. $row->jumlah_parameter.')'. '</div>
+                        <div style="width: 80px; text-align:center;">' . $row->score . '</div>
+                        <div style="width: 80px; text-align:center;">' . $hasil . '</div>
+
+                    </div>';
+                }
+
+                $html .= '</div>';
+                return $html;
+            })
+
+            ->addColumn('action', function ($model){
+                    $button = "
+                    <div class='btn-group-horizontal'>
+                    <a class='table-link sumut' href='" . route("sekolahbersih.print", $model->id) . "' id='printbtn' >
+                        <span class='fa-stack' ><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-file-pdf-o fa-stack-1x fa-inverse'></i></span>
+                    </a>
+                    ";
+
+                $button = $button . "</div>";
+                return $button;
+            })
+            ->rawColumns(['action','id_ruang','catatan_pengawas'])
+            ->make(true);
+    }
+
+
     /**
      * Show the form for creating a new resource.
      *
@@ -1274,6 +1408,138 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
 
     //download PDF
     public function CetakRekapPengawas(Request $request)
+    {
+        try {
+            Log::info('📥 Request diterima', [
+                'startDate_raw' => $request->input('startDate'),
+                'endDate_raw' => $request->input('endDate')
+            ]);
+
+            $startDate = Carbon::parse($request->input('startDate'))->startOfDay();
+            $endDate   = Carbon::parse($request->input('endDate'))->endOfDay();
+
+            Log::info('📅 Parsed tanggal', [
+                'startDate' => $startDate->toDateTimeString(),
+                'endDate' => $endDate->toDateTimeString()
+            ]);
+
+            if ($endDate->lt($startDate)) {
+                Log::warning('⚠️ Tanggal akhir lebih kecil dari tanggal awal');
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Tanggal akhir tidak boleh lebih kecil dari awal.'
+                ], 400);
+            }
+
+            $data = EvaluasiPengawas::whereDate('periode_awal_kuesioner', $startDate->toDateString())
+                ->whereDate('periode_akhir_kuesioner', $endDate->toDateString())
+                ->get();
+
+            $sekolahMap = \App\Models\Sekolah::all()->keyBy('id');
+
+            $user = Auth::check() ? Auth::user() : null;
+            $wilayah = [];
+
+            if ($user && $user->role == 6) {
+                $wilayah = DB::select("
+                    SELECT
+                        cab.id,
+                        cab.nama,
+                        cab.kabupatenkota,
+                        string_agg(kab.nama_kabupaten, ', ' ORDER BY kab.nama_kabupaten) AS nama_kabupaten
+                    FROM
+                        cabdis cab
+                    JOIN LATERAL unnest(string_to_array(cab.kabupatenkota, ', ')) AS kab_id ON TRUE
+                    JOIN kabupaten kab ON kab.kode_kabupaten::text = kab_id
+                    WHERE cab.id = ?
+                    GROUP BY cab.id, cab.nama, cab.kabupatenkota
+                ", [$user->cabdis]);
+            }
+
+            Log::info('📊 Jumlah data ditemukan:', ['count' => $data->count()]);
+
+            if ($data->isEmpty()) {
+                Log::warning('📭 Tidak ada data untuk periode', [
+                    'startDate' => $startDate->toDateString(),
+                    'endDate' => $endDate->toDateString()
+                ]);
+                return response()->json([
+                    'status' => 'nodata',
+                    'message' => 'Data tidak ditemukan untuk periode tersebut.'
+                ], 404);
+            }
+
+            $fileName = "Laporan Supervisi {$startDate->format('d-m-Y')} s.d {$endDate->format('d-m-Y')}.pdf";
+
+            // ✅ 1. Generate PDF dari view
+            $pdfContent = PDF::loadView('sekolahbersih.cetakan_rekappengawas', [
+                'data' => $data,
+                'startDate' => $startDate->toDateString(),
+                'endDate' => $endDate->toDateString(),
+                'wilayah' => $wilayah,
+                'user' => $user,
+                'sekolahMap' => $sekolahMap
+            ])->output(); // <-- output() mengembalikan binary PDF, tidak disimpan
+
+            Log::info('🖨 PDF berhasil dibuat, ukuran asli: ' . number_format(strlen($pdfContent) / 1024, 2) . ' KB');
+
+            // ✅ 2. Jalankan Ghostscript untuk kompresi (tanpa simpan file)
+            $process = new Process([
+                'gs',
+                '-sDEVICE=pdfwrite',
+                '-dCompatibilityLevel=1.4',
+                '-dPDFSETTINGS=/default',     // Kualitas baik, kompresi sedang
+                '-dNOPAUSE',
+                '-dQUIET',
+                '-dBATCH',
+                '-sOutputFile=-',              // Output ke stdout
+                '-'                            // Input dari stdin
+            ]);
+
+            $input = new InputStream();
+            $process->setInput($input);
+            $process->start();
+
+            // Kirim PDF ke Ghostscript
+            $input->write($pdfContent);
+            $input->close();
+
+            // Tunggu proses selesai
+            $process->wait();
+
+            if (!$process->isSuccessful()) {
+                Log::error('❌ Ghostscript gagal: ' . $process->getErrorOutput());
+                // Jika gagal, kembalikan PDF asli
+                return response($pdfContent)
+                    ->header('Content-Type', 'application/pdf')
+                    ->header('Content-Disposition', "attachment; filename=\"$fileName\"");
+            }
+
+            $compressedPdf = $process->getOutput();
+
+            Log::info('✅ PDF berhasil dikompresi, ukuran baru: ' . number_format(strlen($compressedPdf) / 1024, 2) . ' KB');
+
+            // ✅ 3. Langsung kirim ke user sebagai download
+            return response($compressedPdf)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', "attachment; filename=\"$fileName\"");
+
+        } catch (\Exception $e) {
+            Log::error('❌ CetakRekapPengawas gagal', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal membuat PDF.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    //print rekap sekolah
+    public function CetakRekapSekolah(Request $request)
     {
         try {
             Log::info('📥 Request diterima', [
