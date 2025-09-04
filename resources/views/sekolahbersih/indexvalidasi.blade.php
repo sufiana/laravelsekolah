@@ -1,5 +1,5 @@
 @extends('layouts/master')
-@section('title','Penilaian Sekolah Bersih')
+@section('title','Validasi Komponen Sekolah')
 
 @section('content')
 <div class="row">
@@ -10,7 +10,7 @@
                     <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i> Home</a></li>
                     <li class="active"><span>@yield('title')</span></li>
                 </ol>
-                <h1>Data @yield('title') pada {{$sekolah->nama}}</h1>
+                <h1>Data @yield('title')</h1>
             </div>
         </div>
         <div class="row">
@@ -36,11 +36,11 @@
                                 <thead>
                                 <tr class="green-bg" style="color: white">
                                     <th width="20"><a href="#" style="color: white">No.</a></th>
+                                    <th><a href="#" style="color: white">Sekolah</a></th>
                                     <th><a href="#" style="color: white">Periode</a></th>
-                                    <th><a href="#" style="color: white">Ruang</a></th>
                                     <th><a href="#" style="color: white">Deskripsi</a></th>
-                                    <th><a href="#" style="color: white">Score</a></th>
-                                    <th width="20"><a href="#" style="color: white">Status</th>
+                                    {{-- <th><a href="#" style="color: white">Tgl Supervisi</a></th> --}}
+                                    {{-- <th><a href="#" style="color: white">Kesimpulan</th> --}}
                                     <th width="40"><a href="#" style="color: white">Action</a></th>
                                 </tr>
                                 </thead>
@@ -54,9 +54,6 @@
         </div>
     </div>
 </div>
-
-
-@include('manajemenbiaya.delete-modal')
 
 @endsection
 
@@ -81,9 +78,8 @@
             //order: [[0, "desc"]],
             processing: false,
             serverSide: true,
-            pageLength: 25, // ✅ default 25 row per halaman
             ajax: {
-                url: '{{route("sekolahbersih.getDataSekolah")}}'
+                url: '{{route("sekolahbersih.getDataValidasi")}}'
             },
             columns: [
                 {
@@ -92,11 +88,11 @@
                         return "<a href='show/" + row.id + "'>" + i + "</a>"
                     }
                 },
+                {data: 'sekolah', name: 'sekolah', searchable: true, orderable: true},
                 {data: 'periode_awal_kuesioner', name: 'periode_awal_kuesioner', searchable: true, orderable: true},
                 {data: 'id_ruang', name: 'id_ruang', searchable: true, orderable: true},
-                {data: 'id_kuesioner', name: 'id_kuesioner', searchable: true, orderable: true},
-                {data: 'score', name: 'score', searchable: true, orderable: true},
-                {data: 'status_verifikasi_sekolah', name: 'status_verifikasi_sekolah', searchable: true, orderable: true},
+                // {data: 'tanggal_supervisi', name: 'tanggal_supervisi', searchable: true, orderable: true},
+                // {data: 'catatan_pengawas', name: 'catatan_pengawas', searchable: true, orderable: true},
                 {data: 'action', name: 'action'},
             ]
         });
@@ -105,36 +101,6 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
-        });
-
-        $('#delModal').on('show.bs.modal', function (e) {
-            let Id = $(e.relatedTarget).data('id');
-            var nama = $(e.relatedTarget).data('nama');
-            $('#deleteid').val(Id.toString());
-            $('#labelid').html(Id.toString());
-            $('#labelnama').html(nama.toString());
-        });
-        $('#delete-form').submit(function (e) {
-            e.preventDefault();
-            var formData = new FormData(this);
-            let Id = formData.get('id');
-            var url = '{{ route("sekolahbersih.delete", ":id") }}';
-            $.ajax({
-                url  : url.replace(':id', Id),
-                data: {_token: '{{csrf_token()}}'},
-                type: 'DELETE',
-                dataType: 'HTML',
-                success: function (resp) {
-                    $('#save_msgList').html("");
-                    $('#success_message').addClass('alert alert-danger alert-dismissible fade show');
-                    $('#success_message').text('Data berhasil di hapus');
-                    $("#delModal").modal("hide");
-                    oTable.ajax.reload();
-                },
-                error: function (data) {
-                    console.log(data);
-                }
-            });
         });
 
 

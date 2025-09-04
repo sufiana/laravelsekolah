@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\models\VerifikatorSekolah;
 use Illuminate\Http\Request;
 use App\models\EvaluasiKuesioner;
 use App\models\HasilKuesioner;
@@ -80,6 +81,7 @@ class SekolahBersihController extends Controller
             'model'    => $model
         ]);
     }
+
 
     public function getDataRekapPengawas()
     {
@@ -184,9 +186,6 @@ class SekolahBersihController extends Controller
                     ) t
                     WHERE rn = 1 and sekolah = $user->id_sekolah
         ");
-
-
-
 
         return Datatables::of($model)
            ->editColumn('periode_awal_kuesioner',function ($data){
@@ -332,7 +331,7 @@ class SekolahBersihController extends Controller
                 $html = '<div style="font-size: 13px;">';
                 $html .= '<div style="display: flex; font-weight:bold; border-bottom: 1px solid #ddd;">
              <div style="flex: 1;">Parameter</div>
-             <div style="width: 80px; text-align:center;">Status</div>
+             <div style="width: 100px; text-align:center;">Status</div>
              </div>';
 
                 foreach ($hasilKuesioner as $row) {
@@ -341,13 +340,15 @@ class SekolahBersihController extends Controller
                         $status = '<span style="color:green;">Bersih</span>';
                     } elseif ($row->jawaban == 2) {
                         $status = '<span style="color:orange;">Cukup Bersih</span>';
+                    } elseif ($row->jawaban == 4) {
+                        $status = '<span style="color:green;">Sangat Bersih</span>';
                     } else {
                         $status = '<span style="color:red;">Tidak Bersih</span>';
                     }
 
                 $html .= '<div style="display: flex; border-bottom: 1px solid #eee; padding: 2px 0;">
                  <div style="flex: 1;">' . $row->parameter . '</div>
-                 <div style="width: 80px; text-align:center;">' . $status . '</div>
+                 <div style="width: 100px; text-align:center;">' . $status . '</div>
               </div>';
                 }
                 return $html;
@@ -404,7 +405,9 @@ class SekolahBersihController extends Controller
     public function getDataSekolah(){
         if (Auth::check()) {
             $user = Auth::user();
-            $model=EvaluasiKuesioner::where('sekolah',$user->id_sekolah)->orderBy('id', 'ASC')->get();
+            $model=EvaluasiKuesioner::where('sekolah',$user->id_sekolah)
+            ->orderBy('periode_awal_kuesioner', 'DESC','id_ruang','ASC')
+            ->get();
         }
         else {
             $model='';
@@ -439,7 +442,7 @@ class SekolahBersihController extends Controller
                 $html = '<div style="font-size: 10px; line-height: 12px">';
                 $html .= '<div style="display: flex; font-weight:bold; border-bottom: 1px solid #ddd;">
              <div style="flex: 1;">Parameter</div>
-             <div style="width: 80px; text-align:center;">Status</div>
+             <div style="width: 100px; text-align:center;">Status</div>
              </div>';
 
                 foreach ($hasilKuesioner as $row) {
@@ -448,13 +451,16 @@ class SekolahBersihController extends Controller
                         $status = '<span style="color:green;">Bersih</span>';
                     } elseif ($row->jawaban == 2) {
                         $status = '<span style="color:orange;">Cukup Bersih</span>';
-                    } else {
+                    } elseif ($row->jawaban == 4) {
+                        $status = '<span style="color:green;">Sangat Bersih</span>';
+                    } 
+                    else {
                         $status = '<span style="color:red;">Tidak Bersih</span>';
                     }
 
                     $html .= '<div style="display: flex; border-bottom: 1px solid #eee; padding: 2px 0;">
                  <div style="flex: 1;">' . $row->parameter . '</div>
-                 <div style="width: 80px; text-align:center;">' . $status . '</div>
+                 <div style="width: 100px; text-align:center;">' . $status . '</div>
               </div>';
                 }
                 return $html;
@@ -767,6 +773,149 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
 //        ]);
 //    }
 
+public function indexValidasi()
+{
+    $model=EvaluasiKuesioner::all()->sortBy("id");
+    return view('sekolahbersih/indexvalidasi', [
+        'model'    => $model
+    ]);
+}
+public function getDataValidasi(){
+    $user = Auth::user();
+    $model = DB::select("
+                    SELECT *
+                    FROM (
+                        SELECT *,
+                            ROW_NUMBER() OVER (
+                                PARTITION BY sekolah, periode_awal_kuesioner, periode_akhir_kuesioner
+                                ORDER BY time_created DESC
+                            ) AS rn
+                        FROM evaluasi_kuesioner
+                        where sekolah=$user->id_sekolah
+                    ) t
+                    WHERE rn = 1
+    ");
+        return Datatables::of($model)
+            ->editColumn('periode_awal_kuesioner',function ($data){
+                if($data->periode_awal_kuesioner <> null && $data->periode_akhir_kuesioner) {
+                    $periode=date('d-M-Y', strtotime($data->periode_awal_kuesioner)).' s/d '.date('d-M-Y', strtotime($data->periode_akhir_kuesioner));
+                }
+                else {
+                    $periode=date('d-M-Y', strtotime($data->periode_awal_kuesioner));
+                }
+                return $periode;
+            })
+            ->editColumn('sekolah',function ($data){
+                $a= Sekolah::find($data->sekolah);
+                return !$a || !$data->sekolah ?  ' - ' : $a["nama"]  ;
+
+            })
+            ->editColumn('tanggal_supervisi',function ($data){
+                return !$data->tanggal_supervisi ?  ' - ' : Date('d-M-Y', strtotime($data->tanggal_supervisi));
+            })
+            /*
+            ->editColumn('catatan_pengawas', function ($data) {
+                $existing = DB::table('evaluasi_pengawas')
+                    ->where('sekolah', $data->sekolah)
+                    ->where('periode_awal_kuesioner', $data->periode_awal_kuesioner)
+                    ->where('periode_akhir_kuesioner', $data->periode_akhir_kuesioner)
+                    ->first();
+
+                // Mapping tindak lanjut
+                $jenisTindakLanjut = [
+                    '1' => 'Pembinaan',
+                    '2' => 'Penguatan',
+                    '3' => 'Penghargaan',
+                    '4' => 'Monitoring Lanjutan',
+                ];
+
+                if ($existing) {
+                    $statusKepatuhan = 'Status Kepatuhan = ' . $existing->status_kepatuhan;
+                    $statusKebersihan = 'Status Kebersihan = ' . $existing->status_kebersihan;
+                    $tindakLanjut = 'Tindak Lanjut = ' . ($jenisTindakLanjut[$existing->hasil_rekomendasi] ?? 'Tidak diketahui');
+
+                    $hasil = $statusKepatuhan . '<br>' . $statusKebersihan . '<br>' . $tindakLanjut;
+                } else {
+                    $hasil = '-';
+                }
+
+                return $hasil;
+            })
+            */
+             ->editColumn('id_ruang', function ($data) {
+                 $sekolahId= $data->sekolah;
+                 $periodeAwal= $data->periode_awal_kuesioner;
+                 $periodeAkhir= $data->periode_akhir_kuesioner;
+                 
+                 $hasilKuesioner = DB::table('ruang_sekolah as rs')
+                    ->leftJoin('evaluasi_kuesioner as ek', function($join) use ($sekolahId, $periodeAwal, $periodeAkhir) {
+                        $join->on('ek.id_ruang', '=', 'rs.id')
+                            ->where('ek.sekolah', '=', $sekolahId)
+                            ->where('ek.periode_awal_kuesioner', '=', $periodeAwal)
+                            ->where('ek.periode_akhir_kuesioner', '=', $periodeAkhir);
+                    })
+                    ->select(
+                        'rs.nama',
+                        DB::raw('COALESCE(SUM(ek.score), 0) as score'),
+                        DB::raw('(SELECT COUNT(*) FROM parameter_kebersihan p WHERE p.id_ruang = rs.id) as jumlah_parameter'),
+                        DB::raw("
+                            CASE 
+                                WHEN MAX(ek.status_verifikasi_sekolah) = 1 
+                                THEN 'Terverifikasi'
+                                ELSE 'Belum verifikasi'
+                            END as status_verifikasi
+                        ")
+                        )
+                    ->groupBy('rs.id', 'rs.nama')
+                    ->orderBy('rs.id')
+                    ->get();
+                
+
+                
+                $html = '<div style="font-size: 10px; line-height: 12px">';
+                $html .= '<div style="display: flex; font-weight:bold; border-bottom: 1px solid #ddd;">
+                    <div style="flex: 1;">Parameter</div>
+                    <div style="width: 80px; text-align:center;">Score</div>
+                    <div style="width: 80px; text-align:center;">Status Verifikasi</div>
+                    <div style="width: 80px; text-align:center;">Penilaian</div>
+                    </div>';
+
+                    foreach ($hasilKuesioner as $row) {
+                        $hasil=$row->score/$row->jumlah_parameter;                      
+                        $html .= '<div style="display: flex; border-bottom: 1px solid #eee; padding: 2px 0;">
+                            <div style="flex: 1;">' . $row->nama .' ('. $row->jumlah_parameter.')'. '</div>
+                            <div style="width: 80px; text-align:center;">' . ($row->score == 0 ? 'Belum Isi' : $row->score) . '</div>
+                            <div style="width: 80px; text-align:center;">' . $row->status_verifikasi . '</div>
+                            <div style="width: 80px; text-align:center;">' . $hasil . '</div>
+                        </div>';
+                    }
+
+                $html .= '</div>';
+                return $html;
+            })
+
+            ->addColumn('action', function ($model){
+                    $button = "
+                    <div class='btn-group-horizontal'>
+                    <a class='table-link success' href='" . route("sekolahbersih.validasi", $model->id) . "' id='editbtn' >
+                        <span class='fa-stack'><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-edit fa-stack-1x fa-inverse'></i></span>
+                    </a>
+                    <a class='table-link sumut' href='" . route("sekolahbersih.printCabdis", $model->id) . "' id='printbtn' >
+                        <span class='fa-stack'><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-file-pdf-o fa-stack-1x fa-inverse'></i></span>
+                    </a>
+                    <a class='table-link danger' href='" . route("sekolahbersih.printRekapCabdisSekolah", $model->id) . "' id='printbtn1' >
+                        <span class='fa-stack'><i class='fa fa-square fa-stack-2x'></i><i class='fa fa-file-pdf-o fa-stack-1x fa-inverse'></i></span>
+                    </a>
+                ";
+             
+
+                $button = $button . "</div>";
+                return $button;
+            })
+            ->rawColumns(['catatan_pengawas','id_ruang','action'])
+            ->make(true);
+    }
+
 
     public function create($id)
     {
@@ -945,7 +1094,6 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             'required'                  => 'Kolom :attribute Wajib diisi',
         ];
         $validator = Validator::make($request->all(), [
-            'jabatan_verifikasi'                =>'required',
             'user_verifikasi'                   =>'required',
         ],$messages);
 
@@ -955,7 +1103,6 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
         }
         else {
             $post                           = EvaluasiKuesioner::where('id', $request->id)->first();
-            $post->jabatan_verifikasi       = $request->jabatan_verifikasi;
             $post->user_verifikasi          = $request->user_verifikasi;
             $post->tanggal_verifikasi       = date('Y-m-d');
             $post->status_verifikasi_sekolah= 1;
@@ -989,7 +1136,14 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             ->join('ruang_sekolah as r', 'r.id', '=', 'hasil_kuesioner.id_ruang')
             ->whereIn('hasil_kuesioner.id', $arrayIds)
             ->get();
-        return view('sekolahbersih.detail',compact('model','ruang','hasilKuesioner','sekolah'));
+        
+        $verifikator= DB::table('verifikator_sekolah')
+            ->select('verifikator_sekolah.*', 'rjv.nama as jabatan')
+            ->join('ref_jabatan_verifikator as rjv', 'rjv.id', '=', 'verifikator_sekolah.jabatan_verifikator')
+            ->where('verifikator_sekolah.id', $model->user_verifikasi)
+            ->first();
+
+        return view('sekolahbersih.detail',compact('model','ruang','hasilKuesioner','sekolah','verifikator'));
     }
 
     public function verifikasi($id)
@@ -999,6 +1153,11 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
         $sekolah=Sekolah::find($model->sekolah);
         $stringIds = $model->id_kuesioner;  // contoh: "{319,320,321}"
         $arrayIds = explode(',', trim($stringIds, '{}'));
+        $verifikator= DB::table('verifikator_sekolah')
+            ->select('verifikator_sekolah.*', 'rjv.nama as jabatan')
+            ->join('ref_jabatan_verifikator as rjv', 'rjv.id', '=', 'verifikator_sekolah.jabatan_verifikator')
+            ->where('verifikator_sekolah.id_sekolah', $model->sekolah)
+            ->get();
 
         $hasilKuesioner = DB::table('hasil_kuesioner')
             ->select('p.parameter', 'hasil_kuesioner.jawaban','hasil_kuesioner.deskripsi_jawaban')
@@ -1006,9 +1165,119 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             ->join('ruang_sekolah as r', 'r.id', '=', 'hasil_kuesioner.id_ruang')
             ->whereIn('hasil_kuesioner.id', $arrayIds)
             ->get();
-        return view('sekolahbersih.verifikasi',compact('model','ruang','hasilKuesioner','sekolah'));
+        return view('sekolahbersih.verifikasi',compact('model','ruang','hasilKuesioner','sekolah','verifikator'));
     }
 
+    public function validasi($id)
+    {
+        $model=EvaluasiKuesioner::findOrFail($id);
+        $sekolah=Sekolah::find($model->sekolah);
+        $kabupaten=Kabupatenkota::where('kode_kabupaten',$sekolah->kabupaten_kota)->first();
+
+        $data = DB::table('ruang_sekolah as rs')
+            ->select(
+                'rs.id',
+                'rs.nama',
+                DB::raw("CASE
+                            WHEN ek.id IS NULL THEN 'Belum diisi'
+                            ELSE 'Belum diverifikasi'
+                        END AS status")
+            )
+            ->leftJoin('evaluasi_kuesioner as ek', function($join) {
+                $join->on('ek.id_ruang', '=', 'rs.id')
+                    ->where('ek.sekolah', 101)
+                    ->where('ek.periode_awal_kuesioner', '2025-09-01');
+            })
+            ->where(function($query) {
+                $query->whereNull('ek.id')
+                    ->orWhere('ek.status_verifikasi_sekolah', '<>', 1);
+            })
+            ->orderBy('rs.id')
+            ->get();
+
+        $sekolahId= $model->sekolah;
+        $periodeAwal= $model->periode_awal_kuesioner;
+        $periodeAkhir= $model->periode_akhir_kuesioner;
+        $hasilKuesioner = DB::table('ruang_sekolah as rs')
+            ->leftJoin('evaluasi_kuesioner as ek', function($join) use ($sekolahId, $periodeAwal, $periodeAkhir) {
+                $join->on('ek.id_ruang', '=', 'rs.id')
+                    ->where('ek.sekolah', '=', $sekolahId)
+                    ->where('ek.periode_awal_kuesioner', '=', $periodeAwal)
+                    ->where('ek.periode_akhir_kuesioner', '=', $periodeAkhir);
+            })
+            ->select(
+                DB::raw('COALESCE(max(ek.id), 0) as idnya'),
+                'rs.nama',
+                DB::raw('COALESCE(SUM(ek.score), 0) as score'),
+                DB::raw('(SELECT COUNT(*) FROM parameter_kebersihan p WHERE p.id_ruang = rs.id) as jumlah_parameter')
+
+            )
+            ->groupBy('rs.id', 'rs.nama')
+            ->orderBy('rs.id')
+            ->get();
+        
+        $verifikator= DB::table('verifikator_sekolah')
+            ->select('verifikator_sekolah.*', 'rjv.nama as jabatan')
+            ->join('ref_jabatan_verifikator as rjv', 'rjv.id', '=', 'verifikator_sekolah.jabatan_verifikator')
+            ->where('verifikator_sekolah.id_sekolah', $model->sekolah)
+            ->get();
+                    
+        return view('sekolahbersih.validasi',compact('model','sekolah','data','kabupaten','sekolahId','periodeAwal','periodeAkhir', 'hasilKuesioner','verifikator'));
+    }
+
+    //simpan validasi
+    public function storeValidasi(Request $request)
+    {
+        $validated = $request->validate([
+            'sekolah'               => 'required|integer',
+            'periode_awal_kuesioner'=> 'date',
+            'periode_akhir_kuesioner'=> 'date',
+            'total_score'           => 'nullable|numeric',
+            'total_ratarata'        => 'nullable|numeric',
+            'total_akhir'           => 'nullable|numeric',
+            'nilai_kepatuhan'       => 'nullable|integer',
+            'status_kepatuhan'      => 'nullable|string|max:50',
+            'nilai_kebersihan'      => 'nullable|integer',
+            'status_kebersihan'     => 'nullable|string|max:50',
+            'tanggal'               => 'required|string',
+            'user_validator'       => 'nullable|integer',
+            'user_validator_kepsek' => 'nullable|integer',
+            'dokumentasi'           => 'nullable|string',
+            'kendala'               => 'nullable|string',
+            'hasil_evaluasi'        => 'nullable|string',
+        ]);
+
+        try {
+            DB::table('evaluasi_cabdis')->insert([
+                'sekolah'        => $validated['sekolah'],
+                'periode_awal_kuesioner'      => $validated['periode_awal_kuesioner'],
+                'periode_akhir_kuesioner'     => $validated['periode_akhir_kuesioner'],
+                // 'total_score'       => $validated['total_score'] ?? null,
+                // 'total_ratarata'    => $validated['total_ratarata'] ?? null,
+                // 'total_akhir'       => $validated['total_akhir'] ?? null,
+                // 'nilai_kepatuhan'   => $validated['nilai_kepatuhan'] ?? null,
+                // 'status_kepatuhan'  => $validated['status_kepatuhan'] ?? null,
+                // 'nilai_kebersihan'  => $validated['nilai_kebersihan'] ?? null,
+                // 'status_kebersihan' => $validated['status_kebersihan'] ?? null,
+                'tgl_supervisi'           => Carbon::createFromFormat('d-m-Y', $validated['tanggal'])->format('Y-m-d'),
+                'user_validator'   => $validated['user_validator'] ?? null,
+                'user_validator_kepsek' => $validated['user_validator_kepsek'] ?? null,
+                'dokumentasi'       => $validated['dokumentasi'] ?? null,
+                'kendala'           => $validated['kendala'] ?? null,
+                'hasil_evaluasi'    => $validated['hasil_evaluasi'] ?? null,
+                'time_created'        => now(),
+                'time_update'        => now(),
+            ]);
+
+            return redirect()
+    ->route('sekolahbersih.indexValidasi')
+    ->with('success', 'Evaluasi berhasil disimpan.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menyimpan evaluasi: ' . $e->getMessage());
+        }    
+    }
+    
+    
     public function verifikasiPengawas($id)
     {
         $model=EvaluasiKuesioner::findOrFail($id);
@@ -1083,8 +1352,48 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             ->join('ruang_sekolah as r', 'r.id', '=', 'hasil_kuesioner.id_ruang')
             ->whereIn('hasil_kuesioner.id', $arrayIds)
             ->get();
+        
+        $verifikator= DB::table('verifikator_sekolah')
+            ->select('verifikator_sekolah.*', 'rjv.nama as jabatan')
+            ->join('ref_jabatan_verifikator as rjv', 'rjv.id', '=', 'verifikator_sekolah.jabatan_verifikator')
+            ->where('verifikator_sekolah.id', $model->user_verifikasi)
+            ->first();
 
-        $pdf= PDF::loadView('sekolahbersih.cetak',compact('model','ruang','hasilKuesioner','sekolah'))->setPaper('a4', 'portrait');
+        $pdf= PDF::loadView('sekolahbersih.cetak',compact('model','ruang','hasilKuesioner','sekolah','verifikator'))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function printRekapCabdisSekolah($id)
+    {
+        $model=EvaluasiKuesioner::findOrFail($id);
+        $ruang=IconGrid::findOrFail($model->id_ruang);
+        $sekolah=Sekolah::find($model->sekolah);
+        $stringIds = $model->id_kuesioner;  // contoh: "{319,320,321}"
+        $arrayIds = explode(',', trim($stringIds, '{}'));
+
+        $hasilKuesioner = DB::table('hasil_kuesioner')
+            ->select('p.parameter', 'hasil_kuesioner.jawaban','hasil_kuesioner.deskripsi_jawaban')
+            ->join('parameter_kebersihan as p', 'p.id', '=', 'hasil_kuesioner.id_parameter')
+            ->join('ruang_sekolah as r', 'r.id', '=', 'hasil_kuesioner.id_ruang')
+            ->whereIn('hasil_kuesioner.id', $arrayIds)
+            ->get();
+        
+        $verifikator= DB::table('verifikator_sekolah')
+            ->select('verifikator_sekolah.*', 'rjv.nama as jabatan')
+            ->join('ref_jabatan_verifikator as rjv', 'rjv.id', '=', 'verifikator_sekolah.jabatan_verifikator')
+            ->where('verifikator_sekolah.id', $model->user_verifikasi)
+            ->first();
+
+        $loop= DB::table('evaluasi_kuesioner as ek')
+        ->join('ruang_sekolah as rs', 'ek.id_ruang', '=', 'rs.id')
+        ->select('ek.*', 'rs.nama as nama_ruang')
+        ->where('ek.sekolah', $model->sekolah)
+        ->where('ek.periode_awal_kuesioner', $model->periode_awal_kuesioner)
+        ->where('ek.periode_akhir_kuesioner', $model->periode_akhir_kuesioner)
+        ->orderBy('ek.id_ruang')
+        ->get();
+
+        $pdf= PDF::loadView('sekolahbersih.cetakrekapcabdis',compact('model','ruang','hasilKuesioner','sekolah','verifikator','loop'))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 
@@ -1159,6 +1468,80 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
         }
 
         $pdf= PDF::loadView('sekolahbersih.cetakpengawas',compact('model','ruang','hasilKuesioner','sekolah','kabupaten','evaluasipengawas','user','cabdis','wilayah'))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function printCabdis($id)
+    {
+        $model=EvaluasiKuesioner::findOrFail($id);
+        $ruang=IconGrid::find($model->id_ruang);
+        $sekolah=Sekolah::find($model->sekolah);
+        $kabupaten=Kabupatenkota::where('kode_kabupaten',$sekolah->kabupaten_kota)->first();
+        $stringIds = $model->id_kuesioner;  // contoh: "{319,320,321}"
+        $arrayIds = explode(',', trim($stringIds, '{}'));
+
+        $sekolahId= $model->sekolah;
+        $periodeAwal= $model->periode_awal_kuesioner;
+        $periodeAkhir= $model->periode_akhir_kuesioner;
+        $hasilKuesioner = DB::table('ruang_sekolah as rs')
+            ->leftJoin('evaluasi_kuesioner as ek', function($join) use ($sekolahId, $periodeAwal, $periodeAkhir) {
+                $join->on('ek.id_ruang', '=', 'rs.id')
+                    ->where('ek.sekolah', '=', $sekolahId)
+                    ->where('ek.periode_awal_kuesioner', '=', $periodeAwal)
+                    ->where('ek.periode_akhir_kuesioner', '=', $periodeAkhir);
+            })
+            ->select(
+                DB::raw('COALESCE(max(ek.id), 0) as idnya'),
+                'rs.nama',
+                DB::raw('COALESCE(SUM(ek.kesimpulan_pengawas), 0) as kesimpulan_pengawas'),
+                DB::raw('(SELECT COUNT(*) FROM parameter_kebersihan p WHERE p.id_ruang = rs.id) as jumlah_parameter'),
+                DB::raw('MAX(ek.catatan_pengawas) as catatan_pengawas'),
+                DB::raw('COALESCE(MAX(CASE WHEN ek.dokumentasi_pengawas THEN 1 ELSE 0 END), 0) as dokumentasi_pengawas'),
+                DB::raw('MAX(ek.catatan_dokumentasi_pengawas) as catatan_dokumentasi_pengawas')
+            )
+            ->groupBy('rs.id', 'rs.nama')
+            ->orderBy('rs.id')
+            ->get();
+
+        $evaluasipengawas = DB::table('evaluasi_pengawas')
+                ->where('sekolah', $sekolahId)
+                ->where('periode_awal_kuesioner', $periodeAwal)
+                ->where('periode_akhir_kuesioner', $periodeAkhir)
+                ->first();
+
+        if (Auth::check()) {
+            $user = Auth::user();
+            $cabdis = Cabdis::find($user->cabdis);
+            if ($cabdis) {
+                $wilayah = DB::select("
+                    SELECT
+                        cab.id,
+                        cab.nama,
+                        cab.kabupatenkota,
+                        string_agg(kab.nama_kabupaten, ', ' ORDER BY kab.nama_kabupaten) AS nama_kabupaten
+                    FROM
+                        cabdis cab
+                    JOIN
+                        LATERAL unnest(string_to_array(cab.kabupatenkota, ', ')) AS kab_id ON TRUE
+                    JOIN
+                        kabupaten kab ON kab.kode_kabupaten::text = kab_id
+                    WHERE
+                        cab.id = ?
+                    GROUP BY
+                        cab.id, cab.nama, cab.kabupatenkota
+                ", [$user->cabdis]);
+
+            } else {
+                $wilayah = [];
+            }
+
+        } else {
+            $user = null;
+            $cabdis = null;
+            $wilayah = [];
+        }
+
+        $pdf= PDF::loadView('sekolahbersih.cetakcabdis',compact('model','ruang','hasilKuesioner','sekolah','kabupaten','evaluasipengawas','user','cabdis','wilayah'))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 
@@ -1669,6 +2052,189 @@ $hasilKuesioner = DB::table('ruang_sekolah as rs')
             ], 500);
         }
     }
+
+    public function CetakRekapCabdisDanPengawas(Request $request)
+    {
+    try {
+        Log::info('📥 Permintaan cetak rekap cabdis/pengawas diterima', [
+            'user_id' => Auth::id(),
+            'role' => Auth::check() ? Auth::user()->role : null,
+            'input' => $request->all()
+        ]);
+
+        // Validasi input
+        $request->validate([
+            'startDate' => 'required|date',
+            'endDate' => 'required|date',
+        ]);
+
+        $startDate = Carbon::parse($request->startDate)->startOfDay();
+        $endDate   = Carbon::parse($request->endDate)->endOfDay();
+
+        if ($endDate->lt($startDate)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Tanggal akhir tidak boleh lebih kecil dari tanggal awal.'
+            ], 400);
+        }
+
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['status' => 'error', 'message' => 'Unauthorized'], 401);
+        }
+
+        // 🔍 Ambil daftar sekolah berdasarkan role user
+        $sekolahIds = [];
+
+        if ($user->role == 5) { // Pengawas
+            $sekolahIds = DB::table('sekolah')
+                ->where('pengawas_id', $user->id)
+                ->pluck('id');
+        } 
+        elseif ($user->role == 6) { // Cabang Dinas
+            $wilayahKabupaten = DB::table('cabdis')
+                ->where('id', $user->cabdis)
+                ->value('kabupatenkota'); // string: "01, 02, 03"
+
+            if ($wilayahKabupaten) {
+                $kabArray = array_map('trim', explode(',', $wilayahKabupaten));
+                $sekolahIds = DB::table('sekolah')
+                    ->whereIn('kode_kabupaten', $kabArray)
+                    ->pluck('id');
+            }
+        } 
+        else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Anda tidak memiliki akses untuk mencetak rekap ini.'
+            ], 403);
+        }
+
+        if ($sekolahIds->isEmpty()) {
+            Log::warning('📭 Tidak ada sekolah ditemukan untuk user', ['user_id' => $user->id]);
+            return response()->json([
+                'status' => 'nodata',
+                'message' => 'Tidak ada sekolah dalam wilayah Anda.'
+            ], 404);
+        }
+
+        // 🔍 Ambil semua evaluasi kuesioner per sekolah dalam periode
+        $evaluasiList = EvaluasiKuesioner::whereIn('sekolah', $sekolahIds)
+            ->whereDate('periode_awal_kuesioner', $startDate->toDateString())
+            ->whereDate('periode_akhir_kuesioner', $endDate->toDateString())
+            ->with(['sekolahModel', 'ruangModel']) // relasi jika ada
+            ->get();
+
+        if ($evaluasiList->isEmpty()) {
+            return response()->json([
+                'status' => 'nodata',
+                'message' => 'Tidak ada data evaluasi untuk periode ini.'
+            ], 404);
+        }
+
+        // 🔧 Siapkan data untuk view
+        $dataPerSekolah = [];
+
+        foreach ($evaluasiList as $model) {
+            $sekolah = $model->sekolahModel;
+            $ruang = $model->ruangModel;
+
+            // Ambil hasil kuesioner
+            $stringIds = $model->id_kuesioner; // "{1,2,3}"
+            $arrayIds = explode(',', trim($stringIds, '{}'));
+            $hasilKuesioner = DB::table('hasil_kuesioner')
+                ->select('p.parameter', 'hasil_kuesioner.jawaban', 'hasil_kuesioner.deskripsi_jawaban')
+                ->join('parameter_kebersihan as p', 'p.id', '=', 'hasil_kuesioner.id_parameter')
+                ->whereIn('hasil_kuesioner.id', $arrayIds)
+                ->get();
+
+            // Ambil verifikator
+            $verifikator = DB::table('verifikator_sekolah')
+                ->select('verifikator_sekolah.*', 'rjv.nama as jabatan')
+                ->join('ref_jabatan_verifikator as rjv', 'rjv.id', '=', 'verifikator_sekolah.jabatan_verifikator')
+                ->where('verifikator_sekolah.id', $model->user_verifikasi)
+                ->first();
+
+            // Ambil semua ruang di sekolah ini dalam periode yang sama
+            $loop = DB::table('evaluasi_kuesioner as ek')
+                ->join('ruang_sekolah as rs', 'ek.id_ruang', '=', 'rs.id')
+                ->select('ek.*', 'rs.nama as nama_ruang')
+                ->where('ek.sekolah', $model->sekolah)
+                ->where('ek.periode_awal_kuesioner', $model->periode_awal_kuesioner)
+                ->where('ek.periode_akhir_kuesioner', $model->periode_akhir_kuesioner)
+                ->orderBy('rs.nama')
+                ->get();
+
+            $dataPerSekolah[] = [
+                'model' => $model,
+                'sekolah' => $sekolah,
+                'ruang' => $ruang,
+                'hasilKuesioner' => $hasilKuesioner,
+                'verifikator' => $verifikator,
+                'loop' => $loop,
+            ];
+        }
+
+        // 🖨️ Generate PDF dari view
+        $fileName = "Rekap_Kebesihan_{$startDate->format('d-m-Y')}_sd_{$endDate->format('d-m-Y')}.pdf";
+
+        $pdfContent = PDF::loadView('sekolahbersih.cetakrekapcabdis_all', [
+            'dataPerSekolah' => $dataPerSekolah,
+            'startDate' => $startDate->toDateString(),
+            'endDate' => $endDate->toDateString(),
+            'user' => $user,
+        ])->output();
+
+        Log::info('🖨 PDF asli berhasil dibuat', ['size_kb' => strlen($pdfContent) / 1024]);
+
+        // 🧩 Kompresi dengan Ghostscript (opsional)
+        $process = new Process([
+            'gs',
+            '-sDEVICE=pdfwrite',
+            '-dCompatibilityLevel=1.4',
+            '-dPDFSETTINGS=/default',
+            '-dNOPAUSE',
+            '-dQUIET',
+            '-dBATCH',
+            '-sOutputFile=-',
+            '-'
+        ]);
+
+        $input = new InputStream();
+        $process->setInput($input);
+        $process->start();
+
+        $input->write($pdfContent);
+        $input->close();
+
+        $process->wait();
+
+        if (!$process->isSuccessful()) {
+            Log::warning('⚠️ Ghostscript gagal, gunakan PDF asli', ['error' => $process->getErrorOutput()]);
+            $finalPdf = $pdfContent;
+        } else {
+            $finalPdf = $process->getOutput();
+            Log::info('✅ PDF berhasil dikompresi', ['size_kb' => strlen($finalPdf) / 1024]);
+        }
+
+        // 📥 Download langsung
+        return response($finalPdf)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', "attachment; filename=\"$fileName\"");
+
+    } catch (\Exception $e) {
+        Log::error('❌ Gagal cetak rekap cabdis/pengawas', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Terjadi kesalahan saat membuat laporan.',
+            'debug' => app()->environment('local') ? $e->getMessage() : null
+        ], 500);
+    }
+}
 
 
 }

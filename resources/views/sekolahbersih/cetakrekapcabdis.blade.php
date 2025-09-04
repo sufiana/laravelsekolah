@@ -126,11 +126,41 @@
         .ikonchecklist {
             font-family: DejaVu Sans, sans-serif;
         }
+                .barisbaru {
+            display: block;
+            margin-top: 20px;
+            padding: 10px;
+            width: 100%;
+            page-break-before: always;
+            break-before: page;
+        }
+        .barisbarunext {
+            display: block;
+            margin-top: 20px;
+            padding: 10px;
+            width: 100%;
+            page-break-after: always;
+            break-after: page;
+        }
+
+        .page-section {
+        page-break-before: always;
+        }
+
+        .page-section:first-child {
+            page-break-before: auto; /* halaman pertama jangan ada page break */
+        }
+        .page-section:first-of-type {
+    page-break-before: auto;
+}
         /* CSS tetap */
     </style>
 </head>
 <body>
-<div class="page">
+
+    
+@foreach($loop as $z)   
+ <div class="page-section"> 
     <table width="100%" border="0" class="baris">
         <tr><td colspan="2"><br /></td></tr>
 
@@ -139,18 +169,10 @@
                 <div id="header">
                     <table width="100%">
                         <tr>
-                            <td width="12%">
-                                <img
-                                    class="navbar-brand-icon"
-                                    src=""
-                                    width="160px"
-                                    height="120px"
-                                />
-                            </td>
-                            <td width="88%" align="center">
+                            <td width="100%" align="center">
                                 <span class="kop1">GERAKAN KOLABORASI SUMUT BERKAH</span><br />
                                 <span class="kop2">SEKOLAH BERSIH</span><br />
-                                <span class="kop1">FORMAT CHECKLIST HARIAN KEBERSIHAN {{strtoupper($ruang->nama)}}</span><br />
+                                <span class="kop1">FORMAT CHECKLIST HARIAN KEBERSIHAN {{strtoupper($z->nama_ruang)}}</span><br />
                                 <span class="kop1">{{strtoupper($sekolah->nama)}}</span>
                             </td>
                         </tr>
@@ -190,7 +212,20 @@
                         <td><strong>Keterangan / Tindakan </strong></td>
                     </tr>
 
-                    @foreach ($hasilKuesioner as $i => $item): ?>
+                    @php        
+                    $ulang= DB::table('hasil_kuesioner as ek')
+                        ->select('ek.*','p.parameter', 'ek.jawaban','ek.deskripsi_jawaban')
+                        ->join('parameter_kebersihan as p', 'p.id', '=', 'ek.id_parameter')
+
+                        ->where('ek.id_sekolah', $z->sekolah)
+                        ->where('ek.periode_awal_kuesioner', $z->periode_awal_kuesioner)
+                        ->where('ek.periode_akhir_kuesioner', $z->periode_akhir_kuesioner)
+                        ->where('ek.id_ruang', $z->id_ruang)
+                        ->orderBy('ek.id_ruang')
+                        ->get();
+                    @endphp
+
+                    @foreach ($ulang as $i => $item): ?>
                         <tr>
                             <td>{{ $i + 1 }}</td>
                             <td align="left" style="text-align: left; padding-left: 5px">{{$item->parameter}}</td>
@@ -245,8 +280,8 @@
             </td>
         </tr>
     </table>
+ </div>
+    @endforeach
 
-    <div class="footer"><br /></div>
-</div>
 </body>
 </html>

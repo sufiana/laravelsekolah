@@ -40,14 +40,21 @@ Route::get('sekolahbersih/index', 'SekolahBersihController@index')->name('sekola
 Route::get('sekolahbersih/indexsekolah', 'SekolahBersihController@indexsekolah')->name('sekolahbersih.indexsekolah');
 Route::get('sekolahbersih/indexpengawas', 'SekolahBersihController@indexpengawas')->name('sekolahbersih.indexpengawas');
 Route::get('sekolahbersih/indexdinas', 'SekolahBersihController@indexdinas')->name('sekolahbersih.indexdinas');
+Route::get('sekolahbersih/indexValidasi', 'SekolahBersihController@indexValidasi')->name('sekolahbersih.indexValidasi');
+
 Route::get('sekolahbersih/getData', 'SekolahBersihController@getData')->name('sekolahbersih.getData');
 Route::get('sekolahbersih/getDataSekolah', 'SekolahBersihController@getDataSekolah')->name('sekolahbersih.getDataSekolah');
 Route::get('sekolahbersih/getDataPengawas', 'SekolahBersihController@getDataPengawas')->name('sekolahbersih.getDataPengawas');
 Route::get('sekolahbersih/getDataDinas', 'SekolahBersihController@getDataDinas')->name('sekolahbersih.getDataDinas');
+Route::get('sekolahbersih/getDataValidasi', 'SekolahBersihController@getDataValidasi')->name('sekolahbersih.getDataValidasi');
+Route::get('sekolahbersih/validasi/{id}', 'SekolahBersihController@validasi')->name('sekolahbersih.validasi');
+
+
 Route::get('sekolahbersih/create/{id}', 'SekolahBersihController@create')->name('sekolahbersih.create');
 Route::post('sekolahbersih/store', 'SekolahBersihController@store')->name('sekolahbersih.store');
 Route::post('sekolahbersih/saveVerifikasi', 'SekolahBersihController@saveVerifikasi')->name('sekolahbersih.saveVerifikasi');
 Route::post('sekolahbersih/storeVerifikasi', 'SekolahBersihController@storeVerifikasi')->name('sekolahbersih.storeVerifikasi');
+Route::post('sekolahbersih/storeValidasi', 'SekolahBersihController@storeValidasi')->name('sekolahbersih.storeValidasi');
 
 //rekap
 Route::get('sekolahbersih/rekappengawas', 'SekolahBersihController@rekappengawas')->name('sekolahbersih.rekappengawas');
@@ -69,6 +76,8 @@ Route::get('sekolahbersih/verifikasiPengawas/{id}', 'SekolahBersihController@ver
 Route::get('sekolahbersih/show/{id}', 'SekolahBersihController@show')->name('sekolahbersih.show');
 Route::get('sekolahbersih/print/{id}', 'SekolahBersihController@print')->name('sekolahbersih.print');
 Route::get('sekolahbersih/printPengawas/{id}', 'SekolahBersihController@printPengawas')->name('sekolahbersih.printPengawas');
+Route::get('sekolahbersih/printCabdis/{id}', 'SekolahBersihController@printCabdis')->name('sekolahbersih.printCabdis');
+Route::get('sekolahbersih/printRekapCabdisSekolah/{id}', 'SekolahBersihController@printRekapCabdisSekolah')->name('sekolahbersih.printRekapCabdisSekolah');
 
 //verifikator
 Route::get('verifikator/create', 'VerifikatorSekolahController@create')->name('verifikator.create');

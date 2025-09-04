@@ -57,6 +57,8 @@
                                         <td width="10%">
                                             @if($i->jawaban ==3)
                                             <span class="badge badge-success">Bersih</span>
+                                            @elseif($i->jawaban ==4)
+                                            <span class="badge badge-success">Sangat Bersih</span>
                                             @elseif($i->jawaban ==2)
                                             <span class="badge badge-warning">Cukup Bersih</span>
                                             @else
@@ -73,18 +75,28 @@
                                 <form method="POST" action="{{ route('sekolahbersih.saveVerifikasi') }}" id="form-penilaian">
                                     @csrf
                                     <input type="hidden" name="id" value="{{ $model->id }}">
+
                                     <div class="form-group row">
                                         <label for="inputEmail3" class="col-sm-2 col-form-label">User Verifikator <span class="wajib"></span></label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="user_verifikasi" name="user_verifikasi" required>
+                                            {{-- <input type="text" class="form-control" id="user_verifikasi" name="user_verifikasi" required> --}}
+                                            @if($verifikator && count($verifikator) > 0)
+                                                <select name="user_verifikasi" id="user_verifikasi" class="form-control">
+                                                    @foreach($verifikator as $i)
+                                                        <option value="{{ $i->id }}" {{ old('user_verifikasi') == $i->id ? 'selected' : '' }}>
+                                                            {{ $i->verifikator.' - jabatan '.$i->jabatan }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            @else
+                                                <div class="alert alert-warning">
+                                                    Data verifikator sekolah tidak ditemukan. 
+                                                    Silakan <a href="{{ route('verifikator.create') }}">tambahkan verifikator</a> terlebih dahulu.
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label for="inputEmail3" class="col-sm-2 col-form-label">Jabatan Verifikator <span class="wajib"></span></label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="jabatan_verifikasi" name="jabatan_verifikasi" required>
-                                        </div>
-                                    </div>
+                                    
                                     <div class="form-group text-center">
                                         <button class="btn btn-primary tambah" type="submit">Verifikasi</button>
                                     </div>

@@ -57,6 +57,8 @@
                                         <td width="10%">
                                             @if($i->jawaban ==3)
                                             <span class="badge badge-success">Bersih</span>
+                                            @elseif($i->jawaban ==4)
+                                            <span class="badge badge-success">Sangat Bersih</span>
                                             @elseif($i->jawaban ==2)
                                             <span class="badge badge-warning">Cukup Bersih</span>
                                             @else
@@ -81,8 +83,8 @@
                                 </span>
                                 <span class="label"><b>Verifikasi Sekolah</b></span><br/>
                                 @if($model->status_verifikasi_sekolah == 1)
-                                    <span class="label">Nama : {{$model->user_verifikasi}}</span><br/>
-                                    <span class="label">Jabatan : {{$model->jabatan_verifikasi}}</span><br/>
+                                    <span class="label">{{!$model->user_verifikasi && !$verifikator ?  ' - ' : $verifikator->verifikator}}</span><br/>
+                                    <span class="label">Jabatan : {{!$model->jabatan_verifikasi && !$verifikator ?  ' - ' : $verifikator->jabatan}}</span><br/>
                                     <span class="label">Tanggal : {{date('d-M-Y', strtotime($model->tanggal_verifikasi))}}</span><br/>
                                 @endif
                             </a>

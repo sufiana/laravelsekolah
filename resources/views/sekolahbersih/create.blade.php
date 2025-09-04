@@ -55,6 +55,10 @@
 
                                     <div class="btn-group btn-group-toggle d-flex flex-wrap" data-toggle="buttons">
                                         <label class="btn btn-warning btn-secondary">
+                                            <input type="radio" name="jawaban[{{ $p->id }}]" value="4" autocomplete="off"
+                                                   onchange="handleJawabanChange({{ $p->id }}, this.value)"> Sangat Bersih
+                                        </label>
+                                        <label class="btn btn-warning btn-secondary">
                                             <input type="radio" name="jawaban[{{ $p->id }}]" value="3" autocomplete="off"
                                                    onchange="handleJawabanChange({{ $p->id }}, this.value)"> Bersih
                                         </label>
@@ -155,7 +159,7 @@
         const parameterId = radios[0].name.match(/\d+/)[0];
 
         if (!jawabanState[parameterId]) {
-            jawabanState[parameterId] = "3";
+            jawabanState[parameterId] = "4";
         }
 
         radios.forEach(radio => {

@@ -39,7 +39,10 @@ class EvaluasiKuesioner extends Model
         'catatan_dokumentasi_pengawas',
         'tingkat_kepatuhan',
         'kesimpulan_pengawas',
-
+        'status_validasi',
+        'user_validasi',
+        'tanggal_validasi',
+        'catatan_validasi',
     ];
 
     public function ruanglist(){

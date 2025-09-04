@@ -69,6 +69,7 @@
                             </a>
                             <ul class="submenu">
                                 <li><a href="{{ route('sekolahbersih.indexsekolah') }}">Lihat Data</a></li>
+                                <li><a href="{{ route('sekolahbersih.indexValidasi') }}">Validasi</a></li>
                             </ul>
                         </li>
                         @endif

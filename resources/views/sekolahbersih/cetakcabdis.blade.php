@@ -234,7 +234,7 @@
                         <td>i.</td>
                         <td>Tanggal Supervisi</td>
                         <td>:</td>
-                        <td>{{$evaluasipengawas->tgl_supervisi ? date('Y-M-d', strtotime($evaluasipengawas->tgl_supervisi)): ''}}</td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td colspan="4">&nbsp;</td>
@@ -354,36 +354,37 @@
             <tr>
                 <td></td>
                 <td>
-                    @if($evaluasipengawas->nilai_kepatuhan == 4)
-                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
+                    {{-- @if($evaluasipengawas->nilai_kepatuhan == 4)
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> 
                     @else
-                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> 
                     @endif
-                    Sangat Baik
+                    Sangat Baik --}}
                 </td>
                 <td>
-                    @if($evaluasipengawas->nilai_kepatuhan == 3)
-                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
+                    
+                    {{-- @if($evaluasipengawas->nilai_kepatuhan == 3)
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> 
                     @else
-                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> 
                     @endif
-                    Baik
+                    Baik --}}
                 </td>
                 <td>
-                    @if($evaluasipengawas->nilai_kepatuhan == 2)
-                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
+                    {{-- @if($evaluasipengawas->nilai_kepatuhan == 2)
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> 
                     @else
-                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span>
                     @endif
-                    Cukup
+                    Cukup --}}
                 </td>
                 <td>
-                    @if($evaluasipengawas->nilai_kepatuhan == 1)
-                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
+                    {{-- @if($evaluasipengawas->nilai_kepatuhan == 1)
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> 
                     @else
-                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> 
                     @endif
-                    Kurang
+                    Kurang --}}
                 </td>
             </tr>
             <br/>
@@ -394,36 +395,36 @@
             <tr>
                 <td></td>
                 <td>
-                    @if($evaluasipengawas->hasil_rekomendasi == 4)
-                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
+                    {{-- @if($evaluasipengawas->hasil_rekomendasi == 4)
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> 
                     @else
-                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> 
                     @endif
-                    Pembinaan
+                    Pembinaan --}}
                 </td>
                 <td>
-                    @if($evaluasipengawas->hasil_rekomendasi == 3)
-                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
+                    {{-- @if($evaluasipengawas->hasil_rekomendasi == 3)
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> 
                     @else
-                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> 
                     @endif
-                    Penguatan
+                    Penguatan --}}
                 </td>
                 <td>
-                    @if($evaluasipengawas->hasil_rekomendasi == 2)
-                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
+                    {{-- @if($evaluasipengawas->hasil_rekomendasi == 2)
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> 
                     @else
-                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> 
                     @endif
-                    Penghargaan
+                    Penghargaan --}}
                 </td>
                 <td>
-                    @if($evaluasipengawas->hasil_rekomendasi == 1)
-                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
+                    {{-- @if($evaluasipengawas->hasil_rekomendasi == 1)
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> 
                     @else
-                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}
+                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> 
                     @endif
-                    Monitoring Lanjutan
+                    Monitoring Lanjutan --}}
                 </td>
             </tr>
         </table>

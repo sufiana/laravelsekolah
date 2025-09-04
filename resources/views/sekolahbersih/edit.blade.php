@@ -61,10 +61,17 @@
                                         @foreach ($rincian as $p)
                                         <div class="row">
                                             <div class="col-lg-12"><h2>{{ $no++. '. ' . $p->parameter }}</h2></div>
-                                            <div class="col-md-5">
+                                            <div class="col-md-6">
                                                 <div class="row">
                                                     <div class="form-group col-md-12">
                                                         <div class="btn-group btn-group-toggle d-flex flex-wrap" data-toggle="buttons">
+                                                            <label class="btn btn-warning btn-secondary {{ $p->jawaban == 4 ? 'active' : '' }}">
+                                                                <input type="radio"
+                                                                       name="jawaban[{{ $p->id }}]"
+                                                                       value="4"
+                                                                       autocomplete="off"
+                                                                       onchange="handleJawabanChange({{ $p->id }}, this.value)" {{ $p->jawaban == 3 ? 'checked' : '' }}> Sangat Bersih
+                                                            </label>
                                                             <label class="btn btn-warning btn-secondary {{ $p->jawaban == 3 ? 'active' : '' }}">
                                                                 <input type="radio"
                                                                        name="jawaban[{{ $p->id }}]"
@@ -100,7 +107,7 @@
                                             </div>
 
 
-                                            <div class="col-md-7"
+                                            <div class="col-md-6"
                                                  id="alasan_{{ $p->id }}"
                                                  @if($p->jawaban == 1 || $p->jawaban == 2)
                                                 style="display:block;"
