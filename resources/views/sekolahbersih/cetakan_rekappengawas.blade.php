@@ -293,28 +293,28 @@
                                     @if($item->kesimpulan_pengawas == 4)
                                         <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}} <!-- ☑ -->
                                     @else
-                                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}; <!-- ☐ -->
+                                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> 
                                     @endif
                                 </td>
                                 <td class="ikonchecklist">
                                     @if($item->kesimpulan_pengawas == 3)
                                         <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
                                     @else
-                                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}};
+                                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> 
                                     @endif
                                 </td>
                                 <td class="ikonchecklist">
                                     @if($item->kesimpulan_pengawas == 2)
                                         <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
                                     @else
-                                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}};
+                                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> 
                                     @endif
                                 </td>
                                 <td class="ikonchecklist">
                                     @if($item->kesimpulan_pengawas == 1)
                                         <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
                                     @else
-                                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}};
+                                        <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span>
                                     @endif
                                 </td>
                                 <td align="left" style="padding-left: 5px">{{ $item->catatan_pengawas }}</td>
@@ -349,14 +349,14 @@
                                         @if($item->dokumentasi_pengawas === 1)
                                             <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}} <!-- ☑ -->
                                         @else
-                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}; <!-- ☐ -->
+                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> 
                                         @endif
                                     </td>
                                     <td class="ikonchecklist">
                                         @if($item->dokumentasi_pengawas === 0)
                                             <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
                                         @else
-                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}};
+                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> 
                                         @endif
                                     </td>
                                     <td align="left" style="padding-left: 5px">{{ $item->catatan_dokumentasi_pengawas }}</td>
@@ -379,28 +379,28 @@
                                         @if($evaluasipengawas && $evaluasipengawas->nilai_kepatuhan == 4)
                                             <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}} Sangat Baik
                                         @else
-                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}; Sangat Baik
+                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span>Sangat Baik
                                         @endif
                                     </td>
                                     <td>
                                         @if($evaluasipengawas && $evaluasipengawas->nilai_kepatuhan == 3)
                                             <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}} Baik
                                         @else
-                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}; Baik
+                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span>  Baik
                                         @endif
                                     </td>
                                     <td>
                                         @if($evaluasipengawas && $evaluasipengawas->nilai_kepatuhan == 2)
                                             <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}} Cukup
                                         @else
-                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}; Cukup
+                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span>  Cukup
                                         @endif
                                     </td>
                                     <td>
                                         @if($evaluasipengawas && $evaluasipengawas->nilai_kepatuhan == 1)
                                             <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}} Kurang
                                         @else
-                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}; Kurang
+                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span>  Kurang
                                         @endif
                                     </td>
                                 </tr>
@@ -414,28 +414,28 @@
                                         @if($evaluasipengawas && $evaluasipengawas->hasil_rekomendasi == 4)
                                             <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}} Pembinaan
                                         @else
-                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}; Pembinaan
+                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span>  Pembinaan
                                         @endif
                                     </td>
                                     <td>
                                         @if($evaluasipengawas && $evaluasipengawas->hasil_rekomendasi == 3)
                                             <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}} Penguatan
                                         @else
-                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}; Penguatan
+                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> Penguatan
                                         @endif
                                     </td>
                                     <td>
                                         @if($evaluasipengawas && $evaluasipengawas->hasil_rekomendasi == 2)
                                             <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}} Penghargaan
                                         @else
-                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}; Penghargaan
+                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span>  Penghargaan
                                         @endif
                                     </td>
                                     <td>
                                         @if($evaluasipengawas && $evaluasipengawas->hasil_rekomendasi == 1)
                                             <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}} Monitoring Lanjutan
                                         @else
-                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span> {{-- ☐ --}}; Monitoring Lanjutan
+                                            <span style="font-family: DejaVu Sans; font-size: 20px;">&#9744;</span>  Monitoring Lanjutan
                                         @endif
                                     </td>
                                 </tr>
