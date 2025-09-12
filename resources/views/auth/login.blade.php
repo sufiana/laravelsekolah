@@ -9,10 +9,8 @@
                     <div class="col-12 col-sm-12">
                         <header id="login-header">
                             <div id="login-logo" style="background-color: white">
-                                <img src="{{ asset('images') }}/logosm.png" alt="" style="width: 20%; height: 10%" />
-                                <p style="color: #3e5879; line-height: 30px; font-size: smaller">KOLABORASI</p>
-                                <p style="color: #3e5879; font-weight: bold; line-height: 0px; font-size: smaller">SUMUT BERKAH</p>
-                                <p style="color: #3e5879; line-height: 15px; font-size: smaller">DISDIK</p>
+                                <img src="{{ asset('images') }}/flyer.png" alt="" style="width: 90%; height: 50%" />
+
                             </div>
                         </header>
                         <div id="login-box-inner">

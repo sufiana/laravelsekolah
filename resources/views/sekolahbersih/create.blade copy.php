@@ -1,57 +1,6 @@
 @extends('layouts/master')
 @section('title','Penilaian Kebersihan Sekolah')
-  <style>
 
-.switch-radio-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-.switch-radio-label {
-  position: relative;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  margin: 0;
-  padding: 0;
-}
-.switch-radio-label input[type="radio"] {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-.switch-radio-custom {
-  display: flex;
-  align-items: center;
-  padding: 0.6em 1em;
-  border-radius: 20px;
-  border: 2px solid #ffda47;
-  background: #fffbe7;
-  color: #ad8000;
-  font-weight: 500;
-  transition: background 0.2s, color 0.2s, border 0.2s;
-}
-.switch-radio-label input[type="radio"]:checked + .switch-radio-custom {
-  background: #ffd43b;
-  color: #fff;
-  border-color: #ffd43b;
-  font-weight: 700;
-}
-.switch-radio-label input[type="radio"]:focus + .switch-radio-custom {
-  outline: 2px solid #ffd43b;
-}
-@media (max-width: 600px) {
-  .switch-radio-group {
-    gap: 0.3rem;
-  }
-  .switch-radio-custom {
-    padding: 0.4em 0.7em;
-    font-size: 0.97em;
-  }
-}
-  </style>
 @section('content')
 
 <div class="row">
@@ -87,7 +36,7 @@
                     @csrf
                     <input type="hidden" name="id_ruang" value="{{ $model->id }}">
                     <div class="row" style="margin-top: 20px">
-                        <div class="col-12">
+                        <div class="col-lg-8 col-sm-6 col-12">
                             <div class="form-group">
                                 <h2 for="periode">Periode Kuesioner</h2>
                                 <input type="text" name="periode" class="form-control" id="daterange" />
@@ -103,29 +52,8 @@
                                 @foreach($parameter as $index => $p)
                                 <div class="parameter-item" style="{{ $index == 0 ? '' : 'display: none;' }}">
                                     <h2>{{ $no++. '. ' . $p->parameter }}</h2>
-<div class="switch-radio-group">
-  <label class="switch-radio-label">
-    <input type="radio" name="jawaban[{{ $p->id }}]" value="4" autocomplete="off"
-           onchange="handleJawabanChange({{ $p->id }}, this.value)">
-    <span class="switch-radio-custom">Sangat Bersih</span>
-  </label>
-  <label class="switch-radio-label">
-    <input type="radio" name="jawaban[{{ $p->id }}]" value="3" autocomplete="off"
-           onchange="handleJawabanChange({{ $p->id }}, this.value)">
-    <span class="switch-radio-custom">Bersih</span>
-  </label>
-  <label class="switch-radio-label">
-    <input type="radio" name="jawaban[{{ $p->id }}]" value="2" autocomplete="off"
-           onchange="handleJawabanChange({{ $p->id }}, this.value)">
-    <span class="switch-radio-custom">Cukup Bersih</span>
-  </label>
-  <label class="switch-radio-label">
-    <input type="radio" name="jawaban[{{ $p->id }}]" value="1" autocomplete="off"
-           onchange="handleJawabanChange({{ $p->id }}, this.value)">
-    <span class="switch-radio-custom">Tidak Bersih</span>
-  </label>
-</div>
-                                    {{-- <div class="btn-group btn-group-toggle d-flex flex-wrap" data-toggle="buttons">
+
+                                    <div class="btn-group btn-group-toggle d-flex flex-wrap" data-toggle="buttons">
                                         <label class="btn btn-warning btn-secondary">
                                             <input type="radio" name="jawaban[{{ $p->id }}]" value="4" autocomplete="off"
                                                    onchange="handleJawabanChange({{ $p->id }}, this.value)"> Sangat Bersih
@@ -142,7 +70,7 @@
                                             <input type="radio" name="jawaban[{{ $p->id }}]" value="1" autocomplete="off"
                                                    onchange="handleJawabanChange({{ $p->id }}, this.value)"> Tidak Bersih
                                         </label>
-                                    </div> --}}
+                                    </div>
 
                                     <div class="form-group alasan-box mt-3" id="alasanBox_{{ $p->id }}" style="display: none;">
                                         <label for="alasan_{{ $p->id }}">Alasan (Wajib diisi):</label>
@@ -161,9 +89,9 @@
                             <input type="hidden" name="total" id="total">
                         </div>
 
-                        {{-- <div class="col-lg-4 col-sm-6 col-12">
+                        <div class="col-lg-4 col-sm-6 col-12">
                             <img alt="" src="{{ asset('images') }}/kuesioner3.png" width="100%" height="80%" />
-                        </div> --}}
+                        </div>
                     </div>
                 </form>
             </div>
