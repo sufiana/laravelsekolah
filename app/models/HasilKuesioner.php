@@ -11,6 +11,8 @@ class HasilKuesioner extends Model
 {
     //
     protected $table = 'hasil_kuesioner';
+    protected $primaryKey = 'id';
+    public $incrementing = true;
     const CREATED_AT = 'time_created';
     const UPDATED_AT = 'time_update';
     protected $fillable = [
@@ -36,19 +38,24 @@ class HasilKuesioner extends Model
         'tanggal_approval_disdik',
         'periode_awal_kuesioner',
         'periode_akhir_kuesioner',
-        'id_evaluasi_kuesioner'
+        'id_evaluasi_kuesioner',
+        'user_verifikasi_guru_piket',
+        'jawaban_pengawas',
     ];
 
-    public function ruanglist(){
-        return $this->belongsTo(IconGrid::class,'id_ruang','id');
+    public function ruanglist()
+    {
+        return $this->belongsTo(IconGrid::class, 'id_ruang', 'id');
     }
 
-    public function parameterlist(){
-        return $this->belongsTo(Parameter::class,'id_parameter','id');
+    public function parameterlist()
+    {
+        return $this->belongsTo(Parameter::class, 'id_parameter', 'id');
     }
 
-    public function sekolahlist(){
-        return $this->belongsTo(Sekolah::class,'id_sekolah','id');
+    public function sekolahlist()
+    {
+        return $this->belongsTo(Sekolah::class, 'id_sekolah', 'id');
     }
 
 }

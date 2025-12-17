@@ -1,129 +1,280 @@
 @extends('layouts/master')
-@section('title','Detail Penilaian Sekolah Bersih')
+@section('title', 'Detail Penilaian Sekolah Bersih')
+
+@section('css')
+  <style>
+    .card-footer {
+      padding: .75rem 1.25rem;
+      background-color: #3e5879 !important;
+      color: #fff;
+      text-align: center;
+    }
+
+    .widget-user-header {
+      background-color: #3e5879 !important;
+      color: #fff;
+      padding: 0 20px;
+    }
+
+    .widget-user-image {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      margin: 20px 0;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      margin: 0 auto;
+    }
+
+    .chart-wrapper canvas {
+      position: relative;
+      z-index: 1;
+    }
+
+    .chart-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-weight: bold;
+      font-size: 20px;
+      color: #3e5879;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+
+    @media (max-width: 767.98px) {
+      .widget-user-header .row {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .widget-user-image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin: 20px 0;
+      }
+
+      .direct-chat-img {
+        float: none;
+        margin: 0 auto;
+      }
+
+      .widget-user-username {
+        padding-top: 10px !important;
+        align-items: center;
+      }
+
+    }
+  </style>
+@endsection
 
 @section('content')
-<div class="row">
-    <div class="col-lg-12">
-        <div class="row">
-            <div class="col-lg-12">
-                <ol class="breadcrumb">
-                    <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i> Home</a></li>
-                    <li><span><a href="{{ route('sekolahbersih.index') }}"><i class="fa fa-list"></i> Data @yield('title')</a></span></li>
-                    <li class="active"><span>@yield('title')</span></li>
-                </ol>
-                <h1>Lihat Data @yield('title') #{{$model->id}}</h1>
-            </div>
+  <div class="app-content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Data @yield('title')</h3>
         </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="main-box clearfix profile-box-contact">
-                    <div class="main-box-body clearfix">
-                        <div class="profile-box-header gray-bg clearfix" style="background-color: #3e5879 !important;">
-                            <img src="img/samples/angelina-300.jpg" alt="" class="profile-img img-fluid">
-                            <h2>{{$sekolah->nama}}</h2>
-                            <div class="job-position">
-                                Parameter Penilaian {{!$model->ruanglist || !$model->id_ruang ?  ' - ' : $model->ruanglist["nama"]}}
-                            </div>
-                            <ul class="contact-details">
-                                <li>
-                                    <i class="fa fa-calendar"></i> Periode {{date('d-M-Y',strtotime($model->periode_awal_kuesioner)).' s/d '.date('d-M-Y',strtotime($model->periode_awal_kuesioner))}}
-                                </li>
-                                <li>
-                                    <i class="fa fa-percent"></i> Score {{$model->score}}
-                                </li>
-                                <li>
-                                    <i class="fa fa-envelope-open-o"></i> Hasil Evaluasi {{$model->hasil_score}}
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="main-box-body clearfix">
-                            <div class="table-responsive">
-                                <table width="60%" class="table">
-                                    <thead>
-                                    <tr>
-                                        <td width="2%" style="text-align: center">No</td>
-                                        <td width="15%">Parameter</td>
-                                        <td width="10%">Jawaban</td>
-                                        <td width="10%">Alasan</td>
-                                    </tr>
-                                    </thead>
-
-                                    @php $no=0; @endphp
-                                    @foreach($hasilKuesioner as $i)
-                                    @php $no++; @endphp
-                                    <tr>
-                                        <td width="2%" style="text-align: center">{{$no}}</td>
-                                        <td width="10%">{{$i->parameter}}</td>
-                                        <td width="10%">
-                                            @if($i->jawaban ==3)
-                                            <span class="badge badge-success">Bersih</span>
-                                            @elseif($i->jawaban ==4)
-                                            <span class="badge badge-success">Sangat Bersih</span>
-                                            @elseif($i->jawaban ==2)
-                                            <span class="badge badge-warning">Cukup Bersih</span>
-                                            @else
-                                            <span class="badge badge-danger">Tidak Bersih</span>
-                                            @endif
-                                        </td>
-                                        <td width="10%">{{$i->deskripsi_jawaban}}</td>
-                                    </tr>
-                                    @endforeach
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="profile-box-footer clearfix" style="background-color: #3e5879">
-                            <a href="#" style="color: white">
-                                <span class="value">
-                                    @if($model->status_verifikasi_sekolah == 1)
-                                        <i class="fa fa-check-square"></i>
-                                    @else
-                                        <i class="fa fa-exclamation-triangle text-warning"></i>
-                                    @endif
-                                </span>
-                                <span class="label"><b>Verifikasi Sekolah</b></span><br/>
-                                @if($model->status_verifikasi_sekolah == 1)
-                                    <span class="label">{{!$model->user_verifikasi && !$verifikator ?  ' - ' : $verifikator->verifikator}}</span><br/>
-                                    <span class="label">Jabatan : {{!$model->jabatan_verifikasi && !$verifikator ?  ' - ' : $verifikator->jabatan}}</span><br/>
-                                    <span class="label">Tanggal : {{date('d-M-Y', strtotime($model->tanggal_verifikasi))}}</span><br/>
-                                @endif
-                            </a>
-                            <a href="#" style="color: white">
-                                <span class="value">
-                                    @if($model->status_verifikasi_pengawas == 1)
-                                        <i class="fa fa-check-square"></i>
-                                    @else
-                                        <i class="fa fa-exclamation-triangle text-warning"></i>
-                                    @endif
-                                </span>
-                                <span class="label">Verifikasi Pengawas</span><br/>
-                                @if($model->status_evaluasi_pengawas == 1)
-                                <span class="label">Nama : {{$model->user_approval_pengawas}}</span><br/>
-                                <span class="label">Jabatan : {{$model->jabatan_approval_pengawas}}</span><br/>
-                                <span class="label">Tanggal : {{date('d-M-Y', strtotime($model->tanggal_approval_pengawas))}}</span><br/>
-                                @endif
-                            </a>
-                            <a href="#" style="color: white">
-                                <span class="value">
-                                    @if($model->status_verifikasi_cabdis == 1)
-                                        <i class="fa fa-check-square"></i>
-                                    @else
-                                        <i class="fa fa-exclamation-triangle text-warning"></i>
-                                    @endif
-                                </span>
-                                <span class="label">Verifikasi Cabdis</span><br/>
-                                @if($model->status_evaluasi_cabdis == 1)
-                                    <span class="label">Nama : {{$model->user_approval_cabdis}}</span><br/>
-                                    <span class="label">Jabatan : {{$model->jabatan_approval_cabdis}}</span><br/>
-                                    <span class="label">Tanggal : {{date('d-M-Y', strtotime($model->tanggal_approval_cabdis))}}</span><br/>
-                                @endif
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end">
+            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+            <li class="breadcrumb-item active"><span>@yield('title')</span></li>
+          </ol>
         </div>
+      </div>
     </div>
-</div>
+  </div>
+
+  {{-- Hitung persentase --}}
+  @php
+    $score = $model->score;
+    $max = $maxinstrumen;
+    $percentage = round(($score / $max) * 100);
+  @endphp
+
+  <div class="app-content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-9 col-12 mb-3">
+          <div class="card card-widget widget-user-2">
+            <div class="widget-user-header">
+              <div class="row align-items-center">
+                <h6 class="widget-user-username" style="padding-top: 10px; font-weight: bold;">{{$sekolah->nama}}
+                  {{ $kabupaten->nama_kabupaten }}</h6>
+                <ul class="contact-details list-unstyled" style="font-size: 12px;">
+                  <li>
+                    <i class="fa fa-envelope-open-o"></i> Instrumen Penilaian
+                    {{!$model->ruanglist || !$model->id_ruang ? ' - ' : $model->ruanglist["nama"]}}
+                  </li>
+                  <li>
+                    <i class="fa fa-calendar"></i> Periode
+                    {{date('d-M-Y', strtotime($model->periode_awal_kuesioner)) . ' s/d ' . date('d-M-Y', strtotime($model->periode_akhir_kuesioner))}}
+                  </li>
+                  <li>
+                    <i class="fa fa-calculator"></i> Score {{$model->score}}
+                  </li>
+                  <li>
+                    <i class="fa fa-percent"></i> Presentase {{$percentage}}%
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="main-box-body clearfix">
+              <div class="row">
+                <div class="table-responsive">
+                  <table width="100%" class="table table-bordered table-striped">
+                    <thead>
+                      <tr>
+                        <td style="text-align: center; width: 2%;">No</td>
+                        <td width="15%">Parameter</td>
+                        <td width="10%">Jawaban</td>
+                        <td width="10%">Alasan</td>
+                      </tr>
+                    </thead>
+                    @php $no = 0; @endphp
+                    @foreach($hasilKuesioner as $i)
+                      @php $no++; @endphp
+                      <tr>
+                        <td style="text-align: center">{{$no}}</td>
+                        <td>{{$i->parameter}}</td>
+                        <td>
+                          @if($i->jawaban == 3)
+                            <span class="badge text-bg-success">Bersih</span>
+                          @elseif($i->jawaban == 4)
+                            <span class="badge text-bg-success">Sangat Bersih</span>
+                          @elseif($i->jawaban == 2)
+                            <span class="badge text-bg-warning">Cukup Bersih</span>
+                          @else
+                            <span class="badge text-bg-danger">Tidak Bersih</span>
+                          @endif
+                        </td>
+                        <td>{{$i->deskripsi_jawaban}}</td>
+                      </tr>
+                    @endforeach
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <div class="row">
+                <div class="col-sm-6 border-right">
+                  <div class="description-block">
+                    <h5 class="description-header">
+                      @if($model->status_verifikasi_sekolah == 1)
+                        <i class="fa fa-check-square"></i>
+                      @else
+                        <i class="fa fa-exclamation-triangle text-warning"></i>
+                      @endif
+                    </h5>
+                    <span class="description-text">Verifikasi Sekolah</span>
+                    <span class="description-text">
+                      @if($model->status_verifikasi_sekolah == 1)
+                        <span
+                          class="label">{{!$model->user_verifikasi && !$verifikator ? ' - ' : $verifikator->verifikator}}</span><br />
+                        <span class="label">Jabatan :
+                          {{!$model->jabatan_verifikasi && !$verifikator ? ' - ' : $verifikator->jabatan}}</span><br />
+                        <span class="label">Tanggal : {{date('d-M-Y', strtotime($model->tanggal_verifikasi))}}</span><br />
+                      @endif
+                    </span>
+                  </div>
+                </div>
+
+                <div class="col-sm-6">
+                  <div class="description-block">
+                    <h5 class="description-header">
+                      @if($model->status_verifikasi_cabdis == 1)
+                        <i class="fa fa-check-square"></i>
+                      @else
+                        <i class="fa fa-exclamation-triangle text-warning"></i>
+                      @endif
+                    </h5>
+                    <span class="description-text">Validasi</span>
+                    <span class="description-text">
+                      @if($model->status_evaluasi_cabdis == 1)
+                        <span class="label">Nama : {{$model->user_approval_cabdis}}</span><br />
+                        <span class="label">Jabatan : {{$model->jabatan_approval_cabdis}}</span><br />
+                        <span class="label">Tanggal :
+                          {{date('d-M-Y', strtotime($model->tanggal_approval_cabdis))}}</span><br />
+                      @endif
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card card-primary mb-3">
+            <div class="card-header">
+              <h3 class="card-title">Grafik</h3>
+            </div>
+            <div class="card-body">
+              <div class="card-body">
+                <div class="chart-wrapper">
+                  <canvas id="progressChart" width="150" height="150"></canvas>
+                  <div class="chart-text"><span style="font-size: 10px;">% Penilaian</span> <br />{{ $percentage }}%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-outline card-primary">
+            <div class="card-header">
+              <h3 class="card-title">LOG</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body" style="display: block;">
+              Time Created : {{date('d-M-Y H:i:s', strtotime($model->time_created))}}<br />
+              User Created : {{$model->user_created}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+@endsection
+
+@section('js')
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const ctx = document.getElementById('progressChart').getContext('2d');
+      const percentage = {{ $percentage }};
+
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          datasets: [{
+            data: [percentage, 100 - percentage],
+            backgroundColor: ['#00aaff', '#eeeeee'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          cutout: '80%',
+          responsive: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: false }
+          }
+        }
+      });
+    });
+  </script>
 @endsection

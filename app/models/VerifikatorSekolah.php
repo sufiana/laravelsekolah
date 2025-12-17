@@ -19,7 +19,8 @@ class VerifikatorSekolah extends Model
         'created_at',
         'user_create',
         'user_update',
-        'updated_at'
+        'updated_at',
+        'instrumen'
     ];
     
     public function sekolahlist(){

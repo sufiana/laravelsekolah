@@ -7,144 +7,159 @@
     }
 </style>
 
-<div class="row">
-    <div class="col-lg-12">
-        <div class="row">
-            <div class="col-lg-12">
-                <ol class="breadcrumb">
-                    <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i> Home</a></li>
-                    <li><span><a href="{{ route('ListSekolah') }}"><i class="fa fa-list"></i> Data @yield('title')</a></span></li>
-                    <li class="active"><span>@yield('title')</span></li>
-                </ol>
-                <h1>Edit @yield('title')</h1>
+<div class="app-content-header">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-6">
+        <h3 class="mb-0">Edit Data @yield('title')</h3>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-end">
+            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+            <li class="breadcrumb-item active"><span>@yield('title')</span></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="app-content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header" style="cursor: move; color: white; background-color: #3e5879">
+                <h3 class="card-title">Edit @yield('title')</h3>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="main-box clearfix">
-                    <header class="main-box-header clearfix">
-                        <h2 class="float-left">Edit @yield('title')</h2>
-                        <a href="{{ route('ListSekolah') }}" class="btn btn-success float-right">
-                            <i class="fa fa-list"></i> Data @yield('title')
-                        </a>
-                    </header>
 
-                    <div class="main-box-body clearfix">
-                        <i>Bagian Bertanda <span class="wajib"></span> wajib diisi</i><br/><br/>
-
-                        @if ($message = Session::get('berhasil'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <strong>Berhasil </strong>Data @yield('title') Berhasil Di Edit
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+            <div class="card-body">
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                <form role="form" method="POST" action="{{ route('UpdateSekolah') }}" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" id="id" name="id" value="{{$model->id}}">
+                    <div class="row">
+                        <div class="form-group col-6">
+                            <label>Nama <span class="wajib"></span></label>
+                            <input type="text" class="form-control" id="nama" name="nama" value="{{old('nama',$model->nama)}}" required>
                         </div>
-                        @endif
+                        <div class="form-group col-6">
+                            <label>NPSN <span class="wajib"></span></label>
+                            <input type="text" class="form-control" id="npsn" name="npsn" value="{{old('npsn',$model->npsn)}}" required>
 
-                        @if ($message = Session::get('error'))
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-                                <span aria-hidden="true">×</span>
-                            </button>
-                            <strong>{{ $message }}</strong>
                         </div>
-                        @endif
-
-                        @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="form-group col-6">
+                            <label>Alamat <span class="wajib"></span></label>
+                            <input type="text" class="form-control" id="alamat_jalan" name="alamat_jalan" value="{{old('alamat_jalan',$model->alamat_jalan)}}" required>
+                        </div>
+                        <div class="form-group col-6">
+                            <label>Kabupaten / Kota <span class="wajib"></span></label>
+                            <select name="kabupaten_kota" id="kabupaten_kota" class="form-control form-select" required>
+                                <option value="">== Pilih Kabupaten / Kota ==</option>
+                                @foreach ($kabupaten as $png)
+                                <option value="{{ $png->kode_kabupaten }}"
+                                    {{ (old('kabupaten_kota', $model->kabupaten_kota) == $png->kode_kabupaten) ? 'selected' : '' }}>
+                                    {{ $png->kode_kabupaten . ' - ' . $png->nama_kabupaten }}
+                                </option>
                                 @endforeach
-                            </ul>
+                            </select>
                         </div>
-                        @endif
-
-                        <form role="form" method="POST" action="{{ route('UpdateSekolah') }}" enctype="multipart/form-data">
-                            @csrf
-                            <input type="hidden" id="id" name="id" value="{{$model->id}}">
-                            <div class="row">
-                                <div class="form-group col-6">
-                                    <label>Nama <span class="wajib"></span></label>
-                                    <input type="text" class="form-control" id="nama" name="nama" value="{{old('nama',$model->nama)}}" required>
-                                </div>
-                                <div class="form-group col-6">
-                                    <label>NPSN <span class="wajib"></span></label>
-                                    <input type="text" class="form-control" id="npsn" name="npsn" value="{{old('npsn',$model->npsn)}}" required>
-
-                                </div>
-                            </div>
-                            
-                            <div class="row">
-                                <div class="form-group col-6">
-                                    <label>Alamat <span class="wajib"></span></label>
-                                    <input type="text" class="form-control" id="alamat_jalan" name="alamat_jalan" value="{{old('alamat_jalan',$model->alamat_jalan)}}" required>
-                                </div>
-                                <div class="form-group col-6">
-                                    <label>Kabupaten / Kota <span class="wajib"></span></label>
-                                    <select name="kabupaten_kota" id="kabupaten_kota" class="form-control select2" required>
-                                      <option value="">== Pilih Kabupaten / Kota ==</option>
-                                      @foreach ($kabupaten as $png)
-                                        <option value="{{ $png->kode_kabupaten }}"
-                                          {{ (old('kabupaten_kota', $model->kabupaten_kota) == $png->kode_kabupaten) ? 'selected' : '' }}>
-                                          {{ $png->kode_kabupaten . ' - ' . $png->nama_kabupaten }}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="form-group col-6">
+                            <label>Cabdis<span class="wajib"></span></label>
+                            <select name="cabdis" id="cabdis" class="form-control select2" required>
+                                <option value="">== Pilih Cabdis ==</option>
+                                    @foreach ($cabdis as $c)
+                                        <option value="{{ $c->id }}"
+                                            {{ (old('cabdis', $model->cabdis) == $c->id) ? 'selected' : '' }}>
+                                            {{ $c->nama }}
                                         </option>
-                                      @endforeach
-                                    </select>
+                                    @endforeach
+                            </select>
+                        </div>
+                         <div class="form-group col-6">
+                            <label>Kepala Sekolah <span class="wajib"></span></label>
+                            <input type="text" class="form-control" id="kepalasekolah" name="kepalasekolah" value="{{old('kepalasekolah',$model->kepalasekolah)}}" required>
+                        </div>                        
+                    </div>
+                    
+                    
+                    <div class="row">
+                        <div class="form-group col-6">
+                            <label>Email <span class="wajib"></span></label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{old('email',$model->email)}}" required>
+                        </div>
+                        <div class="form-group col-6">
+                            <label>Website <span class="wajib"></span></label>
+                            <input type="text" class="form-control" id="website" name="website" value="{{old('website',$model->website)}}">
+                        </div>
+                    </div>                          
+                    
+                    <div class="row">
+                        <div class="form-group col-6">
+                            <label>Koordinat <span class="wajib"></span></label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <button class="btn btn-primary" type="button" onclick="openMap()">Tentukan Koordinat</button>
                                 </div>
+                                <input type="text" class="form-control" id="koordinat" name="koordinat"
+                                    value="{{ old('koordinat', trim($model->lintang . ($model->lintang && $model->bujur ? ',' : '') . $model->bujur, ',')) }}">
                             </div>
-                            
-                            <div class="row">
-                                <div class="form-group col-6">
-                                    <label>Bentuk Pendidikan <span class="wajib"></span></label>
-                                    <select name="bentuk_pendidikan_id" id="bentuk_pendidikan_id" class="form-control select2" required>
-                                        <option value="">== Pilih Bentuk Pendidikan ==</option>
-                                        <option value=1>Negeri</option>
-                                        <option value=2>SWASTA</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-6">
-                                    <label>Telepon <span class="wajib"></span></label>
-                                    <input type="text" class="form-control" id="nomor_telepon" name="nomor_telepon" value="{{old('nomor_telepon',$model->nomor_telepon)}}" required>
-                                </div>
+                        </div>
+                        <div class="form-group col-6">
+                            <label>Telepon <span class="wajib"></span></label>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1">WA & Telegram</span>
+                                <input type="text" class="form-control" id="nomor_telepon" name="nomor_telepon" value="{{old('nomor_telepon',$model->nomor_telepon)}}" required>
                             </div>
-                            
-                         
-                            <div class="row">
-                                <div class="form-group col-6">
-                                    <label>Email <span class="wajib"></span></label>
-                                    <input type="email" class="form-control" id="email" name="email" value="{{old('email',$model->email)}}" required>
-                                </div>
-                                <div class="form-group col-6">
-                                    <label>Website <span class="wajib"></span></label>
-                                    <input type="text" class="form-control" id="website" name="website" value="{{old('website',$model->website)}}" required>
-                                </div>
-                            </div>                          
-                            
-                            <div class="row">
-                                <div class="form-group col-6">
-                                    <label>Koordinat <span class="wajib"></span></label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <button class="btn btn-primary" type="button" onclick="openMap()">Tentukan Koordinat</button>
-                                        </div>
-                                        <input type="text" class="form-control" id="koordinat" name="koordinat"
-                                            value="{{ old('koordinat', trim($model->lintang . ($model->lintang && $model->bujur ? ',' : '') . $model->bujur, ',')) }}">
+                        </div>                       
+                    </div>   
+                    
+                    <div class="row mb-3">
+                        <label>Pilih Instrumen yang tersedia di sekolah ini</label>
+                        <div class="row">                            
+                            @foreach($daftarInstrumen as $i)
+                                <div class="col-md-6 col-12 mb-2">
+                                    <div class="form-check">
+                                        <input 
+                                            class="form-check-input required-checkbox" 
+                                            type="checkbox" 
+                                            name="instrumen[]" 
+                                            value="{{ $i->id }}" 
+                                            id="instrumen_{{ $i->id }}"
+                                            {{ in_array($i->id, $selectedInstrumen) ? 'checked' : '' }}
+                                            @if(in_array($i->id, [1,2,3,4])) data-required="true" @endif
+                                        >
+                                        <label class="form-check-label" for="instrumen_{{ $i->id }}"> 
+                                            {{ $i->nama }}
+                                            @if(in_array($i->id, [1,2,3,4])) <span class="text-danger">*</span> @endif
+                                        </label>
                                     </div>
                                 </div>
-                                <div class="form-group col-6">
-                                    <label>Nama Kepala Sekolah <span class="wajib"></span></label>
-                                    <input type="text" class="form-control" id="kepalasekolah" name="kepalasekolah" value="{{old('kepalasekolah',$model->kepalasekolah)}}" required>
-                                </div>
-                            </div>                    
-                            
-                            <div class="form-group text-center">
-                                <button class="btn btn-primary tambah" type="submit">Simpan</button>
-                            </div>
-
-                        </form>
+                            @endforeach
+                        </div>
+                        @error('instrumen')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
                     </div>
-                </div>
+                    
+                    <div class="form-group text-center">
+                        <button id="submitBtn" class="btn btn-primary tambah" type="submit">Simpan</button>               
+                    </div>
+
+                </form>
+                   
             </div>
         </div>
     </div>
@@ -226,5 +241,38 @@ function setMarker(lat, lng) {
     marker = L.marker([lat, lng]).addTo(map);
     document.getElementById('koordinat').value = lat.toFixed(6) + "," + lng.toFixed(6);
 }
+
+document.getElementById('submitBtn').addEventListener('click', function(e) {
+    e.preventDefault(); // hentikan submit sementara
+
+    const message = `⚠️ Perhatian!\n\n` +
+                    `Mengubah instrumen dapat berdampak pada hasil penilaian dan laporan.\n` +
+                    `Nama Kepala Sekolah serta jumlah instrumen akan memengaruhi cetakan laporan dan penilaian akhir.\n\n` +
+                    `Apakah Anda tetap ingin menyimpan perubahan?`;
+
+    if (confirm(message)) {
+        // Jika user klik "OK", lanjutkan submit
+        this.form.submit();
+    }
+    // Jika "Cancel", tidak terjadi apa-apa
+});
+</script>
+
+<script>
+document.querySelector("form").addEventListener("submit", function(e) {
+    let requiredBoxes = document.querySelectorAll(".required-checkbox[data-required='true']");
+    let allChecked = true;
+
+    requiredBoxes.forEach(cb => {
+        if (!cb.checked) {
+            allChecked = false;
+        }
+    });
+
+    if (!allChecked) {
+        e.preventDefault();
+        alert("Instrumen wajib (bertanda *) harus dicentang!");
+    }
+});
 </script>
 @endsection

@@ -43,14 +43,17 @@ class EvaluasiKuesioner extends Model
         'user_validasi',
         'tanggal_validasi',
         'catatan_validasi',
+        'user_verifikasi_guru_piket',
     ];
 
-    public function ruanglist(){
-        return $this->belongsTo(IconGrid::class,'id_ruang','id');
+    public function ruanglist()
+    {
+        return $this->belongsTo(IconGrid::class, 'id_ruang', 'id');
     }
 
-    public function sekolahlist(){
-        return $this->belongsTo(Sekolah::class,'id_sekolah','id');
+    public function sekolahlist()
+    {
+        return $this->belongsTo(Sekolah::class, 'id_sekolah', 'id');
     }
 
 }

@@ -3,126 +3,251 @@
 
 @section('content')
 
-<div class="row">
-    <div class="col-lg-12">
-        <ol class="breadcrumb">
-            <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="{{ route('sekolahbersih.index') }}"><i class="fa fa-list"></i> Data @yield('title')</a></li>
-            <li class="active">@yield('title')</li>
+<div class="app-content-header">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-6">
+        <h3 class="mb-0">Edit Data @yield('title')</h3>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-end">
+            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+            <li class="breadcrumb-item active"><span>@yield('title')</span></li>
         </ol>
-        <h1>Tambah @yield('title')</h1>
+      </div>
     </div>
+  </div>
 </div>
+@php
+use Illuminate\Support\Str;
+@endphp
+<div class="app-content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header" style="cursor: move; color: white; background-color: #3e5879">
+                <h3 class="card-title">Edit @yield('title')</h3>
+            </div>
 
-<div class="row">
-    <div class="col-lg-12">
-        <div class="main-box clearfix">
-
-            <div class="main-box-body clearfix">
+            <div class="card-body">
                 @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                 @endif
-
-                <div class="main-box-body clearfix" style="padding: 20px">
-                    <form action="{{route('verifikator.store')}}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <input type="hidden" id="id" nama="id" value="{{$model->id}}">
-                        <div class="form-group row">
-                            <label for="inputEmail3" class="col-sm-2 col-form-label">Pilih Sekolah<span class="wajib"></span></label>
-                            <div class="col-sm-10">
-                                <select class="form-control" id="id_sekolah" name="id_sekolah">
+                
+                <form action="{{route('verifikator.store')}}" method="POST" enctype="multipart/form-data" class="form-horizontal">
+                    @csrf
+                    <input type="hidden" id="id" nama="id" value="{{$model->id}}">
+                    <div class="row mb-2">
+                        <label for="inputEmail3" class="col-sm-2 col-form-label">Pilih Sekolah<span class="wajib"></span></label>
+                        <div class="col-sm-6">
+                           <select class="form-control" id="id_sekolah" name="id_sekolah">
                                     <option value="" disabled selected> Pilih Sekolah</option>
                                     @foreach($sekolah as $i)
                                             <option value="{{ $i->id }}" {{(old('id_sekolah', $model->id_sekolah )== $i->id?'selected':'')}}>{{$i->nama}}</option>
                                     @endforeach
                                 </select>
+
+                        </div>
+                    </div>        
+
+                    <div class="row mb-2">
+                        <label for="inputEmail3" class="col-sm-2 col-form-label">User Verifikator <span class="wajib"></span></label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="verifikator" name="verifikator" required value={{$model->verifikator}}>
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="jabatan_verifikator" class="col-sm-2 col-form-label">Jabatan Verifikator <span class="wajib"></span></label>
+                        <div class="col-sm-6">
+                            <select class="form-control" id="jabatan_verifikator" name="jabatan_verifikator">
+                                <option value="" disabled selected>Pilih Jabatan</option>
+                                @foreach($jabatan as $j)
+                                    <option value="{{ $j->id }}" {{ (old('jabatan_verifikator',$model->jabatan_verifikator) == $j->id ? 'selected' : '') }}>
+                                        {{ $j->nama }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                     {{-- Checklist Memiliki Instrumen --}}
+                    <div class="row mb-2">
+                        <label class="col-sm-2 col-form-label">Memiliki Instrumen?</label>
+                        <div class="col-sm-6 d-flex align-items-center">
+                        <div class="form-check me-3">
+                            <input class="form-check-input" type="radio" name="memiliki_instrumen" id="instrumen_ya" value="iya">
+                            <label class="form-check-label" for="instrumen_ya">Iya</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="memiliki_instrumen" id="instrumen_tidak" value="tidak" checked>
+                            <label class="form-check-label" for="instrumen_tidak">Tidak</label>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Pilih Instrumen</label>
+                        <div class="col-sm-10">
+                            <div class="row">                            
+                                @foreach($daftarInstrumen as $i)
+                                    <div class="col-md-6 col-12 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="instrumen[]" value="{{ $i->id }}" id="instrumen_{{ $i->id }}"{{ in_array($i->id, $selectedInstrumen) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="instrumen_{{ $i->id }}"> {{ $i->nama }}</label>
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label for="inputEmail3" class="col-sm-2 col-form-label">User Verifikator <span class="wajib"></span></label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="verifikator" name="verifikator" required value={{$model->verifikator}}>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="inputEmail3" class="col-sm-2 col-form-label">Deskripsi</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="deskripsi" name="deskripsi" value={{$model->deksripsi}}>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <label for="inputEmail3" class="col-sm-2 col-form-label">Goreskan Tanda Tangan</label>
+                        <div class="col-sm-6">
+                            <div class="onoffswitch">
+                                <input type="checkbox" name="onoffswitch" class="form-check-input" id="myonoffswitch" checked="" style="margin-top: 5px;">                               
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label for="inputEmail3" class="col-sm-2 col-form-label">Jabatan Verifikator <span class="wajib"></span></label>
-                            <div class="col-sm-10">
-                                <select class="form-control" id="jabatan_verifikator" name="jabatan_verifikator">
-                                    <option value="" disabled selected> Pilih Jabatan</option>
-                                    @foreach($jabatan as $j)
-                                            <option value="{{ $j->id }}" {{(old('jabatan_verifikator', $model->jabatan_verifikator) == $j->id?'selected':'')}}>{{$j->nama}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="inputEmail3" class="col-sm-2 col-form-label">Deskripsi</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="deskripsi" name="deskripsi" value={{$model->deksripsi}}>
-                            </div>
+                    </div>
+                    
+                    <div class="signature-container" style="display: flex; flex-direction: column; gap: 15px;">
+                        {{-- PREVIEW TANDA TANGAN LAMA --}}
+                        <div class="col-md-6">
+                            @if($model->tandatangan)
+                                <div id="existing-signature" style="margin-bottom:10px;">
+                                    <label><strong>Tanda Tangan Sebelumnya:</strong></label><br>
+                                    @if(Str::startsWith($model->tandatangan, 'data:image'))
+                                        {{-- Jika data base64 dari canvas --}}
+                                        <img src="{{ $model->tandatangan }}" alt="Tanda tangan lama" style="max-width:250px; border:1px solid #ccc;">
+                                    @else
+                                        {{-- Jika file path tersimpan (seperti upload/ttd/xxx.png) --}}
+                                        <img src="{{ asset($model->tandatangan) }}" alt="Tanda tangan lama" style="max-width:250px; border:1px solid #ccc;">
+                                    @endif
+                                </div>
+
+                                {{-- Simpan hidden input agar tidak hilang jika user tidak ubah --}}
+                                <input type="hidden" name="tandatangan_lama" value="{{ $model->tandatangan }}">
+                            @endif
                         </div>
 
-                        <div class="form-group row">
-                            <label for="inputEmail3" class="col-sm-2 col-form-label">Goreskan Tanda Tangan</label>
-                            <div class="col-sm-10">
-                                <div class="onoffswitch">
-                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked="">
-                                    <label class="onoffswitch-label" for="myonoffswitch">
-                                        <div class="onoffswitch-inner"></div>
-                                        <div class="onoffswitch-switch"></div>
-                                    </label>
+                        <div class="col-md-6">
+                            <!-- CANVAS TANDA TANGAN (DRAW) -->
+                            <div id="ttd-container">
+                                <canvas id="signature-pad" width="w-90" height="200" style="border:1px solid #000"></canvas> <br/>
+                                <button type="button" id="clear" class="btn btn-danger btn-sm">Clear</button>
+                                <input type="hidden" name="tandatangan_drawn" id="tandatangan_drawn">
+                            </div>
+
+                            <!-- UPLOAD TTD -->
+                            <div id="upload-container" style="display: none;">
+                                <div>
+                                    <input type="file" name="tandatangan_upload" accept="image/*" onchange="previewImage(event)">
+                                </div>
+                                <div class="mt-2">
+                                    <img id="preview-upload" src="" style="max-width:200px; display:none; border:1px solid #ccc;">
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Tanda Tangan</label>
-                            <div class="col-sm-10">
-                                <!-- WADAH FLEX UNTUK TAMPILAN BERGANTIAN -->
-                                <div class="signature-container" style="display: flex; flex-direction: column; gap: 15px;">
-
-                                    <!-- CANVAS TANDA TANGAN (DRAW) -->
-                                    <div id="ttd-container">
-                                        <canvas id="signature-pad" width="400" height="200" style="border:1px solid #000"></canvas> <br/>
-                                        <button type="button" id="clear" class="btn btn-danger btn-sm">Clear</button>
-                                        <input type="hidden" name="tandatangan_drawn" id="tandatangan_drawn">
-                                    </div>
-
-                                    <!-- UPLOAD TTD -->
-                                    <div id="upload-container" style="display: none;">
-                                        <div>
-                                            <input type="file" name="tandatangan_upload" accept="image/*" onchange="previewImage(event)">
-                                        </div>
-                                        <div class="mt-2">
-                                            <img id="preview-upload" src="" style="max-width:200px; display:none; border:1px solid #ccc;">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group text-center">
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
-
-                    </form>
-                </div>
-
+                    
+                    <div class="form-group text-center"> 
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                        
+                </form>
             </div>
         </div>
     </div>
 </div>
 
+
+@endsection
+
+@section('css')
+<link href="https://adminlte.io/themes/v3/plugins/select2/css/select2.min.css" rel="stylesheet" />
+<link href="https://adminlte.io/themes/v3/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css" rel="stylesheet" />
+
 @endsection
 
 @section('js')
+
 <script src="https://cdn.jsdelivr.net/npm/signature_pad"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+<script>
+$(document).ready(function() {
+    $('#jabatan_verifikator').select2({
+        tags: true, // memungkinkan input baru
+        placeholder: "Pilih atau tambah jabatan...",
+        allowClear: true,
+        createTag: function (params) {
+            let term = $.trim(params.term);
+            if (term === '') return null;
+            return { id: term, text: term, newOption: true };
+        },
+        templateResult: function (data) {
+            // tampilkan label "Tambah ..." untuk item baru
+            var $result = $("<span></span>");
+            $result.text(data.text);
+            if (data.newOption) {
+                $result.append(" <em>(Tambah Baru)</em>");
+            }
+            return $result;
+        }
+    });
+
+    // Event ketika opsi baru dibuat/dipilih
+    $('#jabatan_verifikator').on('select2:select', function (e) {
+        var data = e.params.data;
+        if (data.newOption) {
+            $.ajax({
+                url: "{{ route('verifikator.SimpanNamaJabatan') }}",
+                method: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    nama: data.text
+                },
+                success: function(response) {
+                    // Ganti value yang baru dibuat dengan ID dari DB
+                    var newOption = new Option(response.nama, response.id, true, true);
+                    $('#jabatan_verifikator').append(newOption).trigger('change');
+                },
+                error: function() {
+                    alert("Gagal menyimpan jabatan baru!");
+                    // hapus opsi yang gagal
+                    $('#jabatan_verifikator').find("option[value='" + data.id + "']").remove();
+                    $('#jabatan_verifikator').val('').trigger('change');
+                }
+            });
+        }
+    });
+
+    // Toggle daftar instrumen
+    $('input[name="memiliki_instrumen"]').change(function() {
+        if ($('#instrumen_ya').is(':checked')) {
+        $('#daftar_instrumen').slideDown();
+        } else {
+        $('#daftar_instrumen').slideUp();
+        $('input[name="instrumen_list[]"]').prop('checked', false);
+        }
+    });
+});
+</script>
 
 <script>
     const canvas = document.getElementById("signature-pad");
@@ -184,4 +309,5 @@ document.addEventListener("DOMContentLoaded", function () {
     switchCheckbox.addEventListener("change", updateDisplay);
 });
 </script>
+
 @endsection

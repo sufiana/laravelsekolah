@@ -1,83 +1,150 @@
-<div id="nav-col">
-    <section id="col-left" class="col-left-nano">
-        <div id="col-left-inner" class="col-left-nano-content">
-            <div id="user-left-box" class="clearfix d-none d-lg-block profile2-dropdown text-center">
-                <div style="display: flex; justify-content: center;">
-                    <img src="{{ asset('images/logosm.png') }}" style="width: 60%;" />
-                </div>
-                <h5 style="font-size: 16px; color: #3e5879">KOLABORASI</h5>
-                <h5 style="font-size: 12px; color: #3e5879; font-weight: bold; line-height: 1px">SUMUT BERKAH</h5>
-                <h5 style="font-size: 12px; color: #3e5879">DISDIK</h5>
-                <h5 style="font-size: 12px; color: #3e5879; font-weight: bold; line-height: 10px">SEKOLAH BERSIH</h5>
-            </div>
-            @php $user = Auth::user(); @endphp
+@php $user = Auth::user(); @endphp
+
+<aside class="app-sidebar bg-light-subtle" data-bs-theme="light">
+    <!--begin::Sidebar Brand-->
+    <div class="sidebar-brand">
+        <!--begin::Brand Link-->
+        <a href="./index.html" class="brand-link">
+            <!--begin::Brand Image-->
+            <img src="{{ asset('images') }}/flyer.png" width="100%" />
+        </a>
+        <!--end::Brand Link-->
+    </div>
+    <!--end::Sidebar Brand-->
+    <!--begin::Sidebar Wrapper-->
+    <div class="sidebar-wrapper">
+        <nav class="mt-2">
+            <!--begin::Sidebar Menu-->
+            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation"
+                aria-label="Main navigation" data-accordion="false" id="navigation">
+                <li class="nav-item">
+                    <a href="{{ route('home') }}" class="nav-link active">
+                        <i class="nav-icon bi bi-speedometer"></i>
+                        <p>
+                            Dashboard
+                        </p>
+                    </a>
+                </li>
 
 
-            <div class="navbar navbar-expand-lg navbar-light">
-                <div class="collapse navbar-collapse navbar-ex1-collapse" id="sidebar-nav">
-                    <ul class="nav navbar-nav nav-pills nav-stacked">
-                        <li class="nav-header nav-header-first d-none d-lg-block">Navigation</li>
-                        <li class="active">
-                            <a href="{{ route('home') }}">
-                                <i class="fa fa-dashboard"></i>
-                                <span>Dashboard</span>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon bi bi-box-seam-fill"></i>
+                        <p> Data Master <i class="nav-arrow bi bi-chevron-right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('ListParameter') }}" class="nav-link">
+                                <i class="nav-icon bi bi-circle"></i>
+                                <p>List Instrumen</p>
                             </a>
                         </li>
-
-                        <li>
-                            <a href="#" class="dropdown-toggle dropdown-nocaret">
-                                <i class="fa fa-table"></i>
-                                <span>Data Master</span>
-                                <i class="fa fa-angle-right drop-icon"></i>
+                        <li class="nav-item">
+                            <a href="{{ route('ListSekolah') }}" class="nav-link">
+                                <i class="nav-icon bi bi-circle"></i>
+                                <p>Data Sekolah</p>
                             </a>
-                            <ul class="submenu">
-                                <li><a href="{{ route('ListParameter') }}">List Parameter</a></li>
-                                <li><a href="{{ route('ListSekolah') }}">Data Sekolah</a></li>
-                                <li><a href="{{ route('verifikator.index') }}">User Verifikator</a></li>
-                            </ul>                            
                         </li>
-                        @if($user)
-                        @if($user->role==4)
-                        <li>
-                            <a href="#" class="dropdown-toggle dropdown-nocaret">
-                                <i class="fa fa-money"></i><span>Manajemen Data</span>
-                                <i class="fa fa-angle-right drop-icon"></i>
+                        <li class="nav-item">
+                            <a href="{{ route('verifikator.index') }}" class="nav-link">
+                                <i class="nav-icon bi bi-circle"></i>
+                                <p>User Verifikator</p>
                             </a>
-                            <ul class="submenu">
-                                <li><a href="{{ route('sekolahbersih.indexdinas') }}">Verifikasi</a></li>
-                                <li><a href="">Rekap</a></li>
-                                <li><a href="">Laporan</a></li>
-                            </ul>
                         </li>
-                        @elseif($user->role==6)
-                        <li>
-                            <a href="#" class="dropdown-toggle dropdown-nocaret">
-                                <i class="fa fa-money"></i><span>Manajemen Data</span>
-                                <i class="fa fa-angle-right drop-icon"></i>
-                            </a>
-                            <ul class="submenu">
-                                <li><a href="{{ route('sekolahbersih.indexpengawas') }}">Verifikasi</a></li>
-                                <li><a href="{{ route('sekolahbersih.rekappengawas') }}">Rekap</a></li>
-                                <li><a href="">Laporan</a></li>
-                            </ul>
-                        </li>
-                        @elseif($user->role==2 || $user->role==3)
-                        <li>
-                            <a href="#" class="dropdown-toggle dropdown-nocaret">
-                                <i class="fa fa-money"></i><span>Manajemen Data</span>
-                                <i class="fa fa-angle-right drop-icon"></i>
-                            </a>
-                            <ul class="submenu">
-                                <li><a href="{{ route('sekolahbersih.indexsekolah') }}">Lihat Data</a></li>
-                                <li><a href="{{ route('sekolahbersih.indexValidasi') }}">Validasi</a></li>
-                            </ul>
-                        </li>
-                        @endif
-                        @endif
                     </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-    <div id="nav-col-submenu"></div>
-</div>
+                </li>
+
+                <li class="nav-header">DOCUMENTATIONS</li>
+                @if($user)
+                    @if($user->role == 4)
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon bi bi-box-seam-fill"></i>
+                                <p> Manajemen Data<i class="nav-arrow bi bi-chevron-right"></i></p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('sekolahbersih.indexdinas') }}" class="nav-link"><i
+                                            class="nav-icon bi bi-circle"></i>
+                                        <p>Verifikasi</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link"><i class="nav-icon bi bi-circle"></i>
+                                        <p>Rekap</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link"><i class="nav-icon bi bi-circle"></i>
+                                        <p>Laporan</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                    @elseif($user->role == 6)
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon bi bi-box-seam-fill"></i>
+                                <p> Manajemen Data<i class="nav-arrow bi bi-chevron-right"></i></p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('sekolahbersih.indexpengawas') }}" class="nav-link"><i
+                                            class="nav-icon bi bi-circle"></i>
+                                        <p>Verifikasi</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('sekolahbersih.rekappengawas') }}" class="nav-link"><i
+                                            class="nav-icon bi bi-circle"></i>
+                                        <p>Rekap</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link"><i class="nav-icon bi bi-circle"></i>
+                                        <p>Laporan</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                    @elseif($user->role == 2 || $user->role == 3)
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon bi bi-box-seam-fill"></i>
+                                <p> Manajemen Data<i class="nav-arrow bi bi-chevron-right"></i></p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('sekolahbersih.indexsekolah') }}" class="nav-link"><i
+                                            class="nav-icon bi bi-circle"></i>
+                                        <p>Lihat Data</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('sekolahbersih.indexValidasi') }}" class="nav-link"><i
+                                            class="nav-icon bi bi-circle"></i>
+                                        <p>Validasi</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('sekolahbersih.indexsubmitValidasi') }}" class="nav-link"><i
+                                            class="nav-icon bi bi-circle"></i>
+                                        <p>Data Validasi Instrumen</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link"><i class="nav-icon bi bi-circle"></i>
+                                        <p>Laporan</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    @endif
+                @endif
+
+            </ul>
+        </nav>
+    </div>
+</aside>

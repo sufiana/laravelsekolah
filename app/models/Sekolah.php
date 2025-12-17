@@ -38,7 +38,7 @@ class Sekolah extends Model
         'create_date',
         'last_update',
         'kepalasekolah',
-        'binaan_kabkota',
+        'cabdis',
     ];
 
 }

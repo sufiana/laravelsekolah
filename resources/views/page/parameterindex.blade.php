@@ -46,56 +46,88 @@
 </style>
 
 @section('content')
-<div class="row">
-    <div class="col-lg-12">
-        <div class="row">
-            <div class="col-lg-12">
-                <ol class="breadcrumb">
-                    <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i> Home</a></li>
-                    <li class="active"><span>@yield('title')</span></li>
-                </ol>
-                <h1>Data @yield('title')</h1>
-            </div>
-        </div>
+<div class="app-content-header">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-6">
+        <h3 class="mb-0">Data @yield('title')</h3>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-end">
+            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+            <li class="breadcrumb-item active"><span>@yield('title')</span></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
 
-        <!-- Row untuk grid card -->
-        <div class="row g-3">
+<div class="app-content">
+    <div class="container-fluid">
+
+        @if($showInstrumenAlert)
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Maaf!</strong> Sekolah ini belum memberikan informasi instrumen apa saja yang dimiliki.<br>
+                Silahkan klik 
+                    <a href="{{ route('EditSekolah', $sekolah->id) }}" class="alert-link">link ini</a>                untuk mengubah data/informasi instrumen yang dimiliki sekolah.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        <div class="row g-3">         
             @foreach($model as $i)
                 <div class="col-lg-6 col-md-6 col-sm-12 mb-4 card-col">
-                    <div class="main-box clearfix profile-box-contact">
-                        <div class="main-box-body clearfix">
-                            <div class="profile-box-header gray-bg clearfix">
-                                <div class="row">
-                                    <!-- Kiri: Gambar (col-md-4) -->
-                                    <div class="col-md-4 col-sm-4 col-4 img-wrap text-center py-3">
-                                        <img src="{{ asset('images/icon/' . $i->gambar) }}" alt="{{ $i->nama }}" class="img-fluid">
-                                    </div>
+                    <div class="card bg-light d-flex flex-fill">                
+                        <div class="card-body pt-10">
+                            <div class="row">
+                                <div class="col-3 text-center">
+                                    <img src="{{ asset('images/icon/' . $i->gambar) }}" alt="{{ $i->nama }}" class="img-circle img-fluid">
+                                </div>
+                                <div class="col-9">
+                                    <h2 class="lead"><b>{{ $i->nama }}</b></h2>
+                                    <ul class="ml-4 mb-0 fa-ul text-muted">
+                                        @php
+                                            $ulang = DB::table('parameter_kebersihan')
+                                                ->where('id_ruang', $i->id_ruang)
+                                                ->orderBy('id')
+                                                ->get();
+                                        @endphp
+                                        @foreach($ulang as $x)
+                                            <li class="small">
+                                                <span class="fa-li"><i class="fa fa-check"></i></span> {{ $x->parameter }}
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
 
-                                    <!-- Kanan: Judul + UL (sisa kolom = 8) -->
-                                    <div class="col-md-8 col-sm-8 col-8 d-flex flex-column py-3">
-                                        <h2 class="mb-2 text-white"><b>{{ $i->nama }}</b></h2>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="text-right">
+                                @php
+                                    $verifikators = $verifikatorPerInstrumen[$i->id_ruang] ?? [];
+                                @endphp
 
-                                        <ul class="contact-details parameter-list">
-                                            @php
-                                                $ulang = DB::table('parameter_kebersihan')
-                                                    ->where('id_ruang', $i->id_ruang)
-                                                    ->orderBy('id')
-                                                    ->get();
-                                            @endphp
-                                            @foreach($ulang as $x)
-                                                <li class="text-white">
-                                                    <i class="fa fa-check"></i> {{ $x->parameter }}
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                </div> <!-- /.row -->
-                            </div> <!-- /.profile-box-header -->
-                        </div> <!-- /.main-box-body -->
-                    </div> <!-- /.profile-box-contact -->
+                                @if(count($verifikators))
+                                    <b>Verifikator:</b>
+                                        @foreach($verifikators as $v)
+                                                {{ $v['nama'] }}
+                                                {{-- @if($v['jabatan']) - Jabatan: {{ $v['jabatan'] }} @endif --}}
+                                                {{-- @if($v['ttd'])<br><img src="{{ asset($v['ttd']) }}" alt="TTD {{ $v['nama'] }}" style="height:40px;">@endif --}}
+                                        @endforeach
+                                @else
+                                    <span class="badge bg-secondary">Belum Ada Verifikator </span> <a href="{{ route('verifikator.create') }}">Klik disini untuk menambah user verifikator</a>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
                 </div>
             @endforeach
         </div>
     </div>
 </div>
+
+
+
+    
 @endsection

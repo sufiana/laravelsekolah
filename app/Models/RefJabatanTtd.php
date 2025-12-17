@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class RefJabatanTtd extends Model
 {
     protected $table = 'ref_jabatan_ttd';
+    public $timestamps = false;
     protected $fillable = [
         'nama',
         'deskripsi',

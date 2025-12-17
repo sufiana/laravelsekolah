@@ -11,101 +11,143 @@
   display: flex;
 }
 
+.main-box {
+    background: #FFFFFF;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+    /* overflow: hidden; */
+    border-radius: 3px;
+}
+
+.profile-box-contact .main-box-body {
+    padding: 0;
+}
+
+.profile-box-contact .profile-box-header {
+    padding: 15px 15px;
+    color: #fff;
+    border-radius: 3px 3px 0 0;
+}
+
+/* .profile-box-contact .profile-box-footer {
+    padding-top: 10px;
+    padding-bottom: 15px;
+} */
+
+.profile-box-contact .profile-box-footer a {
+    display: block;
+    width: 33%;
+    width: 33.33%;
+    float: left;
+    text-align: center;
+    padding: 15px 10px;
+    color: #212121;
+    text-decoration: none;
+}
+
+.profile-box-contact .profile-box-footer .value {
+    display: block;
+    font-size: 1.8em;
+    font-weight: 300;
+}
+
+.direct-chat-img {
+    border-radius: 50%;
+    float: left;
+    height: 130px;
+    width: 130px;
+}
+
+.col-md-1-5 {
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+@media (min-width: 768px) {
+    .col-md-1-5 {
+    flex: 0 0 auto;
+    width: 12.5%;
+    max-width: 12.5%;
+}
+}
 </style>
 @endsection
 @section('content')
-<div class="row">
-    <div class="col-lg-12">
-        <div class="row">
-            <div class="col-lg-12">
-                <div id="content-header" class="clearfix">
-                    <div class="float-left">
-                        <ol class="breadcrumb">
-                            <li><a href="#">Home</a></li>
-                            <li class="active"><span>Dashboard</span></li>
-                        </ol>
-                        <h1>Dashboard</h1>
-                    </div>
-<!--                    <div class="float-right d-none d-sm-block">-->
-<!--                        <div class="xs-graph float-left">-->
-<!--                            <div class="graph-label">-->
-<!--                                <b><i class="fa fa-shopping-cart"></i> 838</b> SPPD Realisasi-->
-<!--                            </div>-->
-<!--                            <div class="graph-content spark-orders"></div>-->
-<!--                        </div>-->
-<!--                        <div class="xs-graph float-left mrg-l-lg mrg-r-sm">-->
-<!--                            <div class="graph-label">-->
-<!--                                <b>&dollar;12.338</b> SPPD-->
-<!--                            </div>-->
-<!--                            <div class="graph-content spark-revenues"></div>-->
-<!--                        </div>-->
-<!--                    </div>-->
+
+    <div class="app-content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-6">
+                <h3 class="mb-0">Dashboard</h3>
+                </div>
+                <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                    <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                </ol>
                 </div>
             </div>
         </div>
-
-       <div class="row g-3 d-flex flex-wrap align-items-stretch">
-  <div class="col-lg-3 col-sm-6 col-12 d-flex">
-    <div class="info-box emerald-bg w-100 d-flex flex-column">
-      <i class="fa fa-user icon"></i>
-      <span class="headline">Jumlah Sekolah</span>
-      <span class="value">46</span>
     </div>
-  </div>
 
-  <div class="col-lg-3 col-sm-6 col-12 d-flex">
-    <div class="info-box red-bg w-100 d-flex flex-column">
-      <i class="fa fa-tag icon"></i>
-      <span class="headline">Sekolah Terintegrasi</span>
-      <span class="value">9</span>
-    </div>
-  </div>
+    <div class="app-content">
+        <div class="container-fluid">
 
-  <div class="col-lg-3 col-sm-6 col-12 d-flex">
-    <div class="info-box green-bg w-100 d-flex flex-column">
-      <i class="fa fa-tags icon"></i>
-      <span class="headline">Sekolah Belum Terintegrasi</span>
-      <span class="value">45</span>
-    </div>
-  </div>
+            <div class="row">
+                <div class="col-lg-3 col-6">
+                    <div class="small-box text-bg-primary">
+                    <div class="inner"><h3>150</h3><p>Jumlah Sekolah</p></div>                  
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-6">
+                    <div class="small-box text-bg-success">
+                        <div class="inner"><h3>9<sup class="fs-5">%</sup></h3><p>Sekolah Terintegrasi</p></div>
+                    </div>
+                </div>
 
-  <div class="col-lg-3 col-sm-6 col-12 d-flex">
-    <div class="info-box purple-bg w-100 d-flex flex-column">
-      <i class="fa fa-credit-card icon"></i>
-      <span class="headline">Persentase Sekolah Bersih</span>
-      <span class="value">42</span>
-    </div>
-  </div>
-</div>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box text-bg-warning">
+                        <div class="inner"><h3>33</h3><p>Sekolah Belum Terintegrasi</p></div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-6">
+                    <div class="small-box text-bg-danger">
+                        <div class="inner"><h3>65</h3><p>Persentase Sekolah Bersih</p></div>                  
+                    </div>
+                </div>
+            </div>
 
-       
-
-        <div class="col-md-12">
             <div class="main-box clearfix profile-box-contact">
                 <div class="main-box-body clearfix">
                     <div class="profile-box-header gray-bg clearfix" style="background-color: #3e5879 !important;">
-                        @if(!is_null($user->img) && file_exists(public_path('images/user/' . $user->img)))
-                        <img src="{{ asset('images/user/' . $user->img) }}" alt="Foto Profil" class="profile-img img-fluid">
-                        @else
-                        <img src="{{ asset('images/user/user.png') }}" alt="Default Foto" class="profile-img img-fluid">
-                        @endif
-                        <h2>{{$user->username}}</h2>
-                        <div class="job-position">
-                            {{$role->name}}
-                        </div>
-                        <ul class="contact-details">
-                            <li>
-                                <i class="fa fa-map-marker"></i> Wilayah Binaan : {{$user->binaan}}
-                            </li>
-                            <li>
-                                <i class="fa fa-map-o"></i>  
-                                @php 
-                                    $cabdis = App\Models\Cabdis::where('id',$user->cabdis)->first();
-                                @endphp
-                                Instansi: {{$cabdis->deskripsi}}
+                        <div class="row g-0 align-items-center">
+                            <div class="col-md-1-5">
+                                @if(!is_null($user->img) && file_exists(public_path('images/user/' . $user->img)))
+                                <img src="{{ asset('images/user/' . $user->img) }}" alt="Foto Profil" class="direct-chat-img">
+                                @else
+                                <img src="{{ asset('images/user/user.png') }}" alt="Default Foto" class="direct-chat-img">
+                                @endif
+                            </div>
+                            <div class="col-md-10"> <!-- kasih padding kecil manual -->
+                                <h5 class="widget-user-username">{{$user->username}}</h5>
+                                <h6 class="widget-user-desc"> {{$role->name}}</h6>
                                 
-                            </li>
-                        </ul>
+                                <ul class="contact-details list-unstyled">
+                                    <li>
+                                        <i class="fa fa-map-marker"></i> Wilayah Binaan : {{$user->binaan}}
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-map-o"></i>  
+                                        @php 
+                                            $cabdis = App\Models\Cabdis::where('id',$user->cabdis)->first();
+                                        @endphp
+                                        Instansi: {{$cabdis->deskripsi}}
+                                        
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>                        
                     </div>
                     <div class="profile-box-footer clearfix">
                         <a href="#">
@@ -123,28 +165,26 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
-            @foreach($icon as $i)
-            <div class="col-lg-2 col-md-6 col-sm-6 col-12">
-                <div class="main-box clearfix profile-box-contact" style="box-shadow: none; background-color: transparent; border: none;">
-                    <div class="main-box-body clearfix" style="border: none;">
-                        <div class="d-flex flex-column align-items-center justify-content-center text-center" style="height: 200px;">
-                            <img src="{{ asset('images/icon/' . $i->gambar) }}" alt="" style="width: 80px; height: 80px; object-fit: cover;">
-                            <a href="{{ route('sekolahbersih.create', $i->id) }}">
-                                <h2 class="mb-0" style="font-size: 1.2rem; color: #3e5879;">{{ $i->singkatan }}</h2>
-                            </a>
+            <div class="row">
+                @foreach($icon as $i)
+                <div class="col-lg-2 col-6">
+                        <div class="main-box clearfix profile-box-contact" style="box-shadow: none; background-color: transparent; border: none;">
+                            <div class="main-box-body clearfix" style="border: none;">
+                                <div class="d-flex flex-column align-items-center justify-content-center text-center" style="height: 150px;">
+                                    <a href="{{ route('sekolahbersih.create', $i->id) }}" style="text-decoration: none;">
+                                        <img src="{{ asset('images/icon/' . $i->gambar) }}" alt="" style="width: 80px; height: 80px; object-fit: cover;">
+                                        <h2 class="mb-0" style="font-size: 1.2rem; color: #3e5879; padding-top: 15px;">{{ $i->singkatan }}</h2>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endforeach
             </div>
-            @endforeach
+
         </div>
-
-
     </div>
-
 
 
 @endsection
