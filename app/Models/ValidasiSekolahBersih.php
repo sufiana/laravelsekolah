@@ -46,4 +46,16 @@ class ValidasiSekolahBersih extends Model
         'catatan_pengawas',
         'catatan_sekolah',
     ];
+
+    // Relasi ke tabel sekolah
+    public function sekolah()
+    {
+        return $this->belongsTo(Sekolah::class, 'id_sekolah', 'id');
+    }
+
+    // Relasi ke detail validasi pengawas
+    public function detail_validasi_sekolah_bersih_pengawas()
+    {
+        return $this->hasMany(ValidasiSekolahBersihChild::class, 'id_evaluasi', 'id');
+    }
 }

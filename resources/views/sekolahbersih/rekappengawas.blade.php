@@ -1,8 +1,7 @@
 @extends('layouts/master')
-@section('title', 'Rekap Pengawas')
+@section('title', 'Verifikasi Sekolah Bersih oleh Pengawas')
 
 @section('content')
-
     <div class="app-content-header">
         <div class="container-fluid">
             <div class="row">
@@ -18,7 +17,6 @@
             </div>
         </div>
     </div>
-
 
     <div class="app-content">
         <div class="container-fluid">
@@ -118,16 +116,14 @@
                         </div>
                     </div>
 
-
-                    <div class=" mb-3 align-items-center">
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#downloadModal">
-                            Cetak Laporan Supervisi Pengawas Sekolah
-                        </button>
-                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#downloadModal">
+                        Cetak Laporan Supervisi Pengawas Sekolah
+                    </button>
+                    <br /><br />
 
                     <div class="table-responsive-lg">
-                        <table class="table table-bordered table-striped table-hover" id="tabelku">
+                        <table id="tabelku" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th width="20">No.</th>
@@ -138,19 +134,16 @@
                                     <th>Status Kebersihan</th>
                                     <th>Status Kepatuhan</th>
                                     <th>Tindak Lanjut</th>
-                                    <th width="40"><a href="#" style="color: white">Action</a></th>
+                                    <th width="40">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                            </tbody>
+                            <tbody></tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-
 
     <!-- Modal -->
     <div class="modal fade" id="downloadModal" tabindex="-1" aria-labelledby="downloadModalLabel" aria-hidden="true">
@@ -177,17 +170,21 @@
         </div>
     </div>
 
+
 @endsection
 
 @section('css')
+
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/autofill/2.7.1/css/autoFill.dataTables.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
         rel="stylesheet">
 
+    {{--
+    <link rel="stylesheet"
+        href="{{ asset('assets/themes') }}/components/datatables.net-bs4/css/dataTables.bootstrap4.min.css"> --}}
     <style>
         .table thead tr th {
             background-color: #0D6EFD !important;
@@ -211,37 +208,22 @@
         div.dataTables_filter {
             display: none;
         }
-
-
-
-        .table {
-            width: 100%;
-        }
     </style>
+
 
 @endsection
 
 @section('js')
-
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-
-    <!-- Date Range Picker -->
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <!-- Optional: modalEffects.js (jika benar-benar dipakai) -->
-    <script src="{{ asset('assets/themes') }}/components-custom/modal-animations/modalEffects.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
     <script>
-        $(document).ready(function () {
-
-
+        $(function () {
             $('#customLength').on('change', function () {
                 oTable.page.len($(this).val()).draw();
             });
@@ -251,24 +233,12 @@
                 oTable.search(this.value).draw();
             });
 
-            // Setup CSRF token untuk semua AJAX
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            // Inisialisasi DataTable
             var oTable = $('#tabelku').DataTable({
-                processing: true,
+                //order: [[0, "desc"]],
+                processing: false,
                 serverSide: true,
                 ajax: {
-                    url: "{{ route('sekolahbersih.getDataRekapPengawas') }}",
-                    error: function (xhr, error, code) {
-                        console.error("Ajax Error:", error);
-                        console.error("Status Code:", xhr.status);
-                        Swal.fire('Error', 'Gagal memuat data. Cek konsol untuk detail.', 'error');
-                    },
+                    url: '{{route("sekolahbersih.getDataRekapPengawas")}}',
                     data: function (d) {
                         // PERIODE (harus string "YYYY-MM-DD - YYYY-MM-DD")
                         if ($('#periode_start').val() && $('#periode_end').val()) {
@@ -297,41 +267,19 @@
                     { data: 'keterangan_kepatuhan', name: 'keterangan_kepatuhan', searchable: true, orderable: true },
                     { data: 'hasil_rekomendasi', name: 'hasil_rekomendasi', searchable: true, orderable: true },
                     { data: 'action', name: 'action' },
-                ],
-                language: {
-                    processing: "Sedang memuat data...",
-                    lengthMenu: "Tampilkan _MENU_ entri",
-                    zeroRecords: "Tidak ada data ditemukan",
-                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
-                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
-                    infoFiltered: "(difilter dari _MAX_ total entri)",
-                    search: "Cari:",
-                    paginate: {
-                        first: "Pertama",
-                        last: "Terakhir",
-                        next: "Selanjutnya",
-                        previous: "Sebelumnya"
-                    }
-                }
+                ]
             });
             $('#sekolah, #rekap_nilai_kebersihan, #hasil_rekomendasi').on('change', function () {
                 oTable.ajax.reload();
             });
-            // Inisialisasi Date Range Picker
-            $('#dateRange').daterangepicker({
-                startDate: moment().startOf('month'),   // Awal bulan ini
-                endDate: moment().endOf('month'),       // Akhir bulan ini
-                opens: 'left',
-                locale: {
-                    format: 'DD-MM-YYYY',
-                    applyLabel: "Pilih",
-                    cancelLabel: "Batal",
-                    fromLabel: "Dari",
-                    toLabel: "Sampai",
-                    customRangeLabel: "Pilih Rentang"
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
 
+            // Inisialisasi date range picker untuk periode
             $('#periodeRange').daterangepicker({
                 autoUpdateInput: false,
                 locale: {
@@ -367,25 +315,55 @@
                 width: '100%'
             });
         });
+
+
+        $(document).ready(function () {
+            $("#success_message").delay(9000).slideUp(300);
+        });
+
+        $('#dateRange').daterangepicker({
+            startDate: moment().startOf('month'),   // Awal bulan ini
+            endDate: moment().endOf('month'),       // Akhir bulan ini
+            opens: 'left',
+            locale: {
+                format: 'DD-MM-YYYY',
+                applyLabel: "Pilih",
+                cancelLabel: "Batal",
+                fromLabel: "Dari",
+                toLabel: "Sampai",
+                customRangeLabel: "Pilih Rentang"
+            }
+        });
+
     </script>
+    <!---->
+
     <script>
         $('#btnDownload').click(function (e) {
             e.preventDefault();
+
             let range = $('#dateRange').val();
             console.log('📌 Date Range dari input:', range);
+
             if (!range.includes(' - ')) {
                 Swal.fire('Error!', 'Format periode tidak valid.', 'error');
                 return;
             }
+
             let parts = range.split(' - ');
             let startParts = parts[0].split('-');
             let endParts = parts[1].split('-');
+
             let startDate = `${startParts[2]}-${startParts[1]}-${startParts[0]}`;
             let endDate = `${endParts[2]}-${endParts[1]}-${endParts[0]}`;
+
             console.log('📤 Start Date:', startDate);
             console.log('📤 End Date:', endDate);
+
             $.ajax({
-                url: "{{ route('sekolahbersih.CetakRekapPengawas') }}",
+                //Route::get('sekolahbersih/CetakRekapPengawasPdf', 'SekolahBersihController@CetakRekapPengawasPdf')->name('sekolahbersih.CetakRekapPengawasPdf');
+
+                url: "{{ route('sekolahbersih.CetakRekapPengawasPdf') }}",
                 method: 'GET',
                 data: { startDate, endDate },
                 xhrFields: { responseType: 'blob' },
@@ -409,6 +387,7 @@
                         reader.readAsText(data);
                         return;
                     }
+
                     // ✅ Kalau PDF, proses download
                     let blob = new Blob([data], { type: 'application/pdf' });
                     let link = document.createElement('a');
@@ -417,6 +396,7 @@
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
+
                     Swal.fire('Berhasil!', 'File berhasil diunduh.', 'success');
                 },
                 error: function (xhr) {
@@ -430,51 +410,6 @@
                 }
             });
         });
-        /*
-                    if(pegawai && pegawailain && tgla && tglb) {
-                    $('#isitable').empty();
-                    $('#responnya').empty();
-                    $('#kosong').empty();
-                    $.ajax({
-                            type: 'GET',
-                        url: 'cekjadwalspt',
-                        data: {'pegawaiarray': pegawaiarray, 'tgla': tgla, 'tglb': tglb},
-                        dataType: "json",
-                        contentType: 'application/json; charset=ytf-8',
-                        success: function (data) {
-                                $('#modalcekjadwal').modal('show');
-                            if (data.sql.length >= 1) {
-                                for (var i = 0; i < data.sql.length; i++) {
-                                    let ptext = data.sql[i].pegawai;
-                                    let rtext = ptext.replace(';-;', '\n');
-                                    var kode='';
-                                    if(data.sql[i].no_spt == null)
-                                        kode=data.sql[i].kode_spt;
-                                    else
-                                        kode=data.sql[i].no_spt;
-                                    $('#responnya').html(data.response);
-                                    var row = $('<tr><td style="font-size: 10px !important;">' + data.sql[i].no_spt + '</td><td>' + rtext + '</td><td>' + data.sql[i].tanggal + '</td></tr>');
-                                    $('#myTable').append(row);
-                                }
-                                } else {
-                                //$('#myTable').empty();
-                                //$('#isitable').empty();
-                                if (tgl1dmy == tgl2dmy) {
-                                        var pesan = tgl1dmy;
-                                    } else {
-                                    var pesan = tgl1dmy + ' s/d ' + tgl2dmy;
-                                }
-                                $('#kosong').html('Tidak Ada Jadwal SPT ' + pesan + ' untuk Anggota tersebut.. Silahkan Lanjutkan untuk menyimpan SPT ini');
-                                    }
-                        },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                    alert('Error: ' + textStatus + ' - ' + errorThrown);
-                                }
-                        });
-                        }
-                    */
 
     </script>
-
-
 @endsection

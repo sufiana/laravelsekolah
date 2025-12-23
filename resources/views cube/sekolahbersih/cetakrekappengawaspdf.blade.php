@@ -6,7 +6,7 @@
         @page {
             size: auto;
             /* auto is the current printer page size */
-            margin: 8mm 7mm 5mm 7mm;
+            margin: 2mm 7mm 0mm 7mm;
             /* this affects the margin in the printer settings */
         }
 
@@ -166,28 +166,23 @@
 </head>
 
 <body>
-    @foreach($models as $index => $model)
+    @foreach($models as $model)
         @php
-            $idsekolah = $model->id_sekolah;
-            $sekolah = DB::table('sekolah')->where('id', $idsekolah)->first();
-            $kabupaten = DB::table('kabupaten')
-                ->where('kode_kabupaten', $sekolah->kabupaten_kota)
-                ->first();
-            $child = DB::table('validasi_sekolahbersih_child')
-                ->select('validasi_sekolahbersih_child.*', 'ruang_sekolah.nama')
-                ->leftJoin('ruang_sekolah', 'ruang_sekolah.id', '=', 'validasi_sekolahbersih_child.id_ruang')
-                ->where('id_validasi', $model->id)
-                ->orderBy('id_ruang')
-                ->get();
+            $sekolah = $model->sekolah;
+            $kabupaten = $sekolah->kabupaten;
+            $child = $model->detail_validasi_sekolah_bersih_pengawas;
         @endphp
-        <div class="page" @if($index > 0) style="page-break-before: always;" @endif>
+        <div class="page">
             <table width="100%" border="0" class="baris">
                 <tr>
                     <td colspan="2">
                         <div id="header">
                             <table width="100%">
                                 <tr>
-                                    <td width="100%" align="center">
+                                    <td width="12%">
+                                        <img class="navbar-brand-icon" src="" width="160px" height="120px" />
+                                    </td>
+                                    <td width="88%" align="center">
                                         <span class="kop1">GERAKAN KOLABORASI SUMUT BERKAH</span><br />
                                         <span class="kop2">SEKOLAH BERSIH</span><br />
                                         <span class="kop1">FORMAT SUPERVISI PENGAWAS SEKOLAH</span><br />
@@ -218,7 +213,7 @@
                                 <td width="3%">a.</td>
                                 <td width="17%">Nama Sekolah</td>
                                 <td width="2%">:</td>
-                                <td width="78%">{{$sekolah->nama}} {{ $kabupaten->jenis.' '.$kabupaten->nama_kabupaten }}</td>
+                                <td width="78%">{{$sekolah->nama}}</td>
                             </tr>
                             <tr>
                                 <td>b.</td>
@@ -236,7 +231,7 @@
                                 <td>d.</td>
                                 <td>Kecamatan/Kabupaten</td>
                                 <td>:</td>
-                                <td>{{ $kabupaten->jenis . ' ' . $kabupaten->nama_kabupaten }}</td>
+                                <td>{{ $kabupaten->nama_kabupaten }}</td>
                             </tr>
                             <tr>
                                 <td>e.</td>
@@ -271,14 +266,7 @@
                                 <td>h.</td>
                                 <td>Wilayah Binaan</td>
                                 <td>:</td>
-                                <td>
-                                    @if($user->binaan_kabkota != null && $binaan != null)
-                                        {{$binaan->jenis . ' ' . $binaan->nama_kabupaten}}
-                                    @else
-                                        -
-                                    @endif
-
-                                </td>
+                                <td>{{$binaan->nama_kabupaten}}</td>
                             </tr>
                             <tr>
                                 <td>i.</td>
@@ -313,7 +301,6 @@
 
                 <tr>
                     <td colspan="2" align="center">
-
                         <table width="90%" style="line-height: 11px" class="tabel" align="center">
                             <tr>
                                 <td width="5%"><b>No.</b></td>
@@ -455,7 +442,7 @@
                     <tr><br /></tr>
                     <tr>
                         <td width="3%"></td>
-                        <td colspan="8">b. Sekolah ini direkomendasikan untuk : </td>
+                        <td colspan="8">b. Sekolah ini direkomendasikan untuk : {{ $model->hasil_rekomendasi }}</td>
                     </tr>
                     <tr>
                         <td></td>

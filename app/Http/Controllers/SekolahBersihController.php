@@ -2007,7 +2007,7 @@ class SekolahBersihController extends Controller
         $sekolah = Sekolah::find($model->sekolah);
         $stringIds = $model->id_kuesioner;  // contoh: "{319,320,321}"
         $arrayIds = explode(',', trim($stringIds, '{}'));
-
+        $kabupaten = Kabupatenkota::where('kode_kabupaten', $sekolah->kabupaten_kota)->first();
         $hasilKuesioner = DB::table('hasil_kuesioner')
             ->select('p.parameter', 'hasil_kuesioner.jawaban', 'hasil_kuesioner.deskripsi_jawaban')
             ->join('parameter_kebersihan as p', 'p.id', '=', 'hasil_kuesioner.id_parameter')
@@ -2027,7 +2027,7 @@ class SekolahBersihController extends Controller
             ->where('verifikator_sekolah.id', $model->user_verifikasi_guru_piket)
             ->first();
 
-        $pdf = PDF::loadView('sekolahbersih.cetak', compact('model', 'ruang', 'hasilKuesioner', 'sekolah', 'verifikator', 'verifikatorpiket'))->setPaper('a4', 'portrait');
+        $pdf = PDF::loadView('sekolahbersih.cetak', compact('model', 'ruang', 'hasilKuesioner', 'sekolah', 'verifikator', 'verifikatorpiket', 'kabupaten'))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 
@@ -2095,7 +2095,7 @@ class SekolahBersihController extends Controller
                 $kabupaten = Kabupatenkota::where('kode_kabupaten', $sekolah->kabupaten_kota)->first();
                 $cabdis = Cabdis::where('id', $user->cabdis)->first();
                 $binaan = Kabupatenkota::where('kode_kabupaten', $user->binaan_kabkota)->first();
-                $pdf = PDF::loadView('sekolahbersih.cetakpengawas', compact('model', 'child', 'sekolah', 'kabupaten', 'cabdis', 'binaan','user'))->setPaper([0, 0, 595, 935], 'portrait');
+                $pdf = PDF::loadView('sekolahbersih.cetakpengawas', compact('model', 'child', 'sekolah', 'kabupaten', 'cabdis', 'binaan', 'user'))->setPaper([0, 0, 595, 935], 'portrait');
                 return $pdf->stream();
             }
         } else {
@@ -2422,59 +2422,110 @@ class SekolahBersihController extends Controller
     //download PDF
     public function CetakRekapPengawas(Request $request)
     {
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Silahkan Login');
+        }
+
+        $user = Auth::user();
+        if ($user->role != 6) {
+            abort(403, 'Anda tidak memiliki akses untuk mencetak laporan ini.');
+        }
+
         try {
-            Log::info('📥 Request diterima', [
-                'startDate_raw' => $request->input('startDate'),
-                'endDate_raw' => $request->input('endDate')
-            ]);
+            $start = Carbon::parse($request->input('startDate'))->startOfDay();
+            $end = Carbon::parse($request->input('endDate'))->endOfDay();
 
-            $startDate = Carbon::parse($request->input('startDate'))->startOfDay();
-            $endDate = Carbon::parse($request->input('endDate'))->endOfDay();
-
-            Log::info('📅 Parsed tanggal', [
-                'startDate' => $startDate->toDateTimeString(),
-                'endDate' => $endDate->toDateTimeString()
-            ]);
-
-            if ($endDate->lt($startDate)) {
-                Log::warning('⚠️ Tanggal akhir lebih kecil dari tanggal awal');
+            if ($end->lt($start)) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Tanggal akhir tidak boleh lebih kecil dari awal.'
                 ], 400);
             }
 
-            $data = EvaluasiPengawas::whereDate('periode_awal_kuesioner', $startDate->toDateString())
-                ->whereDate('periode_akhir_kuesioner', $endDate->toDateString())
+            $models = ValidasiSekolahBersih::where('status', 1)
+                ->whereDate('periode_awal', $start->toDateString())
+                ->whereDate('periode_akhir', $end->toDateString())
+                ->where('status', 1)
+                ->orderBy('periode_awal')
                 ->get();
 
-            $sekolahMap = \App\Models\Sekolah::all()->keyBy('id');
-
-            $user = Auth::check() ? Auth::user() : null;
-            $wilayah = [];
-
-            if ($user && $user->role == 6) {
-                $wilayah = DB::select("
-                    SELECT
-                        cab.id,
-                        cab.nama,
-                        cab.kabupatenkota,
-                        string_agg(kab.nama_kabupaten, ', ' ORDER BY kab.nama_kabupaten) AS nama_kabupaten
-                    FROM
-                        cabdis cab
-                    JOIN LATERAL unnest(string_to_array(cab.kabupatenkota, ', ')) AS kab_id ON TRUE
-                    JOIN kabupaten kab ON kab.kode_kabupaten::text = kab_id
-                    WHERE cab.id = ?
-                    GROUP BY cab.id, cab.nama, cab.kabupatenkota
-                ", [$user->cabdis]);
+            if ($models->isEmpty()) {
+                return response()->json([
+                    'status' => 'nodata',
+                    'message' => 'Data tidak ditemukan untuk periode tersebut.'
+                ], 404);
             }
 
-            Log::info('📊 Jumlah data ditemukan:', ['count' => $data->count()]);
+            $cabdis = Cabdis::find($user->cabdis);
+            $binaan = Kabupatenkota::where('kode_kabupaten', $user->binaan_kabkota)->first();
 
-            if ($data->isEmpty()) {
+            $fileName = "Rekap Supervisi {$start->format('d-m-Y')} s.d {$end->format('d-m-Y')}.pdf";
+
+            // ✅ Generate PDF dari view
+            $pdf = PDF::loadView('sekolahbersih.cetakan_rekappengawas', compact('models', 'cabdis', 'binaan', 'user'))
+                ->setPaper([0, 0, 595, 935], 'portrait');
+
+            // ✅ Preview langsung di browser (inline)
+            return $pdf->stream($fileName);
+
+            // Kalau mau langsung download, ganti dengan:
+            // return $pdf->download($fileName);
+
+        } catch (\Exception $e) {
+            Log::error('❌ CetakRekapPengawas gagal', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal membuat PDF.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    //print rekap pengawas fix
+    public function CetakRekapPengawasPdf(Request $request)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Silahkan Login');
+        }
+
+        $user = Auth::user();
+        if ($user->role != 6) {
+            abort(403, 'Anda tidak memiliki akses untuk mencetak laporan ini.');
+        }
+
+        try {
+            $start = Carbon::parse($request->input('startDate'))->startOfDay();
+            $end = Carbon::parse($request->input('endDate'))->endOfDay();
+
+            Log::info('📥 Request CetakRekapPengawas', [
+                'start' => $start->toDateTimeString(),
+                'end' => $end->toDateTimeString(),
+                'user' => $user->id
+            ]);
+
+            if ($end->lt($start)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Tanggal akhir tidak boleh lebih kecil dari awal.'
+                ], 400);
+            }
+
+            // Ambil semua validasi dalam rentang tanggal (persis sama)
+            $models = ValidasiSekolahBersih::whereDate('periode_awal', $start->toDateString())
+                ->whereDate('periode_akhir', $end->toDateString())
+                ->where('status', 1)
+                ->orderBy('periode_awal')
+                ->get();
+            //dd($models);
+
+            if ($models->isEmpty()) {
                 Log::warning('📭 Tidak ada data untuk periode', [
-                    'startDate' => $startDate->toDateString(),
-                    'endDate' => $endDate->toDateString()
+                    'start' => $start->toDateString(),
+                    'end' => $end->toDateString()
                 ]);
                 return response()->json([
                     'status' => 'nodata',
@@ -2482,57 +2533,49 @@ class SekolahBersihController extends Controller
                 ], 404);
             }
 
-            $fileName = "Laporan Supervisi {$startDate->format('d-m-Y')} s.d {$endDate->format('d-m-Y')}.pdf";
+            // Ambil relasi lain sesuai kebutuhan
+            $cabdis = Cabdis::find($user->cabdis);
+            $binaan = Kabupatenkota::where('kode_kabupaten', $user->binaan_kabkota)->first();
+
+            $fileName = "Rekap Supervisi {$start->format('d-m-Y')} s.d {$end->format('d-m-Y')}.pdf";
 
             // ✅ 1. Generate PDF dari view
-            $pdfContent = PDF::loadView('sekolahbersih.cetakan_rekappengawas', [
-                'data' => $data,
-                'startDate' => $startDate->toDateString(),
-                'endDate' => $endDate->toDateString(),
-                'wilayah' => $wilayah,
-                'user' => $user,
-                'sekolahMap' => $sekolahMap
-            ])->output(); // <-- output() mengembalikan binary PDF, tidak disimpan
+            $pdfContent = PDF::loadView('sekolahbersih.cetakan_rekappengawas', compact('models', 'cabdis', 'binaan', 'user'))
+                ->setPaper([0, 0, 595, 935], 'portrait')
+                ->output();
 
             Log::info('🖨 PDF berhasil dibuat, ukuran asli: ' . number_format(strlen($pdfContent) / 1024, 2) . ' KB');
 
-            // ✅ 2. Jalankan Ghostscript untuk kompresi (tanpa simpan file)
+            // ✅ 2. Kompresi dengan Ghostscript via file sementara
+            $tmpInput = tempnam(sys_get_temp_dir(), 'pdf_in');
+            $tmpOutput = tempnam(sys_get_temp_dir(), 'pdf_out');
+            file_put_contents($tmpInput, $pdfContent);
+
             $process = new Process([
                 'gs',
                 '-sDEVICE=pdfwrite',
                 '-dCompatibilityLevel=1.4',
-                '-dPDFSETTINGS=/default',     // Kualitas baik, kompresi sedang
+                '-dPDFSETTINGS=/default', // bisa diganti /screen, /ebook, /printer sesuai kebutuhan
                 '-dNOPAUSE',
                 '-dQUIET',
                 '-dBATCH',
-                '-sOutputFile=-',              // Output ke stdout
-                '-'                            // Input dari stdin
+                "-sOutputFile=$tmpOutput",
+                $tmpInput
             ]);
 
-            $input = new InputStream();
-            $process->setInput($input);
-            $process->start();
-
-            // Kirim PDF ke Ghostscript
-            $input->write($pdfContent);
-            $input->close();
-
-            // Tunggu proses selesai
-            $process->wait();
-
-            if (!$process->isSuccessful()) {
-                Log::error('❌ Ghostscript gagal: ' . $process->getErrorOutput());
-                // Jika gagal, kembalikan PDF asli
-                return response($pdfContent)
-                    ->header('Content-Type', 'application/pdf')
-                    ->header('Content-Disposition', "attachment; filename=\"$fileName\"");
+            try {
+                $process->mustRun();
+                $compressedPdf = file_get_contents($tmpOutput);
+                Log::info('✅ PDF berhasil dikompresi, ukuran baru: ' . number_format(strlen($compressedPdf) / 1024, 2) . ' KB');
+            } catch (\Exception $ex) {
+                Log::error('❌ Ghostscript gagal: ' . $ex->getMessage());
+                $compressedPdf = $pdfContent; // fallback: kirim PDF asli
+            } finally {
+                @unlink($tmpInput);
+                @unlink($tmpOutput);
             }
 
-            $compressedPdf = $process->getOutput();
-
-            Log::info('✅ PDF berhasil dikompresi, ukuran baru: ' . number_format(strlen($compressedPdf) / 1024, 2) . ' KB');
-
-            // ✅ 3. Langsung kirim ke user sebagai download
+            // ✅ 3. Return hasil ke client
             return response($compressedPdf)
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', "attachment; filename=\"$fileName\"");
@@ -2580,7 +2623,7 @@ class SekolahBersihController extends Controller
                 ->whereDate('periode_akhir_kuesioner', $endDate->toDateString())
                 ->get();
 
-            $sekolahMap = \App\Models\Sekolah::all()->keyBy('id');
+            $sekolahMap = Sekolah::all()->keyBy('id');
 
             $user = Auth::check() ? Auth::user() : null;
             $wilayah = [];

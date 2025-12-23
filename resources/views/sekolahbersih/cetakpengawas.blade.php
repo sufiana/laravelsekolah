@@ -6,7 +6,7 @@
         @page {
             size: auto;
             /* auto is the current printer page size */
-            margin: 2mm 7mm 0mm 7mm;
+            margin: 8mm 7mm 5mm 7mm;
             /* this affects the margin in the printer settings */
         }
 
@@ -173,10 +173,7 @@
                     <div id="header">
                         <table width="100%">
                             <tr>
-                                <td width="12%">
-                                    <img class="navbar-brand-icon" src="" width="160px" height="120px" />
-                                </td>
-                                <td width="88%" align="center">
+                                <td width="100%" align="center">
                                     <span class="kop1">GERAKAN KOLABORASI SUMUT BERKAH</span><br />
                                     <span class="kop2">SEKOLAH BERSIH</span><br />
                                     <span class="kop1">FORMAT SUPERVISI PENGAWAS SEKOLAH</span><br />
@@ -207,7 +204,9 @@
                             <td width="3%">a.</td>
                             <td width="17%">Nama Sekolah</td>
                             <td width="2%">:</td>
-                            <td width="78%">{{$sekolah->nama}}</td>
+                            <td width="78%">{{$sekolah->nama}}
+                                {{ $kabupaten->jenis . ' ' . $kabupaten->nama_kabupaten }}
+                            </td>
                         </tr>
                         <tr>
                             <td>b.</td>
@@ -225,7 +224,7 @@
                             <td>d.</td>
                             <td>Kecamatan/Kabupaten</td>
                             <td>:</td>
-                            <td>{{ $kabupaten->nama_kabupaten }}</td>
+                            <td>{{ $kabupaten->jenis . ' ' . $kabupaten->nama_kabupaten }}</td>
                         </tr>
                         <tr>
                             <td>e.</td>
@@ -260,7 +259,13 @@
                             <td>h.</td>
                             <td>Wilayah Binaan</td>
                             <td>:</td>
-                            <td>{{$binaan->nama_kabupaten}}</td>
+                            <td>
+                                @if($user->binaan_kabkota != null && $binaan != null)
+                                    {{$binaan->jenis . ' ' . $binaan->nama_kabupaten}}
+                                @else
+                                    -
+                                @endif
+                            </td>
                         </tr>
                         <tr>
                             <td>i.</td>
@@ -309,7 +314,9 @@
                         @foreach ($child as $i => $item): ?>
                             <tr>
                                 <td>{{ $i + 1 }}</td>
-                                <td align="left" style="text-align: left; padding-left: 5px">{{$item->nama}}</td>
+                                <td align="left" style="text-align: left; padding-left: 5px">
+                                    {{$item->nama}}
+                                </td>
                                 <td class="ikonchecklist">
                                     @if($item->nilai_kebersihan_pengawas == 4)
                                         <span style="font-family: DejaVu Sans; font-size: 20px;">&#9745;</span> {{-- ☑ --}}
@@ -436,7 +443,7 @@
                 <tr><br /></tr>
                 <tr>
                     <td width="3%"></td>
-                    <td colspan="8">b. Sekolah ini direkomendasikan untuk : {{ $model->hasil_rekomendasi }}</td>
+                    <td colspan="8">b. Sekolah ini direkomendasikan untuk : </td>
                 </tr>
                 <tr>
                     <td></td>

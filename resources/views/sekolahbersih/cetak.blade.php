@@ -167,15 +167,13 @@
                     <div id="header">
                         <table width="100%">
                             <tr>
-                                <td width="12%">
-                                    <img class="navbar-brand-icon" src="" width="160px" height="120px" />
-                                </td>
-                                <td width="88%" align="center">
+                                <td width="100%" align="center">
                                     <span class="kop1">GERAKAN KOLABORASI SUMUT BERKAH</span><br />
                                     <span class="kop2">SEKOLAH BERSIH</span><br />
                                     <span class="kop1">FORMAT CHECKLIST HARIAN KEBERSIHAN
                                         {{strtoupper($ruang->nama)}}</span><br />
-                                    <span class="kop1">{{strtoupper($sekolah->nama)}}</span>
+                                    <span class="kop1">{{strtoupper($sekolah->nama)}}
+                                        {{strtoupper($kabupaten->jenis) . ' ' . strtoupper($kabupaten->nama_kabupaten)}}</span>
                                 </td>
                             </tr>
                         </table>
@@ -256,9 +254,10 @@
                                     @else
                                         <span style="font-family: DejaVu Sans; font-size: 20px"">&#9744;</span> {{-- ☐ --}}
                                     @endif
-                                                                        </td>                                                                                                                                                                
+                                                                                                    </td>                                                                                                                                                                
 
-                                                                        <td class=" ikonchecklist">
+                                                                                                    <td class="
+                                        ikonchecklist">
                                         @if($item->jawaban == 3)
                                             <span style="font-family: DejaVu Sans; font-size: 20px">&#9745;</span> {{-- ☑ --}}
                                         @else

@@ -29,21 +29,25 @@ class HomeController extends Controller
             return redirect()->route('login')->with('error', 'Anda belum login.');
         }
 
-        $role = Role::where('id', $user->role)->first();
+        //dd($user); // Temporary debug
 
-        switch ($role->name) {
-            case 'developer':
-            case 'superadmin':
+        $role = Role::where('id', $user->role)->first();
+        //return 'ana' . $user;
+
+        switch ($user->role) {
+            case 1: // developer
+            case 5: // superadmin
                 return redirect()->route('site.developer');
 
-            case 'sekolah':
-            case 'tata_usaha':
+            case 7: // sekolah
+            case 8: // tata_usaha
+            case 2:
                 return redirect()->route('site.sekolah');
 
-            case 'kepala_dinas':
+            case 3: // kepala_dinas
                 return redirect()->route('site.kadis');
 
-            case 'pengawas_sekolah':
+            case 4: // pengawas_sekolah
                 return redirect()->route('site.pengawas');
 
             default:

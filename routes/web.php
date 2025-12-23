@@ -21,9 +21,23 @@ use App\Http\Controllers\Auth\GoogleAuthController;
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/registrasi', [LoginController::class, 'showRegistrationForm'])->name('register');
+Route::post('/registrasi', [LoginController::class, 'register'])->name('register.post');
+
 
 Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
+
+// Temporary route to update password
+Route::get('/update-password', function () {
+    $user = \App\models\User::where('email', 'raffialfarizky@gmail.com')->first();
+    if ($user) {
+        $user->password_hash = \Illuminate\Support\Facades\Hash::make('developer123');
+        $user->save();
+        return 'Password updated for ' . $user->email;
+    }
+    return 'User not found';
+});
 
 
 Route::middleware(['auth'])->group(function () {
@@ -94,6 +108,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('sekolahbersih/printCabdisSekolah/{id}', 'SekolahBersihController@printCabdisSekolah')->name('sekolahbersih.printCabdisSekolah');
     Route::post('sekolahbersih/storeValidasi', 'SekolahBersihController@storeValidasi')->name('sekolahbersih.storeValidasi');
     Route::get('sekolahbersih/showValidasi/{id}', 'SekolahBersihController@showValidasi')->name('sekolahbersih.showValidasi');
+    Route::get('sekolahbersih/CetakRekapPengawasPdf', 'SekolahBersihController@CetakRekapPengawasPdf')->name('sekolahbersih.CetakRekapPengawasPdf');
 
 
     //verifikator

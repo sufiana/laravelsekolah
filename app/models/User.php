@@ -30,6 +30,10 @@ class User extends Authenticatable
         'refresh_token_expires',
         'last_login',
         'img',
+        'binaan',
+        'cabdis',
+        'binaan_kabkota',
+        'nohp',
     ];
 
     protected $hidden = [
@@ -52,10 +56,10 @@ class User extends Authenticatable
     }
 
     // Optional: generate hashed password setter
-    public function setPasswordHashAttribute($value)
-    {
-        $this->attributes['password_hash'] = Hash::make($value);
-    }
+    // public function setPasswordHashAttribute($value)
+    // {
+    //     $this->attributes['password_hash'] = Hash::make($value);
+    // }
 
     /*
     public function isDeveloper()
