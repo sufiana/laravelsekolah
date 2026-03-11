@@ -255,7 +255,7 @@
                                                         <input type="hidden" id="nilai_kebersihan_child[{{$globalIndex}}]" name="nilai_kebersihan_child[{{$globalIndex}}]" value="{{ $nilaikebersihanchild}}">
                                                         <input type="hidden" id="ket_kebersihan_child[{{$globalIndex}}]" name="ket_kebersihan_child[{{$globalIndex}}]" value="{{ $keterangankebersihanchild}}">
                                                         <input type="hidden" id="user_verifikasi_child[{{ $globalIndex }}]" name="user_verifikasi_child[{{ $globalIndex }}]" value="{{ $ambilchildkuesioner->user_verifikasi ?? '' }}" >
-                                                        <input type="text" id="user_verifikasi_guru_piket_child[{{ $globalIndex }}]" name="user_verifikasi_guru_piket_child[{{ $globalIndex }}]" value="{{ $ambilchildkuesioner->user_verifikasi_guru_piket ?? '' }}" >
+                                                        <input type="hidden" id="user_verifikasi_guru_piket_child[{{ $globalIndex }}]" name="user_verifikasi_guru_piket_child[{{ $globalIndex }}]" value="{{ $ambilchildkuesioner->user_verifikasi_guru_piket ?? '' }}" >
                                                         <input type="hidden" id="tanggal_verifikasi_sekolah_child[{{ $globalIndex }}]" name="tanggal_verifikasi_sekolah_child[{{ $globalIndex }}]" value="{{ date('Y-m-d', strtotime($ambilchildkuesioner->tanggal_verifikasi ?? '')) }}" >
 
                                                     </td>

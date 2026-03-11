@@ -43,6 +43,10 @@ Route::get('/update-password', function () {
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/', 'HomeController@index')->name('home');
+    Route::get('/DaftarUser', [LoginController::class, 'index'])->name('register.index');
+    Route::get('/GetDataDaftarUser', [LoginController::class, 'getData'])->name('register.getData');
+
+
 
     Route::get('/HomeSekolah', 'HomeController@indexSekolah')->name('site.sekolah');
     Route::get('/HomeCabdis', 'HomeController@indexCabdis')->name('site.cabdis');

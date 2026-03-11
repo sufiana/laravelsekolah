@@ -47,8 +47,11 @@ class HomeController extends Controller
             case 3: // kepala_dinas
                 return redirect()->route('site.kadis');
 
-            case 4: // pengawas_sekolah
+            case 6: // pengawas_sekolah
                 return redirect()->route('site.pengawas');
+
+            case 4: // pengawas_sekolah
+                return redirect()->route('site.cabdis');
 
             default:
                 return redirect()->route('site.cabdis');
@@ -124,13 +127,55 @@ class HomeController extends Controller
         }
         $icon = IconGrid::all()->sortBy("id");
         $role = Role::where('id', $user->role)->first();
-        $sekolah = Sekolah::where('id', $user->id_sekolah)->first();
+        if ($user->cabdis != null) {
+            $sekolah = Sekolah::where('cabdis', $user->cabdis)->get();
+            $jumlahsekolah = count($sekolah);
+            $baseHistory = DB::table('v_history as v')->where('cabdis', $user->cabdis);
+            $counts = ['on_progress' => (clone $baseHistory)->where('status_validasi', 'On progres')->count(), 'terverifikasi' => (clone $baseHistory)->where('status_validasi', 'Terverifikasi')->count(), 'belum_lapor' => (clone $baseHistory)->where('status_validasi', 'Belum Lapor')->count(),];
+            $databelumlapor = DB::table('v_history as vs')
+                ->where('vs.status_validasi', 'Belum Lapor')
+                ->where('vs.cabdis', $user->cabdis)
+                // ->get();
+                ->paginate(10); // default 20 data per halaman
+            $databeforebaik = DB::table('v_history_before as vb')
+                ->where('vb.cabdis', $user->cabdis)
+                ->whereIn('rekap_nilai_kebersihan', [3, 4])
+                ->orderBy('rekap_nilai_kebersihan', 'DESC')
+                ->get();
+            $databeforekurang = DB::table('v_history_before as vb')
+                ->where('vb.cabdis', $user->cabdis)
+                ->whereIn('rekap_nilai_kebersihan', [1, 2])
+                ->orderBy('rekap_nilai_kebersihan', 'DESC')
+                ->get();
+            $periodelalu = DB::table('v_history_before')->select('periode_awal', 'periode_akhir')->distinct()->first();
+            $periodeFormattedlalu = date('j-n-Y', strtotime($periodelalu->periode_awal)) . ' s/d ' . date('j-n-Y', strtotime($periodelalu->periode_akhir));
+
+            $datapie = ['Sangat Bersih' => 10, 'Bersih' => 65, 'Cukup Bersih' => 15, 'Kurang Bersih' => 10];
+        } else {
+            $sekolah = '';
+            $jumlahsekolah = 0;
+            $baseHistory = 0;
+            $counts = 0;
+            $databelumlapor = '';
+            $databeforebaik = '';
+            $databeforekurang = '';
+            $datapie = '';
+            $periodelalu = '';
+            $periodeFormattedlalu = '';
+        }
 
         return view('layouts/berandacabdis', [
             'icon' => $icon,
             'user' => $user,
             'role' => $role,
             'sekolah' => $sekolah,
+            'jumlahsekolah' => $jumlahsekolah,
+            'counts' => $counts,
+            'databelumlapor' => $databelumlapor,
+            'datapie' => $datapie,
+            'databeforebaik' => $databeforebaik,
+            'databeforekurang' => $databeforekurang,
+            'periodeFormattedlalu' => $periodeFormattedlalu,
         ]);
     }
 
@@ -142,13 +187,55 @@ class HomeController extends Controller
         }
         $icon = IconGrid::all()->sortBy("id");
         $role = Role::where('id', $user->role)->first();
-        $sekolah = Sekolah::where('id', $user->id_sekolah)->first();
+        if ($user->binaan_kabkota != null) {
+            $sekolah = Sekolah::where('kabupaten_kota', $user->binaan_kabkota)->get();
+            $jumlahsekolah = count($sekolah);
+            $baseHistory = DB::table('v_history as v')->where('kabupaten_kota', $user->binaan_kabkota);
+            $counts = ['on_progress' => (clone $baseHistory)->where('status_validasi', 'On progres')->count(), 'terverifikasi' => (clone $baseHistory)->where('status_validasi', 'Terverifikasi')->count(), 'belum_lapor' => (clone $baseHistory)->where('status_validasi', 'Belum Lapor')->count(),];
+            $databelumlapor = DB::table('v_history as vs')
+                ->where('vs.status_validasi', 'Belum Lapor')
+                ->where('vs.kabupaten_kota', $user->binaan_kabkota)
+                // ->get();
+                ->paginate(10); // default 20 data per halaman
+            $databeforebaik = DB::table('v_history_before as vb')
+                ->where('vb.kabupaten_kota', $user->binaan_kabkota)
+                ->whereIn('rekap_nilai_kebersihan', [3, 4])
+                ->orderBy('rekap_nilai_kebersihan', 'DESC')
+                ->get();
+            $databeforekurang = DB::table('v_history_before as vb')
+                ->where('vb.kabupaten_kota', $user->binaan_kabkota)
+                ->whereIn('rekap_nilai_kebersihan', [1, 2])
+                ->orderBy('rekap_nilai_kebersihan', 'DESC')
+                ->get();
+            $periodelalu = DB::table('v_history_before')->select('periode_awal', 'periode_akhir')->distinct()->first();
+            $periodeFormattedlalu = date('j-n-Y', strtotime($periodelalu->periode_awal)) . ' s/d ' . date('j-n-Y', strtotime($periodelalu->periode_akhir));
+
+            $datapie = ['Sangat Bersih' => 10, 'Bersih' => 65, 'Cukup Bersih' => 15, 'Kurang Bersih' => 10];
+        } else {
+            $sekolah = '';
+            $jumlahsekolah = 0;
+            $baseHistory = 0;
+            $counts = 0;
+            $databelumlapor = '';
+            $databeforebaik = '';
+            $databeforekurang = '';
+            $datapie = '';
+            $periodelalu = '';
+            $periodeFormattedlalu = '';
+        }
 
         return view('layouts/berandapengawas', [
             'icon' => $icon,
             'user' => $user,
             'role' => $role,
             'sekolah' => $sekolah,
+            'jumlahsekolah' => $jumlahsekolah,
+            'counts' => $counts,
+            'databelumlapor' => $databelumlapor,
+            'datapie' => $datapie,
+            'databeforebaik' => $databeforebaik,
+            'databeforekurang' => $databeforekurang,
+            'periodeFormattedlalu' => $periodeFormattedlalu,
         ]);
     }
 

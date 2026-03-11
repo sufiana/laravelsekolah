@@ -2248,35 +2248,74 @@ class SekolahBersihController extends Controller
      */
     public function update(Request $request)
     {
-        $messages = [
-            'required' => 'Kolom :attribute Wajib diisi',
-        ];
         $validator = Validator::make($request->all(), [
-            'jabatan' => 'required',
-            'jenis_biaya' => 'required',
-            //'deskripsi'                 =>'required',
-            'status_wilayah_biaya' => 'required',
-            'nominal' => 'required'
-        ], $messages);
+            'id' => 'required|integer|exists:evaluasi_kuesioner,id',
+            'jawaban' => 'required|array',
+        ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->withInput()->withErrors($validator->errors());
-        } else {
-            $post = ManajemenBiaya::where('id', $request->id)->first();
-            $post->jabatan = $request->jabatan;
-            $post->jenis_biaya = $request->jenis_biaya;
-            $post->deskripsi = $request->deskripsi;
-            $post->status_wilayah_biaya = $request->status_wilayah_biaya;
-            $badChars = array(".");
-            $nominal = str_ireplace($badChars, "", $request->nominal);
-            $post->nominal = $nominal;
-            $post->user_created = NULL;
-            $simpan = $post->save();
-            if ($simpan) {
-                Session::flash('berhasil', 'Data Manajemen Biaya Berhasil di tambah');
-                return redirect()->route('biaya.index');
-            } else
-                return back()->withErrors(['Gagal' => ['Data Manajemen Biaya Gagal di tambah']]);
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        DB::beginTransaction();
+        try {
+
+            $evaluasi = EvaluasiKuesioner::findOrFail($request->id);
+
+            $totalScore = 0;
+            $jumlahParameter = 0;
+
+            foreach ($request->jawaban as $id_parameter => $jawaban) {
+
+                $hasil = HasilKuesioner::where('id_evaluasi_kuesioner', $evaluasi->id)
+                    ->where('id_parameter', $id_parameter)
+                    ->first();
+
+                if (!$hasil) {
+                    // fallback (jika ada parameter baru)
+                    $hasil = new HasilKuesioner();
+                    $hasil->id_evaluasi_kuesioner = $evaluasi->id;
+                    $hasil->id_sekolah = $evaluasi->sekolah;
+                    $hasil->id_user = Auth::id();
+                    $hasil->id_parameter = $id_parameter;
+                    $hasil->id_ruang = $evaluasi->id_ruang;
+                    $hasil->tahun_ajaran = env('TAHUN_AJARAN', 1);
+                    $hasil->periode = 1;
+                    $hasil->periode_awal_kuesioner = $evaluasi->periode_awal_kuesioner;
+                    $hasil->periode_akhir_kuesioner = $evaluasi->periode_akhir_kuesioner;
+                }
+
+                $hasil->jawaban = $jawaban;
+                $hasil->deskripsi_jawaban = $request->alasan[$id_parameter] ?? null;
+                $hasil->save();
+
+                $totalScore += (int) $jawaban;
+                $jumlahParameter++;
+            }
+
+            // update evaluasi
+            $evaluasi->score = $totalScore;
+            $evaluasi->hasil_score = $jumlahParameter > 0
+                ? $totalScore / $jumlahParameter
+                : 0;
+
+            $evaluasi->save();
+
+            DB::commit();
+
+            return redirect()
+                ->route('sekolahbersih.indexsekolah')
+                ->with('berhasil', 'Penilaian berhasil diperbarui');
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+            \Log::error('Update kuesioner gagal: ' . $e->getMessage());
+
+            return redirect()->back()
+                ->withErrors(['Gagal memperbarui data: ' . $e->getMessage()]);
         }
     }
 

@@ -8,11 +8,12 @@ use Illuminate\Support\Facades\Hash;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\models\User;
 use App\models\Role;
-use App\models\Kabupaten;
 use App\models\Cabdis;
 use App\models\Sekolah;
 use App\models\Kabupatenkota;
 use Illuminate\Support\Str;
+use Yajra\Datatables\Datatables;
+
 
 class LoginController extends Controller
 {
@@ -134,4 +135,88 @@ class LoginController extends Controller
             return redirect('/login');
         }
     }
+
+    public function index()
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+            if ($user->role == 1 || $user->role == 4 || $user->role == 6) {
+                $sekolah = Sekolah::all();
+                $kabupaten = Kabupatenkota::all();
+                $cabdis = Cabdis::all();
+                $role = Role::all();
+                return view('auth.index', compact('sekolah', 'kabupaten', 'cabdis', 'role'));
+            } else {
+                return redirect()->back()->with('error', 'Anda tidak memiliki hak akses untuk laman ini');
+            }
+        }
+        //dd($kabupaten);
+
+        return redirect('login');
+    }
+
+    public function getData(Request $request)
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+            $query = User::query();
+
+            // Filter sekolah
+            if ($request->filled('sekolah')) {
+                $query->where('id_sekolah', $request->sekolah);
+            }
+
+            // Filter kabupaten
+            if ($request->filled('kabupaten')) {
+                $query->where('id_kabupaten', $request->kabupaten);
+            }
+
+            // Filter cabdis
+            if ($request->filled('cabdis')) {
+                $query->where('id_cabdis', $request->cabdis);
+            }
+
+            // Tambahan filter lain (misalnya role)
+            if ($request->filled('role')) {
+                $query->where('role', $request->role);
+            }
+
+            $model = $query->orderBy('id', 'ASC')->get();
+        } else {
+            $model = collect(); // kosongkan koleksi
+        }
+
+        return Datatables::of($model)
+            ->editColumn('id_sekolah', function ($data) {
+                $a = Sekolah::where('id', $data->id_sekolah)->first();
+                return !$a ? '-' : $a->nama;
+            })
+            ->editColumn('role', function ($data) {
+                $a = Role::where('id', $data->role)->first();
+                return !$a ? '-' : $a->name;
+            })
+            ->editColumn('binaan_kabkota', function ($data) {
+                $a = Kabupatenkota::where('kode_kabupaten', $data->binaan_kabkota)->first();
+                return !$a ? '-' : $a->nama_kabupaten;
+            })
+            ->editColumn('cabdis', function ($data) {
+                $a = Cabdis::where('id', $data->cabdis)->first();
+                return !$a ? '-' : $a->nama;
+            })
+            //->addColumn('action', function ($model) {
+            //     $button = '-
+            //     // <a class="btn btn-primary btn-sm" href="' . route("user.edit", $model->id) . '" id="editbtn">
+            //     //   <i class="fa fa-edit"></i>
+            //     // </a>
+            //     // <a class="btn btn-danger btn-sm" href="#" data-id="' . $model->id . '" data-nama="' . $model->name . '" id="deletebtn" data-toggle="modal" data-target="#delModal">
+            //     //   <i class="fa fa-trash"></i>
+            //     // </a>
+            // ';
+            //     return $button;
+            // })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
+
+
 }

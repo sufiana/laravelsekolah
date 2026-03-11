@@ -28,8 +28,9 @@
             content: " * ";
         }
     </style>
+
     <link rel="stylesheet" type="text/css"
-        href="{{ asset('assets/themes') }}/components/font-awesome/css/font-awesome.css" />
+        href="{{ asset('assets/themes') }}/admin/font-awesome/css/font-awesome.css" />
 
     @yield('css')
 </head>

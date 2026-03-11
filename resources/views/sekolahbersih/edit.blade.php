@@ -1,8 +1,9 @@
 @extends('layouts/master')
-@section('title','Parameter Kebersihan')
+@section('title', 'Edit Penilaian Kebersihan Sekolah')
 
 @section('css')
 <style>
+/* === COPY PASTE DARI CREATE === */
 .switch-radio-group {
   display: flex;
   flex-wrap: wrap;
@@ -44,54 +45,37 @@
   outline: 2px solid #0D6EFD;
 }
 
-/* ✅ Custom button sumut */
-button.btn-sumut,
-a.btn-sumut {
+/* tombol sumut */
+button.btn-sumut {
   background-color: #3e5879 !important;
   border: 1px solid #3e5879 !important;
   color: white !important;
 }
-button.btn-sumut:hover,
-a.btn-sumut:hover {
+button.btn-sumut:hover {
   background-color: #2f4460 !important;
   border-color: #2f4460 !important;
 }
-button.btn-sumut:disabled,
-a.btn-sumut:disabled {
-  background-color: #3e5879 !important;
-  border-color: #3e5879 !important;
-  opacity: 0.65 !important;
-  cursor: not-allowed !important;
-}
 
-/* ✅ Fix Swal agar tidak ketimpa AdminLTE */
+/* swal fix */
 .swal2-container {
   z-index: 20000 !important;
 }
-
-@media (max-width: 600px) {
-  .switch-radio-group {
-    gap: 0.3rem;
-  }
-  .switch-radio-custom {
-    padding: 0.2em 0.4em;
-    font-size: 0.7em;
-  }
-}
 </style>
 @endsection
+
 @section('content')
 
 <div class="app-content-header">
   <div class="container-fluid">
     <div class="row">
       <div class="col-sm-6">
-        <h3 class="mb-0">Data @yield('title')</h3>
+        <h3 class="mb-0">@yield('title')</h3>
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-end">
           <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-          <li class="breadcrumb-item active"><span>@yield('title')</span></li>
+          <li class="breadcrumb-item"><a href="{{ route('sekolahbersih.indexsekolah') }}">Data Penilaian</a></li>
+          <li class="breadcrumb-item active">Edit</li>
         </ol>
       </div>
     </div>
@@ -99,185 +83,117 @@ a.btn-sumut:disabled {
 </div>
 
 <div class="app-content">
-    <div class="container-fluid">
-        <div class="card card-success">
-            <div class="card-header" style="color: white; background-color: #3e5879">
-                <h3 class="card-title">Instrumen Kebersihan - {{ $model->nama }}</h3>
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse">
-                        <i data-lte-icon="expand" class="bi bi-plus-lg"></i>
-                        <i data-lte-icon="collapse" class="bi bi-dash-lg"></i>
-                    </button>
-                </div>
+  <div class="container-fluid">
+    <div class="card card-success">
+      <div class="card-header" style="background:#3e5879;color:white">
+        <h3 class="card-title">Instrumen Kebersihan - {{ $model->nama }}</h3>
+      </div>
+
+      <div class="card-body">
+
+        @if ($errors->any())
+          <div class="alert alert-danger">
+            <ul class="mb-0">
+              @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+              @endforeach
+            </ul>
+          </div>
+        @endif
+
+        <form method="POST" action="{{ route('sekolahbersih.update') }}">
+          @csrf
+          <input type="hidden" name="id" value="{{ $model->id }}">
+
+          {{-- PERIODE --}}
+          <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">
+              <h5>Periode Instrumen</h5>
+            </label>
+            <div class="col-sm-5">
+              <div class="input-group">
+                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                <input type="text" class="form-control" value="{{ $daterange }}" disabled>
+              </div>
             </div>
+          </div>
 
-            <div class="card-body">
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul class="mb-0">
-                            @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
+          <hr>
 
-                <form role="form" method="POST" action="{{ route('sekolahbersih.update') }}" enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" id="id" name="id" value="{{$model->id}}">
-                    <div class="row mb-3">
-                        <label class="col-sm-2 col-form-label"><h5>Periode Instrumen</h5></label>
-                        <div class="col-sm-5">
-                            <div class="input-group mb-3">
-                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                <input type="text" name="periode" class="form-control" id="daterange" value="{{$daterange}}" disabled />
-                            </div>
-                        </div>
-                    </div>
-                    <div id="parameterContainer">
-                        @php $no = 1; @endphp
-                        @foreach ($rincian as $p)                      
-                                <div class="row">
-                                    <div class="col-lg-12"><h6>{{ $no++. '. ' . $p->parameter }}</h6></div>
-                                    <div class="col-md-6">
-                                        <div class="row">
-                                            <div class="form-group col-md-12">
-                                                <div class="btn-group btn-group-toggle d-flex flex-wrap" data-toggle="buttons">
-                                                    <label class="btn btn-warning btn-secondary {{ $p->jawaban == 4 ? 'active' : '' }}">
-                                                        <input type="radio"
-                                                                name="jawaban[{{ $p->id }}]"
-                                                                value="4"
-                                                                autocomplete="off"
-                                                                onchange="handleJawabanChange({{ $p->id }}, this.value)" {{ $p->jawaban == 3 ? 'checked' : '' }}> Sangat Bersih
-                                                    </label>
-                                                    <label class="btn btn-warning btn-secondary {{ $p->jawaban == 3 ? 'active' : '' }}">
-                                                        <input type="radio"
-                                                                name="jawaban[{{ $p->id }}]"
-                                                                value="3"
-                                                                autocomplete="off"
-                                                                onchange="handleJawabanChange({{ $p->id }}, this.value)" {{ $p->jawaban == 3 ? 'checked' : '' }}> Bersih
-                                                    </label>
+          {{-- PARAMETER LOOP (SEMUA TAMPIL SEKALIGUS) --}}
+          <div id="parameterContainer">
+            @php $no = 1; @endphp
+            @foreach ($rincian as $p)
+              <div class="mb-4">
+                <h6>{{ $no++ . '. ' . $p->parameter }}</h6>
 
-                                                    <label class="btn btn-warning btn-secondary {{ $p->jawaban == 2 ? 'active' : '' }}">
-                                                        <input type="radio"
-                                                                name="jawaban[{{ $p->id }}]"
-                                                                value="2"
-                                                                autocomplete="off"
-                                                                onchange="handleJawabanChange({{ $p->id }}, this.value)"
-                                                                {{ $p->jawaban == 2 ? 'checked' : '' }}>
-                                                        Cukup Bersih
-                                                    </label>
-
-                                                    <label class="btn btn-warning btn-secondary {{ $p->jawaban == 1 ? 'active' : '' }}">
-                                                        <input type="radio"
-                                                                name="jawaban[{{ $p->id }}]"
-                                                                value="1"
-                                                                autocomplete="off"
-                                                                onchange="handleJawabanChange({{ $p->id }}, this.value)" {{ $p->jawaban == 1 ? 'checked' : '' }}> Tidak Bersih
-                                                    </label>
-                                                        <!-- Hidden score -->
-                                                    <input type="hidden" name="score[{{ $p->id }}]" id="score_{{ $p->id }}" value="{{$p->jawaban}}">
-                                                    <input type="hidden" name="id_kuesioner[{{ $p->id }}]" id="score_{{ $p->id }}" value="{{$p->id}}">
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="col-md-6"
-                                            id="alasan_{{ $p->id }}"
-                                            @if($p->jawaban == 1 || $p->jawaban == 2)
-                                        style="display:block;"
-                                        @else
-                                        style="display:none;"
-                                        @endif
-                                        >
-                                        <div class="row">
-                                            <div class="form-group col-md-12">
-                                                <input
-                                                    type="text"
-                                                    class="form-control"
-                                                    name="alasan[{{ $p->id }}]"
-                                                    placeholder="Tuliskan alasan..."
-                                                    value="{{ $p->deskripsi_jawaban ?? '' }}"
-                                                    @if($p->jawaban == 1 || $p->jawaban == 2)
-                                                required
-                                                @endif
-                                                >
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="form-group text-center">
-                        <input type="hidden" name="sum" id="sum">
-                        <button class="btn btn-primary tambah" type="submit">Simpan</button>
-                    </div>
-
-                </form>
-                    </div>
+                <div class="switch-radio-group">
+                  @foreach ([4=>'Sangat Bersih',3=>'Bersih',2=>'Cukup Bersih',1=>'Tidak Bersih'] as $val=>$label)
+                    <label class="switch-radio-label">
+                      <input type="radio"
+                        name="jawaban[{{ $p->id }}]"
+                        value="{{ $val }}"
+                        {{ $p->jawaban == $val ? 'checked' : '' }}
+                        onchange="handleJawabanChange({{ $p->id }}, {{ $val }})">
+                      <span class="switch-radio-custom">{{ $label }}</span>
+                    </label>
+                  @endforeach
                 </div>
-            </div>
-        </div>
+
+                {{-- ALASAN --}}
+                <div class="form-group mt-2"
+                  id="alasanBox_{{ $p->id }}"
+                  style="{{ in_array($p->jawaban,[1,2]) ? '' : 'display:none' }}">
+                  <label>Alasan (Wajib diisi)</label>
+                  <textarea
+                    class="form-control"
+                    name="alasan[{{ $p->id }}]"
+                    rows="2">{{ $p->deskripsi_jawaban }}</textarea>
+                </div>
+
+                <input type="hidden" id="score_{{ $p->id }}" value="{{ $p->jawaban }}">
+              </div>
+            @endforeach
+          </div>
+
+          <input type="hidden" name="total" id="total">
+
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-sumut px-4">Simpan Perubahan</button>
+          </div>
+
+        </form>
+      </div>
     </div>
+  </div>
 </div>
-@endsection
 
-@section('css')
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 @endsection
 
 @section('js')
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-
 <script>
+function handleJawabanChange(id, value) {
+  document.getElementById('score_' + id).value = value;
 
-    function handleJawabanChange(id, value) {
-        // Update nilai hidden input score
-        let scoreInput = document.getElementById('score_' + id);
-        if (scoreInput) {
-            scoreInput.value = value;
-        }
+  const alasanBox = document.getElementById('alasanBox_' + id);
+  if (value == 1 || value == 2) {
+    alasanBox.style.display = '';
+  } else {
+    alasanBox.style.display = 'none';
+    alasanBox.querySelector('textarea').value = '';
+  }
 
-        // 🔁 Langsung hitung total
-        hitungTotal();
+  hitungTotal();
+}
 
-        // Tampilkan/sembunyikan alasan
-        let alasanDiv = document.getElementById('alasan_' + id);
-        if (alasanDiv) {
-            if (value == '1' || value == '2') {
-                alasanDiv.style.display = 'block';
-            } else {
-                alasanDiv.style.display = 'none';
-            }
-        }
-    }
+function hitungTotal() {
+  let total = 0;
+  document.querySelectorAll('input[id^="score_"]').forEach(el => {
+    total += parseInt(el.value) || 0;
+  });
+  document.getElementById('total').value = total;
+}
 
-
-    function hitungTotal() {
-        let total = 0;
-        document.querySelectorAll('input[id^="score_"]').forEach(function(el) {
-            let val = parseFloat(el.value) || 0;
-            total += val;
-        });
-        document.getElementById("sum").value = total;
-    }
-
-    // panggil saat ada perubahan nilai
-    document.querySelectorAll('input[id^="score_"]').forEach(function(el) {
-        el.addEventListener("input", hitungTotal); // event input lebih realtime
-    });
-
-    // hitung total awal saat halaman load
-    hitungTotal();
-
+hitungTotal();
 </script>
-
-
 @endsection

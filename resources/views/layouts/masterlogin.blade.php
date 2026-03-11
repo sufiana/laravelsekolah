@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,8 +10,9 @@
     <!-- Bootstrap 3.3.7 -->
     <link rel="stylesheet" href="{{ asset('assets/themes') }}/bower_components/bootstrap/dist/css/bootstrap.min.css">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{ asset('assets/themes') }}/bower_components/font-awesome/css/font-awesome.min.css">
     <!-- Ionicons -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin') }}/font-awesome/css/font-awesome.css" />
+
     <link rel="stylesheet" href="{{ asset('assets/themes') }}/bower_components/Ionicons/css/ionicons.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('assets/themes') }}/dist/css/AdminLTE.min.css">
@@ -25,29 +27,32 @@
     <![endif]-->
 
     <!-- Google Font -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
     @yield('css')
 </head>
+
 <body class="hold-transition login-page">
-@yield('content')
+    @yield('content')
 
 
 
-<!-- jQuery 3 -->
-<script src="{{ asset('assets/themes') }}/bower_components/jquery/dist/jquery.min.js"></script>
-<!-- Bootstrap 3.3.7 -->
-<script src="{{ asset('assets/themes') }}/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- iCheck -->
-<script src="{{ asset('assets/themes') }}/plugins/iCheck/icheck.min.js"></script>
-<script>
-    $(function () {
-        $('input').iCheck({
-            checkboxClass: 'icheckbox_square-blue',
-            radioClass: 'iradio_square-blue',
-            increaseArea: '20%' /* optional */
+    <!-- jQuery 3 -->
+    <script src="{{ asset('assets/themes') }}/bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap 3.3.7 -->
+    <script src="{{ asset('assets/themes') }}/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- iCheck -->
+    <script src="{{ asset('assets/themes') }}/plugins/iCheck/icheck.min.js"></script>
+    <script>
+        $(function () {
+            $('input').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue',
+                increaseArea: '20%' /* optional */
+            });
         });
-    });
-</script>
-@yield('js')
+    </script>
+    @yield('js')
 </body>
+
 </html>

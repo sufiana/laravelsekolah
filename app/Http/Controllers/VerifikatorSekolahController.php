@@ -13,15 +13,16 @@ use Session;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
+use Illuminate\Support\Str;
 
 
 class VerifikatorSekolahController extends Controller
 {
-     public function index()
+    public function index()
     {
-        $model=VerifikatorSekolah::all()->sortBy("id");
+        $model = VerifikatorSekolah::all()->sortBy("id");
         return view('verifikator/index', [
-            'model'    => $model
+            'model' => $model
         ]);
     }
 
@@ -38,36 +39,37 @@ class VerifikatorSekolahController extends Controller
         }
 
         $user = Auth::user();
-        $query=VerifikatorSekolah::orderBy('id', 'ASC');
-        if (in_array($user->role, [2, 8])){
-            $query=$query->where('verifikator_sekolah.id_sekolah', $user->id_sekolah);
+        $query = VerifikatorSekolah::orderBy('id', 'ASC');
+        if (in_array($user->role, [2, 8])) {
+            $query = $query->where('verifikator_sekolah.id_sekolah', $user->id_sekolah);
         }
-        
-        $model= $query->get();
+
+        $model = $query->get();
         return Datatables::of($model)
-            ->editColumn('jabatan_verifikator',function ($data){
-                return !$data->Jabatanlist || !$data->jabatan_verifikator ?  ' - ' : $data->Jabatanlist["nama"];
+            ->editColumn('jabatan_verifikator', function ($data) {
+                return !$data->Jabatanlist || !$data->jabatan_verifikator ? ' - ' : $data->Jabatanlist["nama"];
             })
-            ->editColumn('id_sekolah',function ($data){
-                return !$data->sekolahlist || !$data->id_sekolah ?  ' - ' : $data->sekolahlist["nama"];
+            ->editColumn('id_sekolah', function ($data) {
+                return !$data->sekolahlist || !$data->id_sekolah ? ' - ' : $data->sekolahlist["nama"];
             })
             ->addColumn('tandatangan_url', function ($data) {
                 if ($data->tandatangan) {
                     $url = asset($data->tandatangan);
-                    return 
-                        '<button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#ttdModal" data-img="'.$url.'">
+                    return
+                        '<button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#ttdModal" data-img="' . $url . '">
                             <i class="fa fa-search"></i>
                         </button>';
                 }
                 return '-';
             })
             ->editColumn('instrumen', function ($data) {
-                if (!$data->instrumen) return '-';
+                if (!$data->instrumen)
+                    return '-';
                 $ids = explode(',', $data->instrumen);
                 $list = IconGrid::whereIn('id', $ids)->pluck('nama')->toArray();
                 return implode(', ', $list);
             })
-            ->addColumn('action', function ($model){
+            ->addColumn('action', function ($model) {
                 $button = "<div class='d-flex flex-nowrap gap-1'>
                     <a href='" . route("verifikator.edit", $model->id) . "' id='editbtn' class='btn btn-success btn-sm'>
                         <i class='fa fa-pencil-square-o'></i>
@@ -79,7 +81,7 @@ class VerifikatorSekolahController extends Controller
                 ";
                 return $button;
             })
-            ->rawColumns(['tandatangan_url','action']) // biar html link ga di-escape
+            ->rawColumns(['tandatangan_url', 'action']) // biar html link ga di-escape
             ->make(true);
     }
 
@@ -90,7 +92,7 @@ class VerifikatorSekolahController extends Controller
         }
         $user = Auth::user();
         // Cek role: hanya role 2, 3, 6 yang dibatasi per sekolah
-        if ($user->role == 2 || $user->role == 3 || $user->role == 8 ) {
+        if ($user->role == 2 || $user->role == 3 || $user->role == 8) {
             $sekolah = Sekolah::where('id', $user->id_sekolah)->get();
         } else {
             $sekolah = Sekolah::all(); // Semua sekolah untuk role lain
@@ -99,7 +101,7 @@ class VerifikatorSekolahController extends Controller
         $jabatan = RefJabatanVerifikator::all();
         $instrumen = IconGrid::orderBy('id', 'asc')->get();
 
-        return view('verifikator.create', compact('sekolah', 'user', 'jabatan','instrumen'));
+        return view('verifikator.create', compact('sekolah', 'user', 'jabatan', 'instrumen'));
     }
 
     /**
@@ -115,11 +117,11 @@ class VerifikatorSekolahController extends Controller
         ];
 
         $validator = Validator::make($request->all(), [
-            'id_sekolah'          => 'required',
-            'verifikator'         => 'required',
+            'id_sekolah' => 'required',
+            'verifikator' => 'required',
             'jabatan_verifikator' => 'required',
-            'tandatangan_upload'  => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
-            'tandatangan_drawn'   => 'nullable|string', // tambahkan validasi utk base64 signature
+            'tandatangan_upload' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+            'tandatangan_drawn' => 'nullable|string', // tambahkan validasi utk base64 signature
         ], $messages);
 
         if ($validator->fails()) {
@@ -159,13 +161,13 @@ class VerifikatorSekolahController extends Controller
         }
 
         $post = new VerifikatorSekolah();
-        $post->id_sekolah          = $request->id_sekolah;
-        $post->verifikator         = $request->verifikator;
-        $post->deskripsi           = $request->deskripsi;
+        $post->id_sekolah = $request->id_sekolah;
+        $post->verifikator = $request->verifikator;
+        $post->deskripsi = $request->deskripsi;
         $post->jabatan_verifikator = $request->jabatan_verifikator;
-        $post->tandatangan         = $tandaTanganPath; // path relatif (contoh: upload/ttd/xxxx.png)
+        $post->tandatangan = $tandaTanganPath; // path relatif (contoh: upload/ttd/xxxx.png)
         //untuk menyimpan user verifikator  yang menilai instrumen
-        $post->instrumen           = $request->filled('instrumen') ? implode(',', $request->instrumen) : null;
+        $post->instrumen = $request->filled('instrumen') ? implode(',', $request->instrumen) : null;
 
 
         if ($post->save()) {
@@ -194,17 +196,16 @@ class VerifikatorSekolahController extends Controller
      */
     public function edit($id)
     {
-        $model                  = VerifikatorSekolah::find($id);
-        $daftarInstrumen        = IconGrid::orderBy('id', 'asc')->get();
-        $selectedInstrumen      = explode(',', $model->instrumen ?? '');
-        if($model)
-        {
-             if (!Auth::check()) {
+        $model = VerifikatorSekolah::find($id);
+        $daftarInstrumen = IconGrid::orderBy('id', 'asc')->get();
+        $selectedInstrumen = explode(',', $model->instrumen ?? '');
+        if ($model) {
+            if (!Auth::check()) {
                 return redirect()->route('login');
-             }
-             $user = Auth::user();
-             // Cek role: hanya role 2, 3, 6 yang dibatasi per sekolah
-            if ($user->role == 2 || $user->role == 3 || $user->role == 8 ) {
+            }
+            $user = Auth::user();
+            // Cek role: hanya role 2, 3, 6 yang dibatasi per sekolah
+            if ($user->role == 2 || $user->role == 3 || $user->role == 8) {
                 $sekolah = Sekolah::where('id', $user->id_sekolah)->get();
             } else {
                 $sekolah = Sekolah::all(); // Semua sekolah untuk role lain
@@ -218,12 +219,10 @@ class VerifikatorSekolahController extends Controller
                 'daftarInstrumen',
                 'selectedInstrumen',
             ));
-        }
-        else
-        {
+        } else {
             return response()->json([
-                'status'=>404,
-                'message'=>'Data Tidak Ditemukan...'
+                'status' => 404,
+                'message' => 'Data Tidak Ditemukan...'
             ]);
         }
     }
@@ -242,11 +241,11 @@ class VerifikatorSekolahController extends Controller
         ];
 
         $validator = Validator::make($request->all(), [
-            'id_sekolah'          => 'required',
-            'verifikator'         => 'required',
+            'id_sekolah' => 'required',
+            'verifikator' => 'required',
             'jabatan_verifikator' => 'required',
-            'tandatangan_upload'  => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
-            'tandatangan_drawn'   => 'nullable|string',
+            'tandatangan_upload' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+            'tandatangan_drawn' => 'nullable|string',
         ], $messages);
 
         if ($validator->fails()) {
