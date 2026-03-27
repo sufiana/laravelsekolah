@@ -3,7 +3,7 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\RefGolongan;
+use App\models\RefGolongan;
 
 
 class RefJabatan extends Model
@@ -21,7 +21,8 @@ class RefJabatan extends Model
 
     ];
 
-    public function golonganlist(){
-        return $this->belongsTo(RefGolongan::class,'id_golongan','id');
+    public function golonganlist()
+    {
+        return $this->belongsTo(RefGolongan::class, 'id_golongan', 'id');
     }
 }

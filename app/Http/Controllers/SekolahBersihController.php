@@ -17,11 +17,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\Kabupatenkota;
-use App\Models\Cabdis;
-use App\Models\EvaluasiPengawas;
-use App\Models\ValidasiSekolahBersih;
-use App\Models\ValidasiSekolahBersihChild;
+use App\models\Kabupatenkota;
+use App\models\Cabdis;
+use App\models\EvaluasiPengawas;
+use App\models\ValidasiSekolahBersih;
+use App\models\ValidasiSekolahBersihChild;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;

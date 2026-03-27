@@ -3,8 +3,8 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Pegawai;
-use App\Models\RefJabatanTtd;
+use App\models\Pegawai;
+use App\models\RefJabatanTtd;
 
 
 class PejabatTtd extends Model
@@ -24,12 +24,14 @@ class PejabatTtd extends Model
 
     ];
 
-    public function pegawailist(){
-        return $this->belongsTo(Pegawai::class,'id_pegawai','id');
+    public function pegawailist()
+    {
+        return $this->belongsTo(Pegawai::class, 'id_pegawai', 'id');
     }
 
-    public function jabatanttdlist(){
-        return $this->belongsTo(RefJabatanTtd::class,'id_jabatan_ttd','id');
+    public function jabatanttdlist()
+    {
+        return $this->belongsTo(RefJabatanTtd::class, 'id_jabatan_ttd', 'id');
     }
 
 

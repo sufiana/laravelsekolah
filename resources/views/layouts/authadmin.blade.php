@@ -36,12 +36,28 @@
 </head>
 
 <body class="register-page bg-body-secondary">
-    <div class="register-box" style="width: 500px;">
+    <div class="register-box">
         <div class="container">
             @yield('isi')
             @yield('content')
         </div>
     </div>
+
+    <style>
+        /* Responsive register-box */
+        .register-box {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 576px) {
+            .register-box {
+                max-width: 100%;
+                margin: 0;
+            }
+        }
+    </style>
 
     <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
         crossorigin="anonymous"></script>

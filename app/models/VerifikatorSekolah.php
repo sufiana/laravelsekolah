@@ -3,7 +3,7 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Sekolah;
+use App\models\Sekolah;
 use App\models\RefJabatanVerifikator;
 
 
@@ -22,14 +22,16 @@ class VerifikatorSekolah extends Model
         'updated_at',
         'instrumen'
     ];
-    
-    public function sekolahlist(){
-        return $this->belongsTo(Sekolah::class,'id_sekolah','id');
+
+    public function sekolahlist()
+    {
+        return $this->belongsTo(Sekolah::class, 'id_sekolah', 'id');
     }
-    
-    public function jabatanlist(){
-        return $this->belongsTo(RefJabatanVerifikator::class,'jabatan_verifikator','id');
-    }   
-    
-    
+
+    public function jabatanlist()
+    {
+        return $this->belongsTo(RefJabatanVerifikator::class, 'jabatan_verifikator', 'id');
+    }
+
+
 }

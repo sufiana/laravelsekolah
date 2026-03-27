@@ -3,8 +3,8 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Program;
-use App\Models\Kegiatan;
+use App\models\Program;
+use App\models\Kegiatan;
 
 class SubKegiatan extends Model
 {
@@ -21,11 +21,13 @@ class SubKegiatan extends Model
         'updated_at'
     ];
 
-    public function programlist(){
-        return $this->belongsTo(Program::class,'id_program','id');
+    public function programlist()
+    {
+        return $this->belongsTo(Program::class, 'id_program', 'id');
     }
 
-    public function kegiatanlist(){
-        return $this->belongsTo(Kegiatan::class,'id_kegiatan','id');
+    public function kegiatanlist()
+    {
+        return $this->belongsTo(Kegiatan::class, 'id_kegiatan', 'id');
     }
 }

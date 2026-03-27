@@ -3,7 +3,7 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\IconGrid;
+use App\models\IconGrid;
 
 
 class PenilaianKuesioner extends Model
@@ -18,8 +18,9 @@ class PenilaianKuesioner extends Model
         'score'
     ];
 
-    public function ruanglist(){
-        return $this->belongsTo(IconGrid::class,'id_ruang','id');
+    public function ruanglist()
+    {
+        return $this->belongsTo(IconGrid::class, 'id_ruang', 'id');
     }
 
 

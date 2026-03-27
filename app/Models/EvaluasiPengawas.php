@@ -4,7 +4,7 @@ namespace App\models;
 
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Sekolah;
+use App\models\Sekolah;
 
 
 class EvaluasiPengawas extends Model
@@ -31,9 +31,9 @@ class EvaluasiPengawas extends Model
         'user_updated',
         'hasil_rekomendasi'
     ];
-    
+
     public function sekolah()
     {
-        return $this->belongsTo(Sekolah::class,'id_sekolah','id');
+        return $this->belongsTo(Sekolah::class, 'id_sekolah', 'id');
     }
 }

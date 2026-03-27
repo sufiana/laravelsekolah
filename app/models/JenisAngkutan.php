@@ -3,7 +3,7 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\JenisTransportasi;
+use App\models\JenisTransportasi;
 
 class JenisAngkutan extends Model
 {
@@ -18,7 +18,8 @@ class JenisAngkutan extends Model
         'jenis_transportasi'
     ];
 
-    public function jenistransportasilist(){
-        return $this->belongsTo(JenisTransportasi::class,'jenis_transportasi','id');
+    public function jenistransportasilist()
+    {
+        return $this->belongsTo(JenisTransportasi::class, 'jenis_transportasi', 'id');
     }
 }

@@ -17,7 +17,7 @@ use Yajra\Datatables\Datatables;
 use Illuminate\Support\Facades\Validator;
 use Session;
 use Illuminate\Support\Facades\Auth;
-Use Carbon\Carbon;
+use Carbon\Carbon;
 use DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\File;
@@ -31,26 +31,27 @@ class PegawaiController extends Controller
      */
     public function index()
     {
-        $model=Pegawai::all()->sortBy("id");
+        $model = Pegawai::all()->sortBy("id");
         return view('pegawai/index', [
-            'model'    => $model
+            'model' => $model
         ]);
     }
 
-    public function getData(){
-        $model=Pegawai::orderBy('id', 'ASC')->get();
+    public function getData()
+    {
+        $model = Pegawai::orderBy('id', 'ASC')->get();
         return Datatables::of($model)
-            ->editColumn('golongan',function ($data){
-                return !$data->golonganlist || !$data->golongan ?  ' - ' : $data->golonganlist["kode"].' - '.$data->golonganlist["nama"] ;
+            ->editColumn('golongan', function ($data) {
+                return !$data->golonganlist || !$data->golongan ? ' - ' : $data->golonganlist["kode"] . ' - ' . $data->golonganlist["nama"];
             })
-            ->editColumn('id_jabatan',function ($data){
-                return !$data->jabatanlist || !$data->id_jabatan ?  ' - ' : $data->jabatanlist["nama"] ;
+            ->editColumn('id_jabatan', function ($data) {
+                return !$data->jabatanlist || !$data->id_jabatan ? ' - ' : $data->jabatanlist["nama"];
             })
-            ->editColumn('status_pegawai',function ($data){
-                return !$data->statuspegawailist || !$data->status_pegawai ?  ' - ' : $data->statuspegawailist["nama"] ;
+            ->editColumn('status_pegawai', function ($data) {
+                return !$data->statuspegawailist || !$data->status_pegawai ? ' - ' : $data->statuspegawailist["nama"];
             })
 
-            ->addColumn('action', function ($model){
+            ->addColumn('action', function ($model) {
                 $button = "
                     <div class='btn-group-horizontal'>
                     <a href='" . route("pegawai.edit", $model->id) . "'  id='edit'>
@@ -76,15 +77,15 @@ class PegawaiController extends Controller
      */
     public function create()
     {
-        $agama                  = RefAgama::all();
-        $statuspegawai          = RefStatusPegawai::all();
-        $pangkat                = RefPangkat::all();
-        $golongan               = RefGolongan::all();
-        $statusjabatan          = RefStatusJabatan::all();
-        $jabatan                = RefJabatan::all();
-        $unitkerja              = UnitKerja::all();
-        $eselon                 = RefEselon::all();
-        $pendidikan             = RefPendidikanTerakhir::all();
+        $agama = RefAgama::all();
+        $statuspegawai = RefStatusPegawai::all();
+        $pangkat = RefPangkat::all();
+        $golongan = RefGolongan::all();
+        $statusjabatan = RefStatusJabatan::all();
+        $jabatan = RefJabatan::all();
+        $unitkerja = UnitKerja::all();
+        $eselon = RefEselon::all();
+        $pendidikan = RefPendidikanTerakhir::all();
 
         return view('pegawai.create', compact(
             'agama',
@@ -109,36 +110,34 @@ class PegawaiController extends Controller
     public function store(Request $request)
     {
         $messages = [
-            'required'                  => 'Kolom :attribute Wajib diisi',
-            'nip.unique'                => 'NIP Tersebut Sudah digunakan sebelumnya',
+            'required' => 'Kolom :attribute Wajib diisi',
+            'nip.unique' => 'NIP Tersebut Sudah digunakan sebelumnya',
 
         ];
         $validator = Validator::make($request->all(), [
-            'nip'                       =>'required|unique:master_pegawai',
-            'nama_pegawai'              =>'required',
-            'jenis_kelamin'             =>'required',
-            'tempat_lahir'              =>'required',
-            'tanggal_lahir'             =>'required',
-            'alamat'                    =>'required',
-            'no_telp_wa'                =>'required',
-            'pangkat'                   =>'required',
-            'golongan'                  =>'required',
-            'id_eselon'                 =>'required',
-            'id_jabatan'                =>'required',
-            'status_pegawai'            =>'required',
-            'foto'                      => 'mimes:jpeg,jpg,bmp,png,gif,svg|max:20000',
-        ],$messages);
+            'nip' => 'required|unique:master_pegawai',
+            'nama_pegawai' => 'required',
+            'jenis_kelamin' => 'required',
+            'tempat_lahir' => 'required',
+            'tanggal_lahir' => 'required',
+            'alamat' => 'required',
+            'no_telp_wa' => 'required',
+            'pangkat' => 'required',
+            'golongan' => 'required',
+            'id_eselon' => 'required',
+            'id_jabatan' => 'required',
+            'status_pegawai' => 'required',
+            'foto' => 'mimes:jpeg,jpg,bmp,png,gif,svg|max:20000',
+        ], $messages);
 
-        if($validator->fails())
-        {
-//            return response()->json([
+        if ($validator->fails()) {
+            //            return response()->json([
 //                'status'=>400,
 //                'errors'=>$validator->errors()->all()
 //            ]);
             return redirect()->back()->withInput()->withErrors($validator->errors());
 
-        }
-        else {
+        } else {
 
 
             $post = new Pegawai();
@@ -201,17 +200,20 @@ class PegawaiController extends Controller
      */
     public function show($id)
     {
-        $model              = Pegawai::findOrFail($id);
-        $unitkerja          = UnitKerja::findOrFail(1);
-        $agama              = $model->agama && $model->agamalist ? $model->agamalist["nama"] : ' - ' ;
-        $statuspegawai      = $model->status_pegawai && $model->statuspegawailist ? $model->statuspegawailist["nama"] : ' - ' ;
-        $pangkat            = $model->pangkat && $model->pangkatlist ? $model->pangkatlist["nama"] : ' - ' ;
-        $golongan           = $model->golongan && $model->golonganlist ? $model->golonganlist["nama"] : ' - ' ;
-        $statusjabatan      = $model->id_status_jabatan && $model->statusjabatanlist ? $model->statusjabatanlist["nama"] : ' - ' ;
-        $jabatan            = $model->id_jabatan && $model->jabatanlist ? $model->jabatanlist["nama"] : ' - ' ;
-        $eselon             = $model->id_eselon && $model->eselonlist ? $model->eselonlist["nama"] : ' - ' ;
-        $pendidikan         = $model->pendidikan_terakhir && $model->pendidikanlist ? $model->pendidikanlist["nama"] : ' - ' ;
-        return view('pegawai.detail',compact('model','unitkerja','agama',
+        $model = Pegawai::findOrFail($id);
+        $unitkerja = UnitKerja::findOrFail(1);
+        $agama = $model->agama && $model->agamalist ? $model->agamalist["nama"] : ' - ';
+        $statuspegawai = $model->status_pegawai && $model->statuspegawailist ? $model->statuspegawailist["nama"] : ' - ';
+        $pangkat = $model->pangkat && $model->pangkatlist ? $model->pangkatlist["nama"] : ' - ';
+        $golongan = $model->golongan && $model->golonganlist ? $model->golonganlist["nama"] : ' - ';
+        $statusjabatan = $model->id_status_jabatan && $model->statusjabatanlist ? $model->statusjabatanlist["nama"] : ' - ';
+        $jabatan = $model->id_jabatan && $model->jabatanlist ? $model->jabatanlist["nama"] : ' - ';
+        $eselon = $model->id_eselon && $model->eselonlist ? $model->eselonlist["nama"] : ' - ';
+        $pendidikan = $model->pendidikan_terakhir && $model->pendidikanlist ? $model->pendidikanlist["nama"] : ' - ';
+        return view('pegawai.detail', compact(
+            'model',
+            'unitkerja',
+            'agama',
             'statuspegawai',
             'pangkat',
             'golongan',
@@ -219,7 +221,8 @@ class PegawaiController extends Controller
             'jabatan',
             'unitkerja',
             'eselon',
-            'pendidikan'));
+            'pendidikan'
+        ));
 
     }
 
@@ -231,16 +234,16 @@ class PegawaiController extends Controller
      */
     public function edit($id)
     {
-        $model                  = Pegawai::find($id);
-        $agama                  = RefAgama::all();
-        $statuspegawai          = RefStatusPegawai::all();
-        $pangkat                = RefPangkat::all();
-        $golongan               = RefGolongan::all();
-        $statusjabatan          = RefStatusJabatan::all();
-        $jabatan                = RefJabatan::all();
-        $unitkerja              = UnitKerja::all();
-        $eselon                 = RefEselon::all();
-        $pendidikan             = RefPendidikanTerakhir::all();
+        $model = Pegawai::find($id);
+        $agama = RefAgama::all();
+        $statuspegawai = RefStatusPegawai::all();
+        $pangkat = RefPangkat::all();
+        $golongan = RefGolongan::all();
+        $statusjabatan = RefStatusJabatan::all();
+        $jabatan = RefJabatan::all();
+        $unitkerja = UnitKerja::all();
+        $eselon = RefEselon::all();
+        $pendidikan = RefPendidikanTerakhir::all();
 
         return view('pegawai.edit', compact(
             'model',
@@ -267,36 +270,34 @@ class PegawaiController extends Controller
     public function update(Request $request)
     {
         $messages = [
-            'required'                  => 'Kolom :attribute Wajib diisi',
-            'nip.unique'                => 'NIP Tersebut Sudah digunakan sebelumnya',
+            'required' => 'Kolom :attribute Wajib diisi',
+            'nip.unique' => 'NIP Tersebut Sudah digunakan sebelumnya',
 
         ];
         $validator = Validator::make($request->all(), [
-            'nip'                       =>'required|unique:master_pegawai,nip,'.$request->id,
-            'nama_pegawai'              =>'required',
-            'jenis_kelamin'             =>'required',
-            'tempat_lahir'              =>'required',
-            'tanggal_lahir'             =>'required',
-            'alamat'                    =>'required',
-            'no_telp_wa'                =>'required',
-            'pangkat'                   =>'required',
-            'golongan'                  =>'required',
-            'id_eselon'                 =>'required',
-            'id_jabatan'                =>'required',
-            'status_pegawai'            =>'required',
-            'foto'                      => 'mimes:jpeg,jpg,bmp,png,gif,svg|max:20000',
-        ],$messages);
+            'nip' => 'required|unique:master_pegawai,nip,' . $request->id,
+            'nama_pegawai' => 'required',
+            'jenis_kelamin' => 'required',
+            'tempat_lahir' => 'required',
+            'tanggal_lahir' => 'required',
+            'alamat' => 'required',
+            'no_telp_wa' => 'required',
+            'pangkat' => 'required',
+            'golongan' => 'required',
+            'id_eselon' => 'required',
+            'id_jabatan' => 'required',
+            'status_pegawai' => 'required',
+            'foto' => 'mimes:jpeg,jpg,bmp,png,gif,svg|max:20000',
+        ], $messages);
 
-        if($validator->fails())
-        {
-//            return response()->json([
+        if ($validator->fails()) {
+            //            return response()->json([
 //                'status'=>400,
 //                'errors'=>$validator->errors()->all()
 //            ]);
             return redirect()->back()->withInput()->withErrors($validator->errors());
 
-        }
-        else {
+        } else {
             $post = Pegawai::where('id', $request->id)->first();
             $foto = $request->file('foto');
 
@@ -370,15 +371,14 @@ class PegawaiController extends Controller
      */
     public function destroy($id)
     {
-        $check=Pegawai::firstWhere('id',$id);
-        if($check) {
+        $check = Pegawai::firstWhere('id', $id);
+        if ($check) {
             Pegawai::destroy($id);
             return response([
                 'status' => 'OK',
                 'message' => 'Data Deleted',
             ], 200);
-        }
-        else{
+        } else {
             return response([
                 'status' => 'Gagal',
                 'message' => 'Data Not Found',

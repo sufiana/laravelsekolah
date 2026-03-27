@@ -16,16 +16,17 @@ class RekeningController extends Controller
      */
     public function index()
     {
-        $model=Rekening::all()->sortBy("id");
+        $model = Rekening::all()->sortBy("id");
         return view('rekening/index', [
-            'model'    => $model,
+            'model' => $model,
         ]);
     }
 
-    public function getData(){
-        $model=Rekening::orderBy('id', 'ASC')->get();
+    public function getData()
+    {
+        $model = Rekening::orderBy('id', 'ASC')->get();
         return Datatables::of($model)
-            ->addColumn('action', function ($model){
+            ->addColumn('action', function ($model) {
                 $button = "
                     <div class='btn-group-horizontal'>
                     <a href='#' class='table-link' data-id='" . $model->id . "' data-nama='" . $model->nama . "' id='editbtn' >
@@ -61,31 +62,29 @@ class RekeningController extends Controller
     public function store(Request $request)
     {
         $messages = [
-            'required'              => 'Kolom :attribute Wajib diisi',
-            'kode.unique'           => 'Kode Tersebut Sudah digunakan sebelumnya',
+            'required' => 'Kolom :attribute Wajib diisi',
+            'kode.unique' => 'Kode Tersebut Sudah digunakan sebelumnya',
         ];
         $validator = Validator::make($request->all(), [
-            'nama'         =>'required',
-            'kode'         =>'required|unique:rekening',
-        ],$messages);
+            'nama' => 'required',
+            'kode' => 'required|unique:rekening',
+        ], $messages);
 
-        if($validator->fails())
-        {
+        if ($validator->fails()) {
             return response()->json([
-                'status'=>400,
-                'errors'=>$validator->errors()->all()
+                'status' => 400,
+                'errors' => $validator->errors()->all()
             ]);
-        }
-        else {
-            $post                   = new Rekening();
-            $post->nama             = $request->input('nama');
-            $post->kode             = $request->input('kode');
-            $post->tahun            = $request->input('tahun');
-            $post->deskripsi        = $request->input('deskripsi');
+        } else {
+            $post = new Rekening();
+            $post->nama = $request->input('nama');
+            $post->kode = $request->input('kode');
+            $post->tahun = $request->input('tahun');
+            $post->deskripsi = $request->input('deskripsi');
             $post->save();
             return response()->json([
-                'status'=>200,
-                'message'=>'Data Berhasil ditambah'
+                'status' => 200,
+                'message' => 'Data Berhasil ditambah'
             ]);
         }
     }
@@ -98,8 +97,8 @@ class RekeningController extends Controller
      */
     public function show($id)
     {
-        $model=Rekening::findOrFail($id);
-        return view('rekening.detail',compact('model'));
+        $model = Rekening::findOrFail($id);
+        return view('rekening.detail', compact('model'));
     }
 
     /**
@@ -111,18 +110,15 @@ class RekeningController extends Controller
     public function edit($id)
     {
         $model = Rekening::find($id);
-        if($model)
-        {
+        if ($model) {
             return response()->json([
-                'status'=>200,
-                'model'=> $model,
+                'status' => 200,
+                'model' => $model,
             ]);
-        }
-        else
-        {
+        } else {
             return response()->json([
-                'status'=>404,
-                'message'=>'Data Tidak Ditemukan...'
+                'status' => 404,
+                'message' => 'Data Tidak Ditemukan...'
             ]);
         }
     }
@@ -137,39 +133,35 @@ class RekeningController extends Controller
     public function update(Request $request, $id)
     {
         $messages = [
-            'required'              => 'Kolom :attribute Wajib diisi',
-            'kodeedit.unique'       => 'Kode Tersebut Sudah digunakan sebelumnya',
+            'required' => 'Kolom :attribute Wajib diisi',
+            'kodeedit.unique' => 'Kode Tersebut Sudah digunakan sebelumnya',
         ];
         $validator = Validator::make($request->all(), [
-            'namaedit'        =>'required',
-            'kodeedit'        =>'required|unique:rekening,kode,'.$id,
-        ],$messages);
+            'namaedit' => 'required',
+            'kodeedit' => 'required|unique:rekening,kode,' . $id,
+        ], $messages);
 
-        if($validator->fails())
-        {
+        if ($validator->fails()) {
             return response()->json([
-                'status'=>400,
-                'errors'=>$validator->errors()->all()
+                'status' => 400,
+                'errors' => $validator->errors()->all()
             ]);
-        }
-        else {
-            $post                           = Rekening::find($id);
-            if($post) {
-                $post->nama                 = $request->input('namaedit');
-                $post->kode                 = $request->input('kodeedit');
-                $post->tahun                = $request->input('tahunedit');
-                $post->deskripsi            = $request->input('deskripsiedit');
+        } else {
+            $post = Rekening::find($id);
+            if ($post) {
+                $post->nama = $request->input('namaedit');
+                $post->kode = $request->input('kodeedit');
+                $post->tahun = $request->input('tahunedit');
+                $post->deskripsi = $request->input('deskripsiedit');
                 $post->update();
                 return response()->json([
                     'status' => 200,
                     'message' => 'Data Berhasil diubah'
                 ]);
-            }
-            else
-            {
+            } else {
                 return response()->json([
-                    'status'=>404,
-                    'message'=>'Data tidak ditemukan.'
+                    'status' => 404,
+                    'message' => 'Data tidak ditemukan.'
                 ]);
             }
         }
@@ -183,15 +175,14 @@ class RekeningController extends Controller
      */
     public function destroy($id)
     {
-        $check=Rekening::firstWhere('id',$id);
-        if($check) {
+        $check = Rekening::firstWhere('id', $id);
+        if ($check) {
             Rekening::destroy($id);
             return response([
                 'status' => 'OK',
                 'message' => 'Data Deleted',
             ], 200);
-        }
-        else{
+        } else {
             return response([
                 'status' => 'Gagal',
                 'message' => 'Data Not Found',

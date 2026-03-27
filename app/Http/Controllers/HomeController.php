@@ -12,7 +12,7 @@ use App\models\User;
 use App\models\Cabdis;
 use App\models\Parameter;
 use Yajra\Datatables\Datatables;
-use App\Models\Kabupatenkota;
+use App\models\Kabupatenkota;
 use Illuminate\Support\Facades\Validator;
 use Session;
 use Illuminate\Support\Facades\DB;

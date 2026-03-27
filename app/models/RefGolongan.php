@@ -3,7 +3,7 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\RefPangkat;
+use App\models\RefPangkat;
 
 
 class RefGolongan extends Model
@@ -20,7 +20,8 @@ class RefGolongan extends Model
         'updated_at'
     ];
 
-    public function pangkatlist(){
-        return $this->belongsTo(RefPangkat::class,'id_pangkat','id');
+    public function pangkatlist()
+    {
+        return $this->belongsTo(RefPangkat::class, 'id_pangkat', 'id');
     }
 }

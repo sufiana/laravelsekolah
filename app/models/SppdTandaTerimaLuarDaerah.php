@@ -3,9 +3,9 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Sppd;
-use App\Models\Pegawai;
-use App\Models\RefJenisBiaya;
+use App\models\Sppd;
+use App\models\Pegawai;
+use App\models\RefJenisBiaya;
 class SppdTandaTerimaLuarDaerah extends Model
 {
     protected $table = 'sppd_tandaterima_luardaerah';
@@ -29,15 +29,18 @@ class SppdTandaTerimaLuarDaerah extends Model
         'generate'
     ];
 
-    public function jenisbiayalist(){
-        return $this->belongsTo(RefJenisBiaya::class,'jenis_biaya','id');
+    public function jenisbiayalist()
+    {
+        return $this->belongsTo(RefJenisBiaya::class, 'jenis_biaya', 'id');
     }
 
-    public function PegawaiList(){
-        return $this->belongsTo(Pegawai::class,'pegawai','id');
+    public function PegawaiList()
+    {
+        return $this->belongsTo(Pegawai::class, 'pegawai', 'id');
     }
 
-    public function SppdList(){
-        return $this->belongsTo(Sppd::class,'id_sppd','id');
+    public function SppdList()
+    {
+        return $this->belongsTo(Sppd::class, 'id_sppd', 'id');
     }
 }

@@ -3,7 +3,7 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Program;
+use App\models\Program;
 
 class Kegiatan extends Model
 {
@@ -19,8 +19,9 @@ class Kegiatan extends Model
         'updated_at'
     ];
 
-    public function programlist(){
-        return $this->belongsTo(Program::class,'id_program','id');
+    public function programlist()
+    {
+        return $this->belongsTo(Program::class, 'id_program', 'id');
     }
 
     public function getFullNameAttribute()

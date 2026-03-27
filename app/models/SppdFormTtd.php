@@ -3,8 +3,8 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Sppd;
-use App\Models\Spt;
+use App\models\Sppd;
+use App\models\Spt;
 
 
 class SppdFormTtd extends Model
@@ -25,11 +25,13 @@ class SppdFormTtd extends Model
         'updated_at'
     ];
 
-    public function listsppd(){
-        return $this->belongsTo(Sppd::class,'id_sppd','id');
+    public function listsppd()
+    {
+        return $this->belongsTo(Sppd::class, 'id_sppd', 'id');
     }
 
-    public function listspt(){
-        return $this->belongsTo(Spt::class,'id_spt','id');
+    public function listspt()
+    {
+        return $this->belongsTo(Spt::class, 'id_spt', 'id');
     }
 }

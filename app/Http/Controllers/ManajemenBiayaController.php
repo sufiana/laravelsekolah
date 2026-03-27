@@ -22,9 +22,9 @@ class ManajemenBiayaController extends Controller
      */
     public function index()
     {
-        $model=ManajemenBiaya::all()->sortBy("id");
+        $model = ManajemenBiaya::all()->sortBy("id");
         return view('manajemenbiaya/index', [
-            'model'    => $model
+            'model' => $model
         ]);
     }
 
@@ -34,23 +34,24 @@ class ManajemenBiayaController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function getData(){
-        $model=ManajemenBiaya::orderBy('id', 'ASC')->get();
+    public function getData()
+    {
+        $model = ManajemenBiaya::orderBy('id', 'ASC')->get();
         return Datatables::of($model)
-            ->editColumn('jabatan',function ($data){
-                return !$data->Jabatanlist || !$data->jabatan ?  ' - ' : $data->Jabatanlist["kode"].' - '.$data->Jabatanlist["nama"];
+            ->editColumn('jabatan', function ($data) {
+                return !$data->Jabatanlist || !$data->jabatan ? ' - ' : $data->Jabatanlist["kode"] . ' - ' . $data->Jabatanlist["nama"];
             })
-            ->editColumn('jenis_biaya',function ($data){
-                return !$data->Jenisbiayalist || !$data->jenis_biaya ?  ' - ' : $data->Jenisbiayalist["nama"]  ;
+            ->editColumn('jenis_biaya', function ($data) {
+                return !$data->Jenisbiayalist || !$data->jenis_biaya ? ' - ' : $data->Jenisbiayalist["nama"];
             })
-            ->editColumn('status_wilayah_biaya',function ($data){
-                return !$data->WilayahBiayalist || !$data->status_wilayah_biaya ?  ' - ' : $data->WilayahBiayalist["nama"]  ;
+            ->editColumn('status_wilayah_biaya', function ($data) {
+                return !$data->WilayahBiayalist || !$data->status_wilayah_biaya ? ' - ' : $data->WilayahBiayalist["nama"];
             })
-            ->editColumn('nominal',function ($data){
-                return 'Rp. '. number_format($data->nominal, 0, ",", ".");
+            ->editColumn('nominal', function ($data) {
+                return 'Rp. ' . number_format($data->nominal, 0, ",", ".");
             })
 
-            ->addColumn('action', function ($model){
+            ->addColumn('action', function ($model) {
                 $button = "
                     <div class='btn-group-horizontal'>
                     <a href='" . route("biaya.edit", $model->id) . "' id='editbtn' >
@@ -69,9 +70,9 @@ class ManajemenBiayaController extends Controller
 
     public function create()
     {
-        $golongan               = RefGolongan::all();
-        $jenisbiaya             = RefJenisBiaya::all();
-        $statusbiaya            = RefStatusWilayahBiaya::all();
+        $golongan = RefGolongan::all();
+        $jenisbiaya = RefJenisBiaya::all();
+        $statusbiaya = RefStatusWilayahBiaya::all();
 
         return view('manajemenbiaya.create', compact(
             'golongan',
@@ -89,48 +90,44 @@ class ManajemenBiayaController extends Controller
     public function store(Request $request)
     {
         $messages = [
-            'required'                  => 'Kolom :attribute Wajib diisi',
+            'required' => 'Kolom :attribute Wajib diisi',
         ];
         $validator = Validator::make($request->all(), [
-            'jabatan'                   =>'required',
-            'jenis_biaya'               =>'required',
+            'jabatan' => 'required',
+            'jenis_biaya' => 'required',
             //'deskripsi'                 =>'required',
-            'status_wilayah_biaya'      =>'required',
-            'nominal'                   =>'required'
-        ],$messages);
+            'status_wilayah_biaya' => 'required',
+            'nominal' => 'required'
+        ], $messages);
 
-        if($validator->fails())
-        {
+        if ($validator->fails()) {
             return redirect()->back()->withInput()->withErrors($validator->errors());
-        }
-        else {
-            if($request->jabatan <> NULL && $request->jabatan <> 0 ) {
-                $post                       = new ManajemenBiaya();
-                $post->jabatan              = $request->jabatan;
-                $post->jenis_biaya          = $request->jenis_biaya;
-                $post->deskripsi            = $request->deskripsi;
+        } else {
+            if ($request->jabatan <> NULL && $request->jabatan <> 0) {
+                $post = new ManajemenBiaya();
+                $post->jabatan = $request->jabatan;
+                $post->jenis_biaya = $request->jenis_biaya;
+                $post->deskripsi = $request->deskripsi;
                 $post->status_wilayah_biaya = $request->status_wilayah_biaya;
-                $badChars                   = array(".");
-                $nominal                    = str_ireplace($badChars, "", $request->nominal);
-                $post->nominal              = $nominal;
-                $post->user_created         = NULL;
-                $simpan                     = $post->save();
+                $badChars = array(".");
+                $nominal = str_ireplace($badChars, "", $request->nominal);
+                $post->nominal = $nominal;
+                $post->user_created = NULL;
+                $simpan = $post->save();
 
-            }
-            else {
-                $loopgol                    = RefGolongan::all();
-                foreach($loopgol as $i)
-                {
-                    $post                       = new ManajemenBiaya();
-                    $post->jabatan              = $i->id;
-                    $post->jenis_biaya          = $request->jenis_biaya;
-                    $post->deskripsi            = $request->deskripsi;
+            } else {
+                $loopgol = RefGolongan::all();
+                foreach ($loopgol as $i) {
+                    $post = new ManajemenBiaya();
+                    $post->jabatan = $i->id;
+                    $post->jenis_biaya = $request->jenis_biaya;
+                    $post->deskripsi = $request->deskripsi;
                     $post->status_wilayah_biaya = $request->status_wilayah_biaya;
-                    $badChars                   = array(".");
-                    $nominal                    = str_ireplace($badChars, "", $request->nominal);
-                    $post->nominal              = $nominal;
-                    $post->user_created         = NULL;
-                    $simpan                     = $post->save();
+                    $badChars = array(".");
+                    $nominal = str_ireplace($badChars, "", $request->nominal);
+                    $post->nominal = $nominal;
+                    $post->user_created = NULL;
+                    $simpan = $post->save();
                 }
             }
             if ($simpan) {
@@ -149,9 +146,9 @@ class ManajemenBiayaController extends Controller
      */
     public function show($id)
     {
-        $model=ManajemenBiaya::findOrFail($id);
-        $rincian=Pegawai::where('golongan',$model->jabatan)->get();
-        return view('manajemenbiaya.detail',compact('model','rincian'));
+        $model = ManajemenBiaya::findOrFail($id);
+        $rincian = Pegawai::where('golongan', $model->jabatan)->get();
+        return view('manajemenbiaya.detail', compact('model', 'rincian'));
     }
 
     /**
@@ -162,10 +159,10 @@ class ManajemenBiayaController extends Controller
      */
     public function edit($id)
     {
-        $model                  = ManajemenBiaya::find($id);
-        $golongan               = RefGolongan::all();
-        $jenisbiaya             = RefJenisBiaya::all();
-        $statusbiaya            = RefStatusWilayahBiaya::all();
+        $model = ManajemenBiaya::find($id);
+        $golongan = RefGolongan::all();
+        $jenisbiaya = RefJenisBiaya::all();
+        $statusbiaya = RefStatusWilayahBiaya::all();
 
         return view('manajemenbiaya.edit', compact(
             'model',
@@ -185,29 +182,27 @@ class ManajemenBiayaController extends Controller
     public function update(Request $request)
     {
         $messages = [
-            'required'                  => 'Kolom :attribute Wajib diisi',
+            'required' => 'Kolom :attribute Wajib diisi',
         ];
         $validator = Validator::make($request->all(), [
-            'jabatan'                   =>'required',
-            'jenis_biaya'               =>'required',
+            'jabatan' => 'required',
+            'jenis_biaya' => 'required',
             //'deskripsi'                 =>'required',
-            'status_wilayah_biaya'      =>'required',
-            'nominal'                   =>'required'
-        ],$messages);
+            'status_wilayah_biaya' => 'required',
+            'nominal' => 'required'
+        ], $messages);
 
-        if($validator->fails())
-        {
+        if ($validator->fails()) {
             return redirect()->back()->withInput()->withErrors($validator->errors());
-        }
-        else {
-            $post                           = ManajemenBiaya::where('id', $request->id)->first();
-            $post->jabatan                  = $request->jabatan;
-            $post->jenis_biaya              = $request->jenis_biaya;
-            $post->deskripsi                = $request->deskripsi;
-            $post->status_wilayah_biaya     = $request->status_wilayah_biaya;
-            $badChars                       = array(".");
-            $nominal                        = str_ireplace($badChars, "", $request->nominal);
-            $post->nominal                  = $nominal;
+        } else {
+            $post = ManajemenBiaya::where('id', $request->id)->first();
+            $post->jabatan = $request->jabatan;
+            $post->jenis_biaya = $request->jenis_biaya;
+            $post->deskripsi = $request->deskripsi;
+            $post->status_wilayah_biaya = $request->status_wilayah_biaya;
+            $badChars = array(".");
+            $nominal = str_ireplace($badChars, "", $request->nominal);
+            $post->nominal = $nominal;
             $post->user_created = NULL;
             $simpan = $post->save();
             if ($simpan) {
@@ -226,15 +221,14 @@ class ManajemenBiayaController extends Controller
      */
     public function destroy($id)
     {
-        $check=ManajemenBiaya::firstWhere('id',$id);
-        if($check) {
+        $check = ManajemenBiaya::firstWhere('id', $id);
+        if ($check) {
             ManajemenBiaya::destroy($id);
             return response([
                 'status' => 'OK',
                 'message' => 'Data Deleted',
             ], 200);
-        }
-        else{
+        } else {
             return response([
                 'status' => 'Gagal',
                 'message' => 'Data Not Found',

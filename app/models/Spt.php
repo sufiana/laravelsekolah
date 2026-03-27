@@ -3,13 +3,13 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\nppd;
-use App\Models\Program;
-use App\Models\Kegiatan;
-use App\Models\SubKegiatan;
-use App\Models\Pegawai;
-use App\Models\PejabatTtd;
-use App\Models\Beban;
+use App\models\nppd;
+use App\models\Program;
+use App\models\Kegiatan;
+use App\models\SubKegiatan;
+use App\models\Pegawai;
+use App\models\PejabatTtd;
+use App\models\Beban;
 
 class Spt extends Model
 {
@@ -58,41 +58,47 @@ class Spt extends Model
         return $this->attributes['pegawai'] = json_decode($value);
     }
 
-    public function programlist(){
-        return $this->belongsTo(Program::class,'program','id');
+    public function programlist()
+    {
+        return $this->belongsTo(Program::class, 'program', 'id');
     }
 
-    public function kegiatanlist(){
-        return $this->belongsTo(Kegiatan::class,'kegiatan','id');
+    public function kegiatanlist()
+    {
+        return $this->belongsTo(Kegiatan::class, 'kegiatan', 'id');
     }
 
-    public function subkegiatanlist(){
-        return $this->belongsTo(SubKegiatan::class,'subkegiatan','id');
+    public function subkegiatanlist()
+    {
+        return $this->belongsTo(SubKegiatan::class, 'subkegiatan', 'id');
     }
 
-    public function bebanlist(){
-        return $this->belongsTo(Beban::class,'mata_anggaran','id');
+    public function bebanlist()
+    {
+        return $this->belongsTo(Beban::class, 'mata_anggaran', 'id');
     }
 
-    public function pejabatlist(){
-        return $this->belongsTo(Pegawai::class,'pejabat_pemberi_perintah','id');
+    public function pejabatlist()
+    {
+        return $this->belongsTo(Pegawai::class, 'pejabat_pemberi_perintah', 'id');
     }
 
-    public function pejabatttdlist(){
-        return $this->belongsTo(PejabatTtd::class,'pejabat_pemberi_perintah','id');
+    public function pejabatttdlist()
+    {
+        return $this->belongsTo(PejabatTtd::class, 'pejabat_pemberi_perintah', 'id');
     }
 
     static function namaBulan($id)
     {
-        $hari=substr($id,8,2);
-        $thn=substr($id,0,4);
-        $id=substr($id,5,2);
+        $hari = substr($id, 8, 2);
+        $thn = substr($id, 0, 4);
+        $id = substr($id, 5, 2);
 
-        $daftar=array('01'=>$hari.' Januari '.$thn ,'02'=>$hari.' Februari '.$thn,'03'=>$hari.' Maret '.$thn,'04'=>$hari.' April '.$thn,'05'=>$hari.' Mei '.$thn,'06'=>$hari.' Juni '.$thn,'07'=>$hari.' Juli '.$thn,'08'=>$hari.' Agustus '.$thn, '09'=>$hari.' September '.$thn, '10'=>$hari.' Oktober '.$thn,'11'=>$hari.' November '.$thn, '12'=>$hari.' Desember '.$thn);
+        $daftar = array('01' => $hari . ' Januari ' . $thn, '02' => $hari . ' Februari ' . $thn, '03' => $hari . ' Maret ' . $thn, '04' => $hari . ' April ' . $thn, '05' => $hari . ' Mei ' . $thn, '06' => $hari . ' Juni ' . $thn, '07' => $hari . ' Juli ' . $thn, '08' => $hari . ' Agustus ' . $thn, '09' => $hari . ' September ' . $thn, '10' => $hari . ' Oktober ' . $thn, '11' => $hari . ' November ' . $thn, '12' => $hari . ' Desember ' . $thn);
 
         return $daftar[$id];
     }
-//    public function getFacingsAttribute()
+    //    public function getFacingsAttribute()
 //    {
 //        return explode(',', $this->pegawai);
 //    }

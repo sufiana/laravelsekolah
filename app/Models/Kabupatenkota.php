@@ -3,7 +3,7 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use app\models\Provinsi;
+use App\models\Provinsi;
 
 class Kabupatenkota extends Model
 {
@@ -15,7 +15,8 @@ class Kabupatenkota extends Model
         'id_provinsi'
     ];
 
-    public function provinsilist(){
-        return $this->belongsTo(Provinsi::class,'id_provinsi','id');
+    public function provinsilist()
+    {
+        return $this->belongsTo(Provinsi::class, 'id_provinsi', 'id');
     }
 }

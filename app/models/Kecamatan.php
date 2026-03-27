@@ -3,8 +3,8 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Kabupatenkota;
-use App\Models\Provinsi;
+use App\models\Kabupatenkota;
+use App\models\Provinsi;
 
 
 class Kecamatan extends Model
@@ -18,11 +18,13 @@ class Kecamatan extends Model
         'prov'
     ];
 
-    public function kabupatenkotalist(){
-        return $this->belongsTo(Kabupatenkota::class,'id_kabupatenkota','id');
+    public function kabupatenkotalist()
+    {
+        return $this->belongsTo(Kabupatenkota::class, 'id_kabupatenkota', 'id');
     }
 
-    public function provlist(){
-        return $this->belongsTo(Provinsi::class,'prov','id');
+    public function provlist()
+    {
+        return $this->belongsTo(Provinsi::class, 'prov', 'id');
     }
 }

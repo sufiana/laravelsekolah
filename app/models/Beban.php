@@ -3,7 +3,7 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\RefBebanJenis;
+use App\models\RefBebanJenis;
 
 
 class Beban extends Model
@@ -23,8 +23,9 @@ class Beban extends Model
         'user_update',
         'updated_at'
     ];
-    public function Jenislist(){
-        return $this->belongsTo(RefBebanJenis::class,'jenis','id');
+    public function Jenislist()
+    {
+        return $this->belongsTo(RefBebanJenis::class, 'jenis', 'id');
     }
 
 }

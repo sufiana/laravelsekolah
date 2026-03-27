@@ -3,15 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\RefAgama;
-use App\Models\RefStatusPegawai;
-use App\Models\RefPangkat;
-use App\Models\RefGolongan;
-use App\Models\RefStatusJabatan;
-use App\Models\RefJabatan;
-use App\Models\UnitKerja;
-use App\Models\RefEselon;
-use App\Models\RefPendidikanTerakhir;
+use App\models\RefAgama;
+use App\models\RefStatusPegawai;
+use App\models\RefPangkat;
+use App\models\RefGolongan;
+use App\models\RefStatusJabatan;
+use App\models\RefJabatan;
+use App\models\UnitKerja;
+use App\models\RefEselon;
+use App\models\RefPendidikanTerakhir;
 
 class Pegawai extends Model
 {
@@ -49,40 +49,49 @@ class Pegawai extends Model
         'updated_at'
     ];
 
-    public function agamalist(){
-        return $this->belongsTo(RefAgama::class,'agama','id');
+    public function agamalist()
+    {
+        return $this->belongsTo(RefAgama::class, 'agama', 'id');
     }
 
-    public function statuspegawailist(){
-        return $this->belongsTo(RefStatusPegawai::class,'status_pegawai','id');
+    public function statuspegawailist()
+    {
+        return $this->belongsTo(RefStatusPegawai::class, 'status_pegawai', 'id');
     }
 
-    public function pangkatlist(){
-        return $this->belongsTo(RefPangkat::class,'pangkat','id');
+    public function pangkatlist()
+    {
+        return $this->belongsTo(RefPangkat::class, 'pangkat', 'id');
     }
 
-    public function golonganlist(){
-        return $this->belongsTo(RefGolongan::class,'golongan','id');
+    public function golonganlist()
+    {
+        return $this->belongsTo(RefGolongan::class, 'golongan', 'id');
     }
 
-    public function statusjabatanlist(){
-        return $this->belongsTo(RefStatusJabatan::class,'id_status_jabatan','id');
+    public function statusjabatanlist()
+    {
+        return $this->belongsTo(RefStatusJabatan::class, 'id_status_jabatan', 'id');
     }
 
-    public function jabatanlist(){
-        return $this->belongsTo(RefJabatan::class,'id_jabatan','id');
+    public function jabatanlist()
+    {
+        return $this->belongsTo(RefJabatan::class, 'id_jabatan', 'id');
     }
 
-    public function unitkerjalist(){
-        return $this->belongsTo(UnitKerja::class,'id_unit_kerja','id');
+    public function unitkerjalist()
+    {
+        return $this->belongsTo(UnitKerja::class, 'id_unit_kerja', 'id');
     }
 
-    public function eselonlist(){
-        return $this->belongsTo(RefEselon::class,'id_eselon','id');
+    public function eselonlist()
+    {
+        return $this->belongsTo(RefEselon::class, 'id_eselon', 'id');
     }
 
-    public function pendidikanlist(){
-        return $this->belongsTo(RefPendidikanTerakhir::class,'pendidikan_terakhir','id');
+    public function pendidikanlist()
+    {
+        return $this->belongsTo(RefPendidikanTerakhir::class, 'pendidikan_terakhir', 'id');
     }
 
 

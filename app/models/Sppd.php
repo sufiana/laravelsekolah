@@ -3,14 +3,14 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Spt;
-use App\Models\JenisTransportasi;
-use App\Models\JenisAngkutan;
-use App\Models\Provinsi;
-use App\Models\Kabupatenkota;
-use App\Models\Kecamatan;
-use App\Models\Kelurahan;
-use App\Models\Beban;
+use App\models\Spt;
+use App\models\JenisTransportasi;
+use App\models\JenisAngkutan;
+use App\models\Provinsi;
+use App\models\Kabupatenkota;
+use App\models\Kecamatan;
+use App\models\Kelurahan;
+use App\models\Beban;
 
 class Sppd extends Model
 {
@@ -54,36 +54,44 @@ class Sppd extends Model
         'tanggal_kwitansi'
     ];
 
-    public function sptlist(){
-        return $this->belongsTo(Spt::class,'id_spt','id');
+    public function sptlist()
+    {
+        return $this->belongsTo(Spt::class, 'id_spt', 'id');
     }
 
-    public function transportasilist(){
-        return $this->belongsTo(JenisTransportasi::class,'jenis_perjalanan','id');
+    public function transportasilist()
+    {
+        return $this->belongsTo(JenisTransportasi::class, 'jenis_perjalanan', 'id');
     }
 
-    public function angkutanlist(){
-        return $this->belongsTo(JenisAngkutan::class,'jenis_angkutan','id');
+    public function angkutanlist()
+    {
+        return $this->belongsTo(JenisAngkutan::class, 'jenis_angkutan', 'id');
     }
 
-    public function provinsilist(){
-        return $this->belongsTo(Provinsi::class,'provinsi','id');
+    public function provinsilist()
+    {
+        return $this->belongsTo(Provinsi::class, 'provinsi', 'id');
     }
 
-    public function kabupatenlist(){
-        return $this->belongsTo(Kabupatenkota::class,'kabupatenkota','id');
+    public function kabupatenlist()
+    {
+        return $this->belongsTo(Kabupatenkota::class, 'kabupatenkota', 'id');
     }
 
-    public function kecamatanlist(){
-        return $this->belongsTo(Kecamatan::class,'kecamatan','id');
+    public function kecamatanlist()
+    {
+        return $this->belongsTo(Kecamatan::class, 'kecamatan', 'id');
     }
 
-    public function kelurahanlist(){
-        return $this->belongsTo(Kelurahan::class,'kelurahan','id');
+    public function kelurahanlist()
+    {
+        return $this->belongsTo(Kelurahan::class, 'kelurahan', 'id');
     }
 
-    public function bebanlist(){
-        return $this->belongsTo(Beban::class,'mata_anggaran','id');
+    public function bebanlist()
+    {
+        return $this->belongsTo(Beban::class, 'mata_anggaran', 'id');
     }
 
 

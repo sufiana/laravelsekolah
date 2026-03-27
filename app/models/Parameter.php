@@ -3,7 +3,7 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\IconGrid;
+use App\models\IconGrid;
 
 class Parameter extends Model
 {
@@ -19,8 +19,9 @@ class Parameter extends Model
         'time_update'
     ];
 
-    public function ruanglist(){
-        return $this->belongsTo(IconGrid::class,'id_ruang','id');
+    public function ruanglist()
+    {
+        return $this->belongsTo(IconGrid::class, 'id_ruang', 'id');
     }
 
 }
