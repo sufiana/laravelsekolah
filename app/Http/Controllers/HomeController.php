@@ -39,7 +39,7 @@ class HomeController extends Controller
             case 5: // superadmin
                 return redirect()->route('site.developer');
 
-            case 7: // sekolah
+            //case 7: // sekolah
             case 8: // tata_usaha
             case 2:
                 return redirect()->route('site.sekolah');
@@ -421,11 +421,13 @@ class HomeController extends Controller
         // Base query
         $query = Sekolah::query();
 
-        // Filter berdasarkan role (role 2 dan 3 hanya sekolahnya sendiri)
+        // Filter berdasarkan role
         if (in_array($user->role, [2, 3])) {
             $query->where('id', $user->id_sekolah);
+        } elseif (in_array($user->role, [5, 6])) { // Pengawas dan Cabdis
+            $query->where('cabdis', $user->cabdis);
         }
-        // Role lain (4,5,6,7,dst) akan dapat semua data
+        // Role lain (1,4,7,dst) akan dapat semua data
 
         // Search
         if ($request->has('search') && !empty(trim($request->search['value']))) {
@@ -446,7 +448,7 @@ class HomeController extends Controller
         $data = $query->orderBy('id', 'ASC')->skip($start)->take($length)->get();
 
         // Format data
-        $formatted = $data->map(function ($item) {
+        $formatted = $data->map(function ($item) use ($user) {
             $kabupaten = Kabupatenkota::where('kode_kabupaten', $item->kabupaten_kota)->first();
 
             $mapLink = (!empty($item->lintang) && !empty($item->bujur))
@@ -455,11 +457,20 @@ class HomeController extends Controller
 
             $ids = !empty($item->instrumen) ? explode(',', $item->instrumen) : [];
 
-            // Cegah error jika tabel kosong
             $list = !empty($ids) ? IconGrid::whereIn('id', $ids)->pluck('nama')->toArray() : [];
             $listno = IconGrid::count() > 0
                 ? IconGrid::whereNotIn('id', $ids)->pluck('nama')->toArray()
                 : [];
+
+            // Kondisi tombol edit hanya untuk role 2 dan 3
+            $action = '';
+            if (in_array($user->role, [2, 3])) {
+                $action = "
+            <div class='btn-group'>
+                <a href='" . route("EditSekolah", $item->id) . "' class='btn btn-sm btn-warning'>Edit</a>
+            </div>
+        ";
+            }
 
             return [
                 'id' => $item->id ?? '-',
@@ -476,11 +487,7 @@ class HomeController extends Controller
                 'rtrw' => ($item->rt && $item->rw) ? "RT {$item->rt} / RW {$item->rw}" : '-',
                 'instrumen' => $list,
                 'instrumenno' => $listno,
-                'action' => "
-                <div class='btn-group'>
-                    <a href='" . route("EditSekolah", $item->id) . "' class='btn btn-sm btn-warning'>Edit</a>
-                </div>
-            "
+                'action' => $action
             ];
         });
 
@@ -493,14 +500,29 @@ class HomeController extends Controller
 
     public function EditSekolah($id)
     {
+        $user = Auth::user();
+
+        // Cek role user (hanya role 2 dan 3 yang boleh)
+        if (!in_array($user->role, [2, 3])) {
+            return abort(403, "Maaf Anda Tidak bisa mengubah data sekolah ini, Hanya sekolah yang bersangkutan saja yang bisa merubah data sekolah ini");
+        }
+
         $model = Sekolah::find($id);
+
+        // Cek apakah sekolah yang diakses sesuai dengan id_sekolah user
+        if (!$model || $model->id != $user->id_sekolah) {
+            return abort(403, "Maaf Anda Tidak bisa mengubah data sekolah ini, Hanya sekolah yang bersangkutan saja yang bisa merubah data sekolah ini");
+        }
+
         $kabupaten = Kabupatenkota::all();
         $instrumen = IconGrid::orderBy('id', 'asc')->get();
         $daftarInstrumen = IconGrid::orderBy('id', 'asc')->get();
         $selectedInstrumen = explode(',', $model->instrumen ?? '');
         $cabdis = Cabdis::all();
+
         return view('page.sekolahedit', compact('model', 'kabupaten', 'instrumen', 'daftarInstrumen', 'selectedInstrumen', 'cabdis'));
     }
+
 
     public function UpdateSekolah(Request $request)
     {

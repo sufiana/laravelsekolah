@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 /*
@@ -18,15 +19,20 @@ use App\Http\Controllers\Auth\GoogleAuthController;
 //    return view('/layouts/beranda');
 //});
 
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-Route::get('/registrasi', [LoginController::class, 'showRegistrationForm'])->name('register');
-Route::post('/registrasi', [LoginController::class, 'register'])->name('register.post');
+// Authentication Routes
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:60,1');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/registrasi', [AuthController::class, 'showRegistrationForm'])->name('register');
+Route::post('/registrasi', [AuthController::class, 'register'])->name('register.post');
 
+// Security Monitoring Routes
+Route::post('/auth/login-status', [AuthController::class, 'getLoginStatus'])->name('auth.login-status');
+Route::post('/auth/generate-captcha', [AuthController::class, 'generateCaptcha'])->name('auth.generate-captcha');
 
-Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
-Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
+// Google OAuth Routes
+Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google.redirect');
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
 // Temporary route to update password
 Route::get('/update-password', function () {
@@ -125,6 +131,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('verifikator/update', 'VerifikatorSekolahController@update')->name('verifikator.update');
     Route::post('verifikator/SimpanNamaJabatan', 'VerifikatorSekolahController@SimpanNamaJabatan')->name('verifikator.SimpanNamaJabatan');
 
-
+    // Security Monitoring Routes (Admin Only)
+    Route::prefix('admin/security')->group(function () {
+        Route::get('/', [App\Http\Controllers\SecurityMonitoringController::class, 'index'])->name('security.index');
+        Route::post('/user-attempts', [App\Http\Controllers\SecurityMonitoringController::class, 'getUserAttempts'])->name('security.user-attempts');
+        Route::post('/ip-stats', [App\Http\Controllers\SecurityMonitoringController::class, 'getIpStatistics'])->name('security.ip-stats');
+        Route::post('/unlock', [App\Http\Controllers\SecurityMonitoringController::class, 'unlockAccount'])->name('security.unlock');
+        Route::post('/block-ip', [App\Http\Controllers\SecurityMonitoringController::class, 'blockIpAddress'])->name('security.block-ip');
+        Route::get('/export', [App\Http\Controllers\SecurityMonitoringController::class, 'export'])->name('security.export');
+    });
 
 });

@@ -16,7 +16,24 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'username', 'email', 'password_hash', 'google_id', 'google_email', 'google_name', 'role', 'id_sekolah', 'is_active', 'is_verified', 'verification_token', 'verification_expires', 'refresh_token', 'refresh_token_expires', 'last_login',
+        'username',
+        'email',
+        'password_hash',
+        'google_id',
+        'google_email',
+        'google_name',
+        'role',
+        'id_sekolah',
+        'is_active',
+        'is_verified',
+        'verification_token',
+        'verification_expires',
+        'refresh_token',
+        'refresh_token_expires',
+        'last_login',
+        'login_attempts',
+        'last_login_attempt',
+        'locked_until',
     ];
 
     /**
@@ -25,7 +42,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password_hash', 'remember_token',
+        'password_hash',
+        'remember_token',
     ];
 
     /**
@@ -37,5 +55,15 @@ class User extends Authenticatable
         'verification_expires' => 'datetime',
         'refresh_token_expires' => 'datetime',
         'last_login' => 'datetime',
+        'last_login_attempt' => 'datetime',
+        'locked_until' => 'datetime',
     ];
+
+    /**
+     * Override getAuthPassword to use password_hash field
+     */
+    public function getAuthPassword()
+    {
+        return $this->password_hash;
+    }
 }

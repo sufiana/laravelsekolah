@@ -4,15 +4,30 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\Rules\ValidateCaptcha;
+use App\Services\BruteForceProtectionService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
+    protected $bruteForceService;
+
+    public function __construct(BruteForceProtectionService $bruteForceService)
+    {
+        $this->bruteForceService = $bruteForceService;
+    }
+
     public function showLoginForm()
     {
-        return view('auth.login');
+        // Generate CAPTCHA for session
+        $captcha = null;
+        if (session()->has('show_captcha')) {
+            $captcha = ValidateCaptcha::generateCaptcha();
+        }
+
+        return view('auth.login', ['captcha' => $captcha]);
     }
 
     public function showRegistrationForm()
@@ -42,15 +57,111 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->only('username', 'password');
+        $usernameOrEmail = $request->input('username') ?? $request->input('email');
+        $password = $request->input('password');
+        $ipAddress = $this->bruteForceService->getClientIp();
 
-        if (Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']])) {
-            // Authentication passed...
+        // Check if account is locked
+        if ($this->bruteForceService->isAccountLocked($usernameOrEmail)) {
+            $remainingSeconds = $this->bruteForceService->getLockoutTimeRemaining($usernameOrEmail);
+            $remainingMinutes = ceil($remainingSeconds / 60);
+
+            $this->bruteForceService->recordAttempt($usernameOrEmail, false, 'account_locked', $ipAddress);
+
+            return redirect()->back()->withErrors([
+                'username' => "Akun Anda terkunci sementara karena terlalu banyak percobaan login gagal. Silakan coba lagi dalam $remainingMinutes menit.",
+            ])->withInput($request->except('password'));
+        }
+
+        // Check if CAPTCHA is required
+        if ($this->bruteForceService->requiresCaptchaValidation($usernameOrEmail)) {
+            session(['show_captcha' => true]);
+
+            $validationRules = [
+                'username' => 'required|string',
+                'password' => 'required|string',
+                'captcha_answer' => [new ValidateCaptcha()],
+            ];
+
+            $customMessages = [
+                'captcha_answer.validate_captcha' => 'Jawaban CAPTCHA tidak benar.'
+            ];
+
+            $request->validate($validationRules, $customMessages);
+        }
+
+        // Attempt authentication
+        $credentials = [
+            'username' => $usernameOrEmail,
+            'password' => $password
+        ];
+
+        // Try with username first
+        if (Auth::attempt($credentials)) {
+            $this->bruteForceService->recordAttempt($usernameOrEmail, true, null, $ipAddress);
+
+            session()->forget(['show_captcha', 'captcha_answer', 'captcha_expires']);
+
             return redirect()->intended('dashboard');
         }
 
+        // Try with email
+        $credentials = [
+            'email' => $usernameOrEmail,
+            'password' => $password
+        ];
+
+        if (Auth::attempt($credentials)) {
+            $this->bruteForceService->recordAttempt($usernameOrEmail, true, null, $ipAddress);
+
+            session()->forget(['show_captcha', 'captcha_answer', 'captcha_expires']);
+
+            return redirect()->intended('dashboard');
+        }
+
+        // Record failed attempt
+        $this->bruteForceService->recordAttempt($usernameOrEmail, false, 'invalid_credentials', $ipAddress);
+
+        // Check if should show CAPTCHA
+        if ($this->bruteForceService->shouldShowCaptcha($usernameOrEmail, $ipAddress)) {
+            session(['show_captcha' => true]);
+        }
+
         return redirect()->back()->withErrors([
-            'username' => 'The provided credentials do not match our records.',
+            'username' => 'Username/Email atau password tidak sesuai.',
+        ])->withInput($request->except('password'));
+    }
+
+    /**
+     * Get login attempt status via AJAX
+     */
+    public function getLoginStatus(Request $request)
+    {
+        $usernameOrEmail = $request->input('username_or_email');
+
+        if (!$usernameOrEmail) {
+            return response()->json(['error' => 'Username atau email diperlukan'], 400);
+        }
+
+        $stats = $this->bruteForceService->getStatistics($usernameOrEmail);
+
+        return response()->json([
+            'success' => true,
+            'data' => $stats
+        ]);
+    }
+
+    /**
+     * Generate CAPTCHA via AJAX
+     */
+    public function generateCaptcha()
+    {
+        session(['show_captcha' => true]);
+        $captcha = ValidateCaptcha::generateCaptcha();
+
+        return response()->json([
+            'success' => true,
+            'captcha' => $captcha
         ]);
     }
 
@@ -66,6 +177,9 @@ class AuthController extends Controller
             $user = User::where('google_id', $googleUser->getId())->orWhere('email', $googleUser->getEmail())->first();
 
             if ($user) {
+                $ipAddress = $this->bruteForceService->getClientIp();
+                $this->bruteForceService->recordAttempt($user->email, true, 'google_oauth', $ipAddress);
+
                 Auth::login($user);
                 return redirect()->intended('dashboard');
             } else {

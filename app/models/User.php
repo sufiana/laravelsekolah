@@ -1,16 +1,11 @@
 <?php
 namespace App\models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Hash;
-use App\models\Role;
+use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
-
-class User extends Authenticatable
+class User extends Model
 {
-    use Notifiable;
-
     protected $table = 'users';
 
     protected $fillable = [
@@ -48,7 +43,10 @@ class User extends Authenticatable
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'last_login' => 'datetime',
+        'locked_until' => 'datetime',
     ];
+
+    protected $dates = ['locked_until', 'created_at', 'updated_at'];
 
     public function getAuthPassword()
     {
